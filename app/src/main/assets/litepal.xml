@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="dwpos" ></dbname>
+
+    <version value="6" ></version>
+    <list>
+        <mapping class="com.duowei.dw_pos.bean.YHJBQK"></mapping>
+    </list>
+    <list>
+        <mapping class="com.duowei.dw_pos.bean.JYCSSZ"></mapping>
+    </list>
+    <list>
+        <mapping class="com.duowei.dw_pos.bean.DMJYXMSSLB"></mapping>
+    </list>
+    <list>
+        <mapping class="com.duowei.dw_pos.bean.JYXMSZ"></mapping>
+    </list>
+    <list>
+        <mapping class="com.duowei.dw_pos.bean.TCMC"></mapping>
+    </list>
+    <list>
+        <mapping class="com.duowei.dw_pos.bean.TCSD"></mapping>
+    </list>
+    <list>
+        <mapping class="com.duowei.dw_pos.bean.GKLX"></mapping>
+    </list>
+    <list>
+        <mapping class="com.duowei.dw_pos.bean.SZLB"></mapping>
+    </list>
+    <list>
+        <mapping class="com.duowei.dw_pos.bean.DMPZSD"></mapping>
+    </list>
+    <list>
+        <mapping class="com.duowei.dw_pos.bean.DMKWDYDP"></mapping>
+    </list>
+</litepal>
