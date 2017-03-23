@@ -7,9 +7,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.JYXMSZ;
+import com.duowei.dw_pos.bean.TCMC;
+import com.duowei.dw_pos.bean.TCSD;
+
+import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +69,28 @@ public class RightAdapter extends BaseAdapter {
             holder.tv_name.setText(item.getXMMC());
             holder.tv_money.setText(String.valueOf("¥" + item.getXSJG()));
 
+            holder.btn_add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(mContext, "添加到购物车", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } else if (object instanceof TCMC) {
+            TCMC item = (TCMC) object;
+            holder.tv_name.setText(item.getXMMC());
+
+            List<TCSD> tcsdList = DataSupport.where("xmbh = ? and gq = ?", item.getXMBH(), "1").find(TCSD.class);
+            if (tcsdList.size() > 0) {
+                TCSD tcsd = tcsdList.get(0);
+                holder.tv_money.setText("¥" + tcsd.getDJ());
+            }
+            holder.btn_add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(mContext, "进入套餐子项", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         return convertView;
@@ -71,6 +98,7 @@ public class RightAdapter extends BaseAdapter {
 
     public void setList(List list) {
         mList = list;
+        notifyDataSetChanged();
     }
 
     static class ViewHolder {

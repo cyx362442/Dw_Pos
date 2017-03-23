@@ -77,4 +77,48 @@ public class TCSD extends DataSupport {
     public String getLBBM() {
         return LBBM;
     }
+
+    public void setXH(String XH) {
+        this.XH = XH;
+    }
+
+    public void setXMBH(String XMBH) {
+        this.XMBH = XMBH;
+    }
+
+    public void setXMBH1(String XMBH1) {
+        this.XMBH1 = XMBH1;
+    }
+
+    public void setXMMC1(String XMMC1) {
+        this.XMMC1 = XMMC1;
+    }
+
+    public void setDW1(String DW1) {
+        this.DW1 = DW1;
+    }
+
+    public void setTM(String TM) {
+        this.TM = TM;
+    }
+
+    public void setSL(String SL) {
+        this.SL = SL;
+    }
+
+    public void setDJ(String DJ) {
+        this.DJ = DJ;
+    }
+
+    public void setSFXZ(String SFXZ) {
+        this.SFXZ = SFXZ;
+    }
+
+    public void setGQ(String GQ) {
+        this.GQ = GQ;
+    }
+
+    public void setLBBM(String LBBM) {
+        this.LBBM = LBBM;
+    }
 }

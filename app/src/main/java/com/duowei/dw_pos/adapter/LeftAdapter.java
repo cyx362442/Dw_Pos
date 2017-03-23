@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.DMJYXMSSLB;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,9 +21,9 @@ public class LeftAdapter extends BaseAdapter {
     private Context mContext;
     private List mList;
 
-    public LeftAdapter(Context context, List list) {
+    public LeftAdapter(Context context) {
         mContext = context;
-        mList = list;
+        mList = new ArrayList();
     }
 
     @Override
@@ -54,8 +55,18 @@ public class LeftAdapter extends BaseAdapter {
             // 单品
             DMJYXMSSLB item = (DMJYXMSSLB) object;
             textView.setText(item.getLBMC());
+
+        } else if (object instanceof String) {
+            // 套餐
+            String item = (String) object;
+            textView.setText(item);
         }
 
         return textView;
+    }
+
+    public void setList(List list) {
+        mList = list;
+        notifyDataSetChanged();
     }
 }
