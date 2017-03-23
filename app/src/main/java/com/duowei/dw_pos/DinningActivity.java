@@ -2,6 +2,7 @@ package com.duowei.dw_pos;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,7 +16,7 @@ import org.litepal.crud.DataSupport;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DinningActivity extends AppCompatActivity implements  View.OnClickListener, AdapterView.OnItemClickListener {
+public class DinningActivity extends AppCompatActivity implements  View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
     private List<String>listName=new ArrayList<>();
     private Spinner mSp;
     private GridView mGv;
@@ -27,6 +28,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         findViewById(R.id.btn_exit).setOnClickListener(this);
         mSp = (Spinner) findViewById(R.id.spinnner);
         mGv = (GridView) findViewById(R.id.gridView);
+        mSp.setOnItemSelectedListener(this);
         mGv.setOnItemClickListener(this);
     }
 
@@ -65,6 +67,16 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+        Log.e("=====",position+"号");
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
 }
