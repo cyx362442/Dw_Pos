@@ -168,4 +168,108 @@ public class JYXMSZ extends DataSupport{
     public String getHYJ9() {
         return HYJ9;
     }
+
+    public void setXMBH(String XMBH) {
+        this.XMBH = XMBH;
+    }
+
+    public void setXMMC(String XMMC) {
+        this.XMMC = XMMC;
+    }
+
+    public void setPY(String PY) {
+        this.PY = PY;
+    }
+
+    public void setTM(String TM) {
+        this.TM = TM;
+    }
+
+    public void setDW(String DW) {
+        this.DW = DW;
+    }
+
+    public void setLBBM(String LBBM) {
+        this.LBBM = LBBM;
+    }
+
+    public void setLBMC(String LBMC) {
+        this.LBMC = LBMC;
+    }
+
+    public void setXSJG(String XSJG) {
+        this.XSJG = XSJG;
+    }
+
+    public void setSFTC(String SFTC) {
+        this.SFTC = SFTC;
+    }
+
+    public void setGQ(String GQ) {
+        this.GQ = GQ;
+    }
+
+    public void setSFQX(String SFQX) {
+        this.SFQX = SFQX;
+    }
+
+    public void setXL(String XL) {
+        this.XL = XL;
+    }
+
+    public void setHLBMMC(String HLBMMC) {
+        this.HLBMMC = HLBMMC;
+    }
+
+    public void setSFYHQ(String SFYHQ) {
+        this.SFYHQ = SFYHQ;
+    }
+
+    public void setBY16(String BY16) {
+        this.BY16 = BY16;
+    }
+
+    public void setBY6(String BY6) {
+        this.BY6 = BY6;
+    }
+
+    public void setYHJ(String YHJ) {
+        this.YHJ = YHJ;
+    }
+
+    public void setHYJ(String HYJ) {
+        this.HYJ = HYJ;
+    }
+
+    public void setHYJ2(String HYJ2) {
+        this.HYJ2 = HYJ2;
+    }
+
+    public void setHYJ3(String HYJ3) {
+        this.HYJ3 = HYJ3;
+    }
+
+    public void setHYJ4(String HYJ4) {
+        this.HYJ4 = HYJ4;
+    }
+
+    public void setHYJ5(String HYJ5) {
+        this.HYJ5 = HYJ5;
+    }
+
+    public void setHYJ6(String HYJ6) {
+        this.HYJ6 = HYJ6;
+    }
+
+    public void setHYJ7(String HYJ7) {
+        this.HYJ7 = HYJ7;
+    }
+
+    public void setHYJ8(String HYJ8) {
+        this.HYJ8 = HYJ8;
+    }
+
+    public void setHYJ9(String HYJ9) {
+        this.HYJ9 = HYJ9;
+    }
 }

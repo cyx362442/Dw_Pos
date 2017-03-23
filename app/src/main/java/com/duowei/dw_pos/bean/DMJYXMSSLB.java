@@ -19,7 +19,7 @@ public class DMJYXMSSLB  extends DataSupport{
     public String LBBM;
     public String LBMC;
     public String SFTY;
-    public String XL;
+    public float XL;
 
     public String getLBBM() {
         return LBBM;
@@ -33,7 +33,23 @@ public class DMJYXMSSLB  extends DataSupport{
         return SFTY;
     }
 
-    public String getXL() {
+    public float getXL() {
         return XL;
+    }
+
+    public void setLBBM(String LBBM) {
+        this.LBBM = LBBM;
+    }
+
+    public void setLBMC(String LBMC) {
+        this.LBMC = LBMC;
+    }
+
+    public void setSFTY(String SFTY) {
+        this.SFTY = SFTY;
+    }
+
+    public void setXL(float XL) {
+        this.XL = XL;
     }
 }
