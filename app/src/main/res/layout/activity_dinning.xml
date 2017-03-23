@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,19 +11,13 @@
         android:layout_height="50dp"
         android:gravity="center_vertical"
         android:background="@color/colorBlack">
-        <ImageButton
-            android:id="@+id/imageButton"
+        <Spinner
+            android:id="@+id/spinnner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            app:srcCompat="@android:drawable/ic_menu_sort_by_size"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/imageButton"
             android:layout_centerVertical="true"
-            android:text="全部"
-            android:textColor="@color/colorWhite"/>
+            >
+        </Spinner>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,21 +31,17 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:background="@color/colorGreen"
+            android:background="@drawable/shape_land"
             android:text="退出"
             android:textColor="@color/colorWhite"/>
     </RelativeLayout>
-    <FrameLayout
-        android:id="@+id/frameList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/rlTop"
-        >
-    </FrameLayout>
     <GridView
         android:id="@+id/gridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/rlTop"
+        android:numColumns="3"
+        android:horizontalSpacing="10dp"
+        android:verticalSpacing="10dp"
         ></GridView>
 </RelativeLayout>

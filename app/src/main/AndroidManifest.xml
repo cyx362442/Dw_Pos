@@ -27,6 +27,8 @@
         </activity>
         <activity android:name=".DinningActivity">
         </activity>
+        <activity android:name=".OpenTableActivity">
+        </activity>
     </application>
 
 </manifest>
