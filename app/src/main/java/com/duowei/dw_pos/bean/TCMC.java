@@ -71,4 +71,44 @@ public class TCMC extends DataSupport {
     public String getJSSJ() {
         return JSSJ;
     }
+
+    public void setXMBH(String XMBH) {
+        this.XMBH = XMBH;
+    }
+
+    public void setXMMC(String XMMC) {
+        this.XMMC = XMMC;
+    }
+
+    public void setLBMC(String LBMC) {
+        this.LBMC = LBMC;
+    }
+
+    public void setXL(String XL) {
+        this.XL = XL;
+    }
+
+    public void setTM(String TM) {
+        this.TM = TM;
+    }
+
+    public void setPY(String PY) {
+        this.PY = PY;
+    }
+
+    public void setBy3(String by3) {
+        this.by3 = by3;
+    }
+
+    public void setBy4(String by4) {
+        this.by4 = by4;
+    }
+
+    public void setKSSJ(String KSSJ) {
+        this.KSSJ = KSSJ;
+    }
+
+    public void setJSSJ(String JSSJ) {
+        this.JSSJ = JSSJ;
+    }
 }

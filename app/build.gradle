@@ -35,4 +35,5 @@ dependencies {
     compile 'com.idescout.sql:sqlscout-server:1.0'
     compile 'com.android.support:support-v4:25.2.0'
     testCompile 'junit:junit:4.12'
+    compile 'com.android.support:design:25.2.0'
 }
