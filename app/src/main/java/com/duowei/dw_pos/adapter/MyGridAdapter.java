@@ -1,6 +1,8 @@
 package com.duowei.dw_pos.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,8 @@ import android.widget.TextView;
 
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.JYCSSZ;
+import com.duowei.dw_pos.bean.TableUse;
+import com.duowei.dw_pos.tools.Users;
 
 import java.util.List;
 import java.util.zip.Inflater;
@@ -22,10 +26,11 @@ import java.util.zip.Inflater;
 public class MyGridAdapter extends BaseAdapter{
     Context context;
     List<JYCSSZ>list;
-
-    public MyGridAdapter(Context context, List<JYCSSZ> list) {
+    TableUse[]used;
+    public MyGridAdapter(Context context, List<JYCSSZ> list,TableUse[]used) {
         this.context = context;
         this.list = list;
+        this.used=used;
     }
 
     @Override
@@ -61,6 +66,25 @@ public class MyGridAdapter extends BaseAdapter{
             viewHolder=(ViewHolder)convertView.getTag();
         }
         viewHolder.tv1.setText(list.get(position).CSMC);
+        for(int i=0;i<used.length;i++){//已开台
+            if((list.get(position).CSMC+",").equals(used[i].getZH())){
+                Log.e("===",list.get(position).CSMC+":"+used[i].getCsmc());
+                viewHolder.ll_table.setBackgroundResource(R.drawable.table_used);
+                viewHolder.ll_tv.setVisibility(View.VISIBLE);
+                viewHolder.tv1.setTextColor(Color.parseColor("#ffffff"));
+                viewHolder.tv2.setText(used[i].getYS());
+                viewHolder.tv3.setText("  "+used[i].getJCRS());
+                //截取点餐时间时、分
+                String jysj = used[i].getJYSJ();
+                String sDateTime = jysj.substring(9, 14);
+                viewHolder.tv4.setText(sDateTime);
+                viewHolder.tv5.setText(used[i].getScjc()+"分");
+                break;
+            }else{
+                viewHolder.ll_table.setBackgroundResource(R.drawable.table_normal);
+                viewHolder.ll_tv.setVisibility(View.GONE);
+            }
+        }
         return convertView;
     }
     class ViewHolder{
