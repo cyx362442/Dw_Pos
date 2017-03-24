@@ -12,6 +12,7 @@ import com.duowei.dw_pos.bean.DMPZSD;
 import com.duowei.dw_pos.bean.GKLX;
 import com.duowei.dw_pos.bean.JYCSSZ;
 import com.duowei.dw_pos.bean.JYXMSZ;
+import com.duowei.dw_pos.bean.PaySet;
 import com.duowei.dw_pos.bean.SZLB;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.bean.TCSD;
@@ -335,7 +336,7 @@ public class DataLoad {
             @Override
             public void onResponse(final String response) {
                 if(response.equals("]")){
-                    mProgressDialog.dismiss();
+                    Http_PaySet();
                 }else{
                     new Thread(new Runnable() {
                         @Override
@@ -345,6 +346,34 @@ public class DataLoad {
                             DMKWDYDP[] dmkwdydp = gson.fromJson(response, DMKWDYDP[].class);
                             for(DMKWDYDP D:dmkwdydp){
                                 D.save();
+                            }
+                        }
+                    }).start();
+                    Http_PaySet();
+                }
+            }
+        });
+    }
+    private void Http_PaySet() {
+        mProgressDialog.setMessage("扫码支付设置……");
+        String sql="SELECT isnull(PID,'')PID,isnull(BY1,'')BY1,isnull(BY2,'')BY2,isnull(BY3,'')BY3,isnull(FWQDZ,'')FWQDZ,isnull(BY6,'')BY6,isnull(BY7,'')BY7 FROM payset|";
+        DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+            @Override
+            public void onResponse(final String response) {
+                if(response.equals("]")){
+                   mProgressDialog.dismiss();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DataSupport.deleteAll(PaySet.class);
+                            Gson gson = new Gson();
+                            PaySet[] payset = gson.fromJson(response, PaySet[].class);
+                            for(PaySet P:payset){
+                                P.save();
                             }
                         }
                     }).start();

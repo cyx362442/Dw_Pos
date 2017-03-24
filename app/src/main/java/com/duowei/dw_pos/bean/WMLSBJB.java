@@ -1,10 +1,13 @@
 package com.duowei.dw_pos.bean;
 
+
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2017-03-24.
  */
 
-public class WMLSBJB {
+public class WMLSBJB implements Serializable{
 
     /**
      * WMDBH : CYY20170323151848634
@@ -169,4 +172,5 @@ public class WMLSBJB {
     public void setBY12(String BY12) {
         this.BY12 = BY12;
     }
+
 }

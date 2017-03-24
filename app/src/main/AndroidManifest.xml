@@ -34,6 +34,8 @@
             android:exported="true"/>
         <activity android:name=".CheckOutActivity">
         </activity>
+        <activity android:name=".WebViewPayActivity">
+        </activity>
     </application>
 
 </manifest>

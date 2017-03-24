@@ -10,12 +10,14 @@ import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewDebug;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
 import com.duowei.dw_pos.httputils.DownHTTP;
@@ -94,6 +96,7 @@ public class CheckOutActivity extends AppCompatActivity {
         }
     };
     private WMLSB[] mWmlsbs;
+    private Intent mIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +152,7 @@ public class CheckOutActivity extends AppCompatActivity {
                 mTvZekou.setText("￥"+(mTotalMoney-mActualMoney));
                 mTvYishou.setText("￥"+mYishou);
                 mTvDaishou.setText("￥"+(mActualMoney-mYishou));
+                Moneys.wfjr=mActualMoney-mYishou;
             }
         });
     }
@@ -198,8 +202,16 @@ public class CheckOutActivity extends AppCompatActivity {
             case R.id.btn_dingdan:
                 break;
             case R.id.rl_zhifubao:
+                mIntent = new Intent(this, WebViewPayActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("WMLSBJB", mWmlsbjb);
+                mIntent.putExtra("from","支付宝");
+                startActivity(mIntent);
                 break;
             case R.id.rl_weixin:
+                mIntent = new Intent(this, WebViewPayActivity.class);
+                mIntent.putExtra("from","微信");
+                startActivity(mIntent);
                 break;
             case R.id.rl_jiezhang:
                 break;

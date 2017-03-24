@@ -4,6 +4,13 @@ import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
 import com.duowei.dw_pos.tools.Base64;
 
+import org.apache.http.util.ByteArrayBuffer;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,5 +66,49 @@ public final class DownHTTP {
 		};
 		// 将http请求加入队列，volley库会开始执行请求
 		queue.add(myReq);
+	}
+	/**
+	 * 没用Volley的请求方式
+	 * */
+
+	private static final int TIMEOUT = 10000;
+
+	public static String getResult(String urlGet) {
+		InputStream is = null;
+		try {
+			URL url = new URL(urlGet);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			// 超时时间
+			conn.setConnectTimeout(TIMEOUT);
+			conn.setReadTimeout(TIMEOUT);
+			// 检查服务端的状态是否正确
+			if (conn.getResponseCode()!= HttpURLConnection.HTTP_OK){
+				// 服务器无法响应，作给客户端的结果的事件
+				return "fail";
+			}
+			is = conn.getInputStream();
+			byte[] buffer = new byte[4096];
+			ByteArrayBuffer byteBuf = new ByteArrayBuffer(10000);
+			int len = 0;
+			while (-1 != (len  = is.read(buffer))){
+				byteBuf.append(buffer, 0 , len);
+			}
+			return new String(byteBuf.buffer(), 0, byteBuf.length(),"utf-8");
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return "fail";
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "fail";
+		}finally{
+			if (is != null){
+				try {
+					is.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					return "fail";
+				}
+			}
+		}
 	}
 }
