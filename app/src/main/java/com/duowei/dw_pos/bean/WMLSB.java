@@ -239,4 +239,23 @@ public class WMLSB {
     public void setBY13(String BY13) {
         this.BY13 = BY13;
     }
+
+    public WMLSB() {
+    }
+
+    /**
+     * 添加 单品 到 点单临时表明细信息
+     *
+     * @param jyxmsz
+     */
+    public WMLSB(JYXMSZ jyxmsz) {
+
+    }
+
+    /**
+     * 添加 套餐 到 点单临时表明细信息
+     * @param tcsd 套餐主项（主项）
+     */
+    public WMLSB(TCSD tcsd) {
+    }
 }

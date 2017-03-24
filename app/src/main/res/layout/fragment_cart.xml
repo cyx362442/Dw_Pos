@@ -17,9 +17,9 @@
         android:layout_below="@id/temp"
         android:background="#434459">
 
-
-
-        <TextView
+        <Button
+            style="?borderlessButtonStyle"
+            android:id="@+id/btn_commit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -35,8 +35,10 @@
     </RelativeLayout>
 
     <FrameLayout
+        android:id="@+id/fl_cart"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -45,6 +47,7 @@
             android:src="@drawable/ic_shopping_cart_1"/>
 
         <TextView
+            android:id="@+id/tv_cart_num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|right"
@@ -54,4 +57,28 @@
             android:gravity="center"/>
 
     </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@id/fl_cart">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="4dp"
+            android:text="共"
+            android:textSize="16sp"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:id="@+id/tv_cart_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="¥10.00"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
 </RelativeLayout>
