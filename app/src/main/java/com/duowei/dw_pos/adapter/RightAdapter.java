@@ -1,6 +1,7 @@
 package com.duowei.dw_pos.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.duowei.dw_pos.ComboActivity;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
@@ -77,7 +79,7 @@ public class RightAdapter extends BaseAdapter {
             });
 
         } else if (object instanceof TCMC) {
-            TCMC item = (TCMC) object;
+            final TCMC item = (TCMC) object;
             holder.tv_name.setText(item.getXMMC());
 
             List<TCSD> tcsdList = DataSupport.where("xmbh = ? and gq = ?", item.getXMBH(), "1").find(TCSD.class);
@@ -88,7 +90,10 @@ public class RightAdapter extends BaseAdapter {
             holder.btn_add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(mContext, "进入套餐子项", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mContext, "进入套餐子项", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(mContext, ComboActivity.class);
+                    intent.putExtra("xmbh", item.getXMBH());
+                    mContext.startActivity(intent);
                 }
             });
         }
