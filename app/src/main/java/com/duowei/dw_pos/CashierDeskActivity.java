@@ -4,6 +4,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -16,6 +18,7 @@ import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.fragment.CartFragment;
+import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.view.ToggleButton;
 
 import org.litepal.crud.DataSupport;
@@ -44,6 +47,21 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
 
     private CartFragment mCartFragment;
 
+    private TextWatcher mTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            mRightAdapter.getFilter().filter(s);
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +69,9 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_cashier_desk);
         initViews();
         initData();
+        clearEditText();
+        // 清空购物车
+        CartList.newInstance().clear();
     }
 
     @Override
@@ -63,6 +84,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         mBackView = (ImageView) findViewById(R.id.iv_back);
         mSearchView = (ImageView) findViewById(R.id.iv_search);
         mEditText = (EditText) findViewById(R.id.edit_query);
+
         mLeftListView = (ListView) findViewById(R.id.left_list);
         mRightListView = (ListView) findViewById(R.id.right_list);
         mToggleButton = (ToggleButton) findViewById(R.id.btn_toggle);
@@ -138,20 +160,21 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         int id = v.getId();
 
         if (id == R.id.iv_back) {
-//            finish();
-            getSupportFragmentManager().beginTransaction().hide(mCartFragment).commit();
+            finish();
 
         } else if (id == R.id.iv_search) {
-            getSupportFragmentManager().beginTransaction().show(mCartFragment).commit();
+            //
 
         } else if (id == R.id.btn_toggle) {
             mToggleButton.toggle();
+            clearEditText();
         }
     }
 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        clearEditText();
         Object object = mLeftAdapter.getItem(position);
 
         if (object instanceof DMJYXMSSLB) {
@@ -206,4 +229,9 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         return DataSupport.where("lbmc == ?", lbmc).order("xl").find(TCMC.class);
     }
 
+    private void clearEditText() {
+        mEditText.removeTextChangedListener(mTextWatcher);
+        mEditText.setText(null);
+        mEditText.addTextChangedListener(mTextWatcher);
+    }
 }

@@ -73,6 +73,7 @@
             android:id="@id/tv_combo_money"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:text="¥10.0"
             android:textColor="#1fb5ac"
             android:textSize="18sp"

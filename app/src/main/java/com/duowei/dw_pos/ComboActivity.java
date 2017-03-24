@@ -74,7 +74,7 @@ public class ComboActivity extends AppCompatActivity {
         if (oneTcsdList.size() == 1) {
             TCSD tcsd = oneTcsdList.get(0);
             mComboNameView.setText(tcsd.getXMMC1());
-            mComboMoneyView.setText(tcsd.getDJ());
+            mComboMoneyView.setText("¥" + tcsd.getDJ());
         } else {
             Toast.makeText(this, "oneTcsdList.size() != 1", Toast.LENGTH_SHORT).show();
         }
