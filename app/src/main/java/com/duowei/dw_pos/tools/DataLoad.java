@@ -3,6 +3,7 @@ package com.duowei.dw_pos.tools;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.DMJYXMSSLB;
@@ -49,22 +50,29 @@ public class DataLoad {
         DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context,"网络连接失败",Toast.LENGTH_SHORT).show();
+                mProgressDialog.dismiss();
+                return;
             }
             @Override
             public void onResponse(final String response) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Gson gson = new Gson();
-                        DataSupport.deleteAll(YHJBQK.class);
-                        YHJBQK[] yhjbqks = gson.fromJson(response, YHJBQK[].class);
-                        for(YHJBQK Y:yhjbqks){
-                            Y.save();
+                if(response.equals("]")){
+                    Http_JYCSSZ();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Gson gson = new Gson();
+                            DataSupport.deleteAll(YHJBQK.class);
+                            YHJBQK[] yhjbqks = gson.fromJson(response, YHJBQK[].class);
+                            for(YHJBQK Y:yhjbqks){
+                                Y.save();
+                            }
                         }
-                    }
-                }).start();
-                //经营场所设置
-                Http_JYCSSZ();
+                    }).start();
+                    //经营场所设置
+                    Http_JYCSSZ();
+                }
             }
         });
     }
@@ -78,19 +86,23 @@ public class DataLoad {
             }
             @Override
             public void onResponse(final String response) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Gson gson = new Gson();
-                        DataSupport.deleteAll(JYCSSZ.class);
-                        JYCSSZ[] jycsszs = gson.fromJson(response, JYCSSZ[].class);
-                        for(JYCSSZ J:jycsszs){
-                            J.save();
+                if(response.equals("]")){
+                    Http_DMJYXMSSLB();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Gson gson = new Gson();
+                            DataSupport.deleteAll(JYCSSZ.class);
+                            JYCSSZ[] jycsszs = gson.fromJson(response, JYCSSZ[].class);
+                            for(JYCSSZ J:jycsszs){
+                                J.save();
+                            }
                         }
-                    }
-                }).start();
-                //单品类别
-                Http_DMJYXMSSLB();
+                    }).start();
+                    //单品类别
+                    Http_DMJYXMSSLB();
+                }
             }
         });
     }
@@ -104,19 +116,23 @@ public class DataLoad {
             }
             @Override
             public void onResponse(final String response) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        DataSupport.deleteAll(DMJYXMSSLB.class);
-                        Gson gson = new Gson();
-                        DMJYXMSSLB[] dmjyxmsslbs = gson.fromJson(response, DMJYXMSSLB[].class);
-                        for(DMJYXMSSLB D:dmjyxmsslbs){
-                            D.save();
+                if(response.equals("]")){
+                    Http_JYXMSZ();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DataSupport.deleteAll(DMJYXMSSLB.class);
+                            Gson gson = new Gson();
+                            DMJYXMSSLB[] dmjyxmsslbs = gson.fromJson(response, DMJYXMSSLB[].class);
+                            for(DMJYXMSSLB D:dmjyxmsslbs){
+                                D.save();
+                            }
                         }
-                    }
-                }).start();
-                //单品信息
-                Http_JYXMSZ();
+                    }).start();
+                    //单品信息
+                    Http_JYXMSZ();
+                }
             }
         });
     }
@@ -133,19 +149,23 @@ public class DataLoad {
             }
             @Override
             public void onResponse(final String response) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        DataSupport.deleteAll(JYXMSZ.class);
-                        Gson gson = new Gson();
-                        JYXMSZ[] jyxmsz = gson.fromJson(response, JYXMSZ[].class);
-                        for(JYXMSZ J:jyxmsz){
-                            J.save();
+                if(response.equals("]")){
+                    Http_TCMC();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DataSupport.deleteAll(JYXMSZ.class);
+                            Gson gson = new Gson();
+                            JYXMSZ[] jyxmsz = gson.fromJson(response, JYXMSZ[].class);
+                            for(JYXMSZ J:jyxmsz){
+                                J.save();
+                            }
                         }
-                    }
-                }).start();
-                //单品信息
-                Http_TCMC();
+                    }).start();
+                    //单品信息
+                    Http_TCMC();
+                }
             }
         });
     }
@@ -164,19 +184,23 @@ public class DataLoad {
             }
             @Override
             public void onResponse(final String response) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        DataSupport.deleteAll(TCMC.class);
-                        Gson gson = new Gson();
-                        TCMC[] tcmc = gson.fromJson(response, TCMC[].class);
-                        for(TCMC T:tcmc){
-                            T.save();
+                if(response.equals("]")){
+                    Http_TCSD();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DataSupport.deleteAll(TCMC.class);
+                            Gson gson = new Gson();
+                            TCMC[] tcmc = gson.fromJson(response, TCMC[].class);
+                            for(TCMC T:tcmc){
+                                T.save();
+                            }
                         }
-                    }
-                }).start();
-                //单品信息
-                Http_TCSD();
+                    }).start();
+                    //单品信息
+                    Http_TCSD();
+                }
             }
         });
     }
@@ -190,19 +214,23 @@ public class DataLoad {
             }
             @Override
             public void onResponse(final String response) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        DataSupport.deleteAll(TCSD.class);
-                        Gson gson = new Gson();
-                        TCSD[] tcsd = gson.fromJson(response, TCSD[].class);
-                        for(TCSD T:tcsd){
-                            T.save();
+                if(response.equals("]")){
+                    Http_GKLX();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DataSupport.deleteAll(TCSD.class);
+                            Gson gson = new Gson();
+                            TCSD[] tcsd = gson.fromJson(response, TCSD[].class);
+                            for(TCSD T:tcsd){
+                                T.save();
+                            }
                         }
-                    }
-                }).start();
-                //顾客信息
-               Http_GKLX();
+                    }).start();
+                    //顾客信息
+                   Http_GKLX();
+                }
             }
         });
     }
@@ -216,19 +244,23 @@ public class DataLoad {
             }
             @Override
             public void onResponse(final String response) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        DataSupport.deleteAll(GKLX.class);
-                        Gson gson = new Gson();
-                        GKLX[] gklx = gson.fromJson(response, GKLX[].class);
-                        for(GKLX G:gklx){
-                            G.save();
+                if(response.equals("]")){
+                    Http_SZLB();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DataSupport.deleteAll(GKLX.class);
+                            Gson gson = new Gson();
+                            GKLX[] gklx = gson.fromJson(response, GKLX[].class);
+                            for(GKLX G:gklx){
+                                G.save();
+                            }
                         }
-                    }
-                }).start();
-                //退品原因
-                Http_SZLB();
+                    }).start();
+                    //退品原因
+                    Http_SZLB();
+                }
             }
         });
     }
@@ -242,19 +274,23 @@ public class DataLoad {
             }
             @Override
             public void onResponse(final String response) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        DataSupport.deleteAll(SZLB.class);
-                        Gson gson = new Gson();
-                        SZLB[] szlb = gson.fromJson(response, SZLB[].class);
-                        for(SZLB S:szlb){
-                            S.save();
+                if(response.equals("]")){
+                    Http_DMPZSD();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DataSupport.deleteAll(SZLB.class);
+                            Gson gson = new Gson();
+                            SZLB[] szlb = gson.fromJson(response, SZLB[].class);
+                            for(SZLB S:szlb){
+                                S.save();
+                            }
                         }
-                    }
-                }).start();
-                //口味信息
-                Http_DMPZSD();
+                    }).start();
+                    //口味信息
+                    Http_DMPZSD();
+                }
             }
         });
     }
@@ -268,19 +304,23 @@ public class DataLoad {
             }
             @Override
             public void onResponse(final String response) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        DataSupport.deleteAll(DMPZSD.class);
-                        Gson gson = new Gson();
-                        DMPZSD[] dmpzsd = gson.fromJson(response, DMPZSD[].class);
-                        for(DMPZSD D:dmpzsd){
-                            D.save();
+                if(response.equals("]")){
+                    Http_DMKWDYDP();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DataSupport.deleteAll(DMPZSD.class);
+                            Gson gson = new Gson();
+                            DMPZSD[] dmpzsd = gson.fromJson(response, DMPZSD[].class);
+                            for(DMPZSD D:dmpzsd){
+                                D.save();
+                            }
                         }
-                    }
-                }).start();
-                //口味对应单品设置
-                Http_DMKWDYDP();
+                    }).start();
+                    //口味对应单品设置
+                    Http_DMKWDYDP();
+                }
             }
         });
     }
@@ -294,18 +334,22 @@ public class DataLoad {
             }
             @Override
             public void onResponse(final String response) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        DataSupport.deleteAll(DMKWDYDP.class);
-                        Gson gson = new Gson();
-                        DMKWDYDP[] dmkwdydp = gson.fromJson(response, DMKWDYDP[].class);
-                        for(DMKWDYDP D:dmkwdydp){
-                            D.save();
+                if(response.equals("]")){
+                    mProgressDialog.dismiss();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DataSupport.deleteAll(DMKWDYDP.class);
+                            Gson gson = new Gson();
+                            DMKWDYDP[] dmkwdydp = gson.fromJson(response, DMKWDYDP[].class);
+                            for(DMKWDYDP D:dmkwdydp){
+                                D.save();
+                            }
                         }
-                    }
-                }).start();
-                mProgressDialog.dismiss();
+                    }).start();
+                    mProgressDialog.dismiss();
+                }
             }
         });
     }
