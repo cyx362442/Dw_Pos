@@ -81,6 +81,7 @@
                     android:id="@+id/btn_dayin"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:enabled="false"
                     android:layout_weight="1"
                     android:layout_marginRight="5dp"
                     android:background="@drawable/shape_land"
@@ -93,7 +94,7 @@
                     android:layout_weight="1"
                     android:layout_marginLeft="5dp"
                     android:background="@drawable/check_dingdan"
-                    android:text="打印详情"
+                    android:text="订单详情"
                     android:textColor="@color/colorGreen"/>
             </LinearLayout>
             <LinearLayout
@@ -218,29 +219,38 @@
             android:layout_weight="1"
             android:layout_marginTop="5dp"
             android:orientation="vertical">
+
             <RelativeLayout
                 android:id="@+id/rl_zhifubao"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:gravity="center_vertical"
                 android:background="@drawable/shape_check"
+                android:gravity="center_vertical"
                 >
+
                 <ImageView
                     android:id="@+id/imgzhifubao"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:src="@mipmap/check_zhifubao"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="支付宝支付"
-                    android:textSize="@dimen/textSize20"
                     android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@+id/imgzhifubao"/>
+                    android:layout_toRightOf="@+id/imgzhifubao"
+                    android:text="支付宝支付"
+                    android:textSize="@dimen/textSize20"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_keyboard_arrow_right_black_36dp"
+                    android:layout_alignParentRight="true"/>
             </RelativeLayout>
+
             <RelativeLayout
                 android:id="@+id/rl_weixin"
                 android:layout_width="match_parent"
@@ -264,6 +274,11 @@
                     android:textSize="@dimen/textSize20"
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@+id/imgweixin"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_keyboard_arrow_right_black_36dp"
+                    android:layout_alignParentRight="true"/>
             </RelativeLayout>
             <RelativeLayout
                 android:id="@+id/rl_jiezhang"

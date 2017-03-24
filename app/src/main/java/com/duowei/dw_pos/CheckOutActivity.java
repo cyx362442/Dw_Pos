@@ -1,6 +1,12 @@
 package com.duowei.dw_pos;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +20,8 @@ import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
+import com.duowei.dw_pos.sunmiprint.BytesUtil;
+import com.duowei.dw_pos.sunmiprint.ThreadPoolManager;
 import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.Users;
 import com.google.gson.Gson;
@@ -21,6 +29,8 @@ import com.google.gson.Gson;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import woyou.aidlservice.jiuiv5.ICallback;
+import woyou.aidlservice.jiuiv5.IWoyouService;
 
 public class CheckOutActivity extends AppCompatActivity {
 
@@ -67,11 +77,46 @@ public class CheckOutActivity extends AppCompatActivity {
     private float mActualMoney=0;//实际金额
     private float mYishou=0.00f;
 
+    private IWoyouService woyouService;
+    private ICallback callback = null;
+    private String[]text=new String[3];
+    private int[]width=new int[] { 20, 6, 8 };
+    private int[]align= new int[] { 0, 0, 0 };
+    private ServiceConnection connService = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            woyouService = null;
+        }
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            woyouService = IWoyouService.Stub.asInterface(service);
+            mBtnDayin.setEnabled(true);
+        }
+    };
+    private WMLSB[] mWmlsbs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_out);
         ButterKnife.bind(this);
+        callback = new ICallback.Stub() {
+            @Override
+            public void onRunResult(final boolean success) throws RemoteException {
+            }
+            @Override
+            public void onReturnString(final String value) throws RemoteException {
+            }
+            @Override
+            public void onRaiseException(int code, final String msg) throws RemoteException {
+            }
+        };
+        Intent intent=new Intent();
+        intent.setPackage("woyou.aidlservice.jiuiv5");
+        intent.setAction("woyou.aidlservice.jiuiv5.IWoyouService");
+        startService(intent);
+        bindService(intent, connService, Context.BIND_AUTO_CREATE);
+
         String response = getIntent().getStringExtra("response");
         Gson gson = new Gson();
         WMLSBJB[] wmlsbjbs = gson.fromJson(response, WMLSBJB[].class);
@@ -95,8 +140,8 @@ public class CheckOutActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 Gson gson = new Gson();
-                WMLSB[] wmlsbs = gson.fromJson(response, WMLSB[].class);
-                for(WMLSB W:wmlsbs){
+                mWmlsbs = gson.fromJson(response, WMLSB[].class);
+                for(WMLSB W: mWmlsbs){
                     mTotalMoney = mTotalMoney+W.getYSJG() * W.getSL();
                     mActualMoney = mActualMoney+W.getDJ() * W.getSL();
                 }
@@ -115,6 +160,40 @@ public class CheckOutActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.btn_dayin:
+                ThreadPoolManager.getInstance().executeTask(new Runnable(){
+                    @Override
+                    public void run() {
+                        try {
+                            woyouService.setAlignment(1,callback);
+                            woyouService.printTextWithFont("桌号："+mWmlsbjb.getZH()+"\n","",32,callback);
+                            woyouService.setAlignment(0,callback);
+                            woyouService.printTextWithFont("账单号："+mWmlsbjb.getWMDBH()+"\n","",28,callback);
+                            woyouService.printTextWithFont("日期："+mWmlsbjb.getJYSJ()+"\n","",28,callback);
+                            woyouService.printTextWithFont("点单员："+mWmlsbjb.getYHBH()+"    人数："+mWmlsbjb.getJCRS()+"\n","",28,callback);
+                            woyouService.sendRAWData(BytesUtil.initLine1(384,1), callback);
+                            text[0] = "单品名称";
+                            text[1] = "数量";
+                            text[2] = "金额";
+                            woyouService.printColumnsText(text, width, align, callback);
+                            for(int i=0;i<mWmlsbs.length;i++){
+                                text[0]=mWmlsbs[i].getXMMC();
+                                text[1]=mWmlsbs[i].getSL()+"";
+                                text[2]=mWmlsbs[i].getXJ()+"";
+                                woyouService.printColumnsText(text, width, align, callback);
+                            }
+                            woyouService.sendRAWData(BytesUtil.initLine1(384,1), callback);
+                            woyouService.printTextWithFont("原价合计："+mTotalMoney+"\n","",30,callback);
+                            woyouService.printTextWithFont("折扣："+(mTotalMoney-mActualMoney)+"\n","",30,callback);
+                            woyouService.printTextWithFont("应付："+mActualMoney+"\n","",30,callback);
+                            woyouService.sendRAWData(BytesUtil.initLine1(384,1), callback);
+                            woyouService.setAlignment(1,callback);
+                            woyouService.printTextWithFont("此单据不作结账单使用","",32,callback);
+                            woyouService.lineWrap(4, callback);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
                 break;
             case R.id.btn_dingdan:
                 break;
