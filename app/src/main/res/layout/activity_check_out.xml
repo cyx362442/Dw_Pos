@@ -43,6 +43,7 @@
             android:background="@drawable/shape_check"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/tv_table"
                 android:layout_width="100dp"
                 android:layout_height="0dp"
                 android:text="A101"
@@ -57,15 +58,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:layout_gravity="center_vertical"
                 android:gravity="center">
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
                     android:src="@mipmap/check_user"/>
                 <TextView
                    android:id="@+id/tv_user"
                     style="@style/textview_setting"
-                    android:layout_marginLeft="5dp"
+                   android:textSize="18dp"
                     android:text="用户"/>
             </LinearLayout>
             <LinearLayout
@@ -96,53 +99,64 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:gravity="center_vertical"
                 android:layout_weight="1">
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:layout_weight="2">
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
                         android:src="@mipmap/check_time"/>
                     <TextView
                         android:id="@+id/tv_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="2dp"
                         android:text="开台时间：2017-03-21 17：50"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:layout_weight="1">
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@mipmap/check_persons"/>
                     <TextView
+                        android:id="@+id/tvPersons"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="2dp"
                         android:text="人数：3人"/>
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
+                android:gravity="center_vertical"
                 android:layout_weight="1">
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
                     android:src="@mipmap/check_opener"/>
                 <TextView
+                    android:id="@+id/tv_opener"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
                     android:text="开台人：林丽"/>
             </LinearLayout>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="0.9"
             android:background="@drawable/shape_check"
             android:layout_marginTop="5dp"
             android:orientation="vertical">
@@ -187,7 +201,8 @@
                     android:text="￥106"/>
             </LinearLayout>
             <LinearLayout
-                style="@style/linearLayout_checkOut">
+                style="@style/linearLayout_checkOut"
+                android:visibility="gone">
                 <TextView
                     style="@style/textView_orange"
                     android:text="找        零"/>
@@ -215,7 +230,7 @@
                     android:id="@+id/imgzhifubao"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_marginLeft="10dp"
                     android:src="@mipmap/check_zhifubao"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -223,6 +238,7 @@
                     android:layout_centerVertical="true"
                     android:text="支付宝支付"
                     android:textSize="@dimen/textSize20"
+                    android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@+id/imgzhifubao"/>
             </RelativeLayout>
             <RelativeLayout
@@ -238,7 +254,7 @@
                     android:id="@+id/imgweixin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_marginLeft="10dp"
                     android:src="@mipmap/check_weixin"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -246,6 +262,7 @@
                     android:layout_centerVertical="true"
                     android:text="微信支付"
                     android:textSize="@dimen/textSize20"
+                    android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@+id/imgweixin"/>
             </RelativeLayout>
             <RelativeLayout
