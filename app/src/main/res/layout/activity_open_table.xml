@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorWhite"
     tools:context="com.duowei.dw_pos.OpenTableActivity">
     <RelativeLayout
         android:id="@+id/rlTop"
@@ -12,17 +13,74 @@
         android:gravity="center_vertical"
         android:background="@color/colorBlack">
         <TextView
+            android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="开台—A101"
+            android:textSize="@dimen/textSize20"
             android:textColor="@color/colorWhite"/>
     </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="20dp"
         android:orientation="vertical"
         android:layout_below="@+id/rlTop">
-
+        <LinearLayout
+            style="@style/linearLayout_openTable">
+            <TextView
+                style="@style/textView_openTable"
+                android:text="来客类型："/>
+            <EditText
+                android:id="@+id/editText1"
+               style="@style/editText_openTable"/>
+        </LinearLayout>
+        <LinearLayout
+            style="@style/linearLayout_openTable">
+            <TextView
+                style="@style/textView_openTable"
+                android:text="就餐人数："/>
+            <EditText
+                android:id="@+id/editText2"
+                android:text="1"
+                android:selectAllOnFocus="true"
+                android:inputType="number"
+                style="@style/editText_openTable"/>
+        </LinearLayout>
+        <LinearLayout
+            style="@style/linearLayout_openTable"
+            android:layout_weight="2">
+            <TextView
+                style="@style/textView_openTable"
+                android:text="备        注："/>
+            <EditText
+                android:id="@+id/editText3"
+                style="@style/editText_openTable"
+                android:layout_height="100dp"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3">
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_cancel"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:text="取消"/>
+            <Button
+                android:id="@+id/btn_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/shape_land"
+                android:textColor="@color/colorWhite"
+                android:text="确定"/>
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

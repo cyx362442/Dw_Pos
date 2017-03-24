@@ -17,6 +17,7 @@ import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.tools.DataLoad;
 import com.duowei.dw_pos.tools.Net;
+import com.duowei.dw_pos.tools.Users;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 
@@ -97,6 +98,9 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                 if(yhjbqk.size()<=0){
                     Toast.makeText(this,"账号不存在",Toast.LENGTH_SHORT).show();
                 }else if(yhjbqk.get(0).getYHMM().equals(password)){
+                    Users.YHBH=account;
+                    List<YHJBQK> yhmc = DataSupport.select("YHMC").where("YHBH=?", account).find(YHJBQK.class);
+                    Users.YHMC=yhmc.get(0).YHMC;
                     Intent intent = new Intent(this, DinningActivity.class);
                     startActivity(intent);
                 }else{

@@ -32,10 +32,8 @@
         <activity
             android:name=".CashierDeskActivity"
             android:exported="true"/>
-
-        <activity
-            android:name=".ComboActivity"
-            android:exported="true"/>
+        <activity android:name=".CheckOutActivity">
+        </activity>
     </application>
 
 </manifest>
