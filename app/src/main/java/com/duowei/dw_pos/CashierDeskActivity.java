@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -19,6 +20,7 @@ import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.fragment.CartFragment;
 import com.duowei.dw_pos.tools.CartList;
+import com.duowei.dw_pos.tools.DateTimeUtils;
 import com.duowei.dw_pos.view.ToggleButton;
 
 import org.litepal.crud.DataSupport;
@@ -32,7 +34,9 @@ import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
  * 点餐界面
  */
 
-public class CashierDeskActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class CashierDeskActivity extends AppCompatActivity implements View.OnClickListener,
+        AdapterView.OnItemClickListener {
+    private static final String TAG = "CashierDeskActivity";
 
     private ImageView mBackView;
     private ImageView mSearchView;
@@ -44,6 +48,9 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
 
     private LeftAdapter mLeftAdapter;
     private RightAdapter mRightAdapter;
+
+    private List<JYXMSZ> mRightJyxmszAllList;
+    private List<TCMC> mRightTcmcAllList;
 
     private CartFragment mCartFragment;
 
@@ -67,6 +74,9 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         SQLiteStudioService.instance().start(this);
         setContentView(R.layout.activity_cashier_desk);
+        mRightJyxmszAllList = getJyxmszAllList();
+        mRightTcmcAllList = getTcmcAllList();
+
         initViews();
         initData();
         clearEditText();
@@ -137,7 +147,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
 
         int checkedPosition = mLeftListView.getCheckedItemPosition();
         if (checkedPosition != ListView.INVALID_POSITION) {
-            mRightAdapter.setList(getJyxmszList(((DMJYXMSSLB) mLeftAdapter.getItem(checkedPosition)).getLBBM()));
+            mRightAdapter.setList(getJyxmszList(((DMJYXMSSLB) mLeftAdapter.getItem(checkedPosition)).getLBBM()), mRightJyxmszAllList);
         }
     }
 
@@ -151,7 +161,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
 
         int checkedPosition = mLeftListView.getCheckedItemPosition();
         if (checkedPosition != ListView.INVALID_POSITION) {
-            mRightAdapter.setList(getTcmc2List(((String) mLeftAdapter.getItem(checkedPosition))));
+            mRightAdapter.setList(getTcmc2List(((String) mLeftAdapter.getItem(checkedPosition))), mRightTcmcAllList);
         }
     }
 
@@ -180,12 +190,14 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         if (object instanceof DMJYXMSSLB) {
             // 单品项点击
             DMJYXMSSLB item = (DMJYXMSSLB) object;
-            mRightAdapter.setList(getJyxmszList(item.getLBBM()));
+            Log.d(TAG, "onItemClick: before " + DateTimeUtils.getCurrentDatetime());
+            mRightAdapter.setList(getJyxmszList(item.getLBBM()), mRightJyxmszAllList);
+            Log.d(TAG, "onItemClick: after " + DateTimeUtils.getCurrentDatetime());
 
         } else if (object instanceof String) {
             // 套餐项 点击
             String item = (String) object;
-            mRightAdapter.setList(getTcmc2List(item));
+            mRightAdapter.setList(getTcmc2List(item), mRightTcmcAllList);
         }
     }
 
@@ -202,6 +214,21 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
      */
     private List<JYXMSZ> getJyxmszList(String lbbm) {
         return DataSupport.where("lbbm = ?", lbbm).find(JYXMSZ.class);
+//        ArrayList<JYXMSZ> list = new ArrayList<>();
+//        for (int i = 0; i < mRightJyxmszAllList.size(); i++) {
+//            JYXMSZ jyxmsz = mRightJyxmszAllList.get(i);
+//            if (lbbm.endsWith(jyxmsz.getLBBM())) {
+//                list.add(jyxmsz);
+//            }
+//        }
+//        return list;
+    }
+
+    /**
+     * @return 总的单品信息 列表
+     */
+    private List<JYXMSZ> getJyxmszAllList() {
+        return DataSupport.findAll(JYXMSZ.class);
     }
 
     /**
@@ -220,13 +247,19 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         return stringList;
     }
 
-
     /**
      * @param lbmc 点击的套餐分类名称
      * @return 套餐列表
      */
     private List<TCMC> getTcmc2List(String lbmc) {
         return DataSupport.where("lbmc == ?", lbmc).order("xl").find(TCMC.class);
+    }
+
+    /**
+     * @return 总的套餐列表
+     */
+    private List<TCMC> getTcmcAllList() {
+        return DataSupport.findAll(TCMC.class);
     }
 
     private void clearEditText() {

@@ -9,7 +9,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_alignBottom="@+id/fragment_container"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -83,8 +86,8 @@
                     android:id="@+id/btn_toggle"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </com.duowei.dw_pos.view.ToggleButton>
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"/>
 
                 <ListView
                     android:id="@+id/left_list"
@@ -100,7 +103,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="没有数据"/>
+                    android:text="没有数据"
+                    android:textSize="18sp"/>
 
             </RelativeLayout>
 
@@ -122,6 +126,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
+                    android:textSize="18sp"
                     android:text="没有数据"/>
 
             </FrameLayout>

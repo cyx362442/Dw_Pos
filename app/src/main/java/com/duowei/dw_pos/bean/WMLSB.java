@@ -1,5 +1,7 @@
 package com.duowei.dw_pos.bean;
 
+import com.duowei.dw_pos.tools.DateTimeUtils;
+
 /**
  * Created by Administrator on 2017-03-24.
  */
@@ -55,6 +57,9 @@ public class WMLSB {
     private String by5;
     private String BY12;
     private String BY13;
+    private String BY15;
+    private String TCXMBH;
+    private float DWSL;
 
     public String getZSSJ2() {
         return ZSSJ2;
@@ -240,6 +245,32 @@ public class WMLSB {
         this.BY13 = BY13;
     }
 
+    public String getBY15() {
+        return BY15;
+    }
+
+    public void setBY15(String BY15) {
+        this.BY15 = BY15;
+    }
+
+    public String getTCXMBH() {
+        return TCXMBH;
+    }
+
+    public void setTCXMBH(String TCXMBH) {
+        this.TCXMBH = TCXMBH;
+    }
+
+    public float getDWSL() {
+        return DWSL;
+    }
+
+    public void setDWSL(float DWSL) {
+        this.DWSL = DWSL;
+    }
+
+
+
     public WMLSB() {
     }
 
@@ -249,13 +280,39 @@ public class WMLSB {
      * @param jyxmsz
      */
     public WMLSB(JYXMSZ jyxmsz) {
-
+        this.XMBH = jyxmsz.XMBH;
+        this.XMMC = jyxmsz.XMMC;
+        this.DW = jyxmsz.DW;
+        this.DJ = jyxmsz.XSJG;
+        this.YSJG = jyxmsz.XSJG;
+        this.sfxs = "1";
+        this.by5 = DateTimeUtils.getCurrentDatetime();
+        this.TM = jyxmsz.TM;
+        this.by2 = jyxmsz.LBBM;
+        this.by3 = jyxmsz.YHJ;
+        this.SL = 1;
     }
 
     /**
      * 添加 套餐 到 点单临时表明细信息
+     *
      * @param tcsd 套餐主项（主项）
+     * @param sfxs 主项 1 子项 0
+     * @param tcbh 当前时间
      */
-    public WMLSB(TCSD tcsd) {
+    public WMLSB(TCSD tcsd, String sfxs, String tcbh) {
+        this.XMBH = tcsd.XMBH1;
+        this.XMMC = tcsd.XMMC1;
+        this.TCXMBH = tcsd.XMBH;
+        this.DW = tcsd.DW1;
+        this.DJ = tcsd.DJ;
+        this.YSJG = tcsd.DJ;
+        this.sfxs = sfxs;
+        this.BY15 = tcsd.TM;
+        this.TCBH = tcbh;
+        this.DWSL = tcsd.SL;
+        this.by2 = tcsd.LBBM;
+//        this.by3 = tcsd.
+        this.SL = tcsd.SL;
     }
 }

@@ -36,6 +36,9 @@
         <activity
             android:name=".ComboActivity"
             android:exported="true"/>
+        <activity
+            android:name=".CartDetailActivity"
+            android:exported="true"/>
         <activity android:name=".CheckOutActivity">
         </activity>
         <activity android:name=".WebViewPayActivity">

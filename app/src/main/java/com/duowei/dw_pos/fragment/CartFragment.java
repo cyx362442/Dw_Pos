@@ -1,14 +1,16 @@
 package com.duowei.dw_pos.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.duowei.dw_pos.CartDetailActivity;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.CartInfo;
 import com.duowei.dw_pos.event.CartUpdateEvent;
@@ -18,10 +20,11 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 /**
- * Created by Administrator on 2017-03-23.
+ * 购物车
  */
 
 public class CartFragment extends Fragment implements View.OnClickListener {
+    private static final String TAG = "CartFragment";
 
     private View mRootView;
 
@@ -31,6 +34,8 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ");
+        EventBus.getDefault().register(this);
     }
 
     @Nullable
@@ -54,12 +59,20 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+        Log.d(TAG, "onStart: ");
+        
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        Log.d(TAG, "onStop: ");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
         EventBus.getDefault().unregister(this);
     }
 
@@ -84,7 +97,9 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         int id = v.getId();
 
         if (id == R.id.btn_commit) {
-            Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getContext(), CartDetailActivity.class);
+            getContext().startActivity(intent);
         }
     }
 }
