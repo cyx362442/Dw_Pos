@@ -13,7 +13,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.duowei.dw_pos.adapter.ComboAdapter;
+import com.duowei.dw_pos.bean.AddTcsdItem;
 import com.duowei.dw_pos.bean.TCSD;
+import com.duowei.dw_pos.tools.CartList;
+import com.duowei.dw_pos.tools.DateTimeUtils;
 
 import org.litepal.crud.DataSupport;
 
@@ -35,6 +38,8 @@ public class ComboActivity extends AppCompatActivity {
 
     private String mXmbh;
 
+    private TCSD mMainTcsd;
+    private LinkedHashMap<String, List<TCSD>> mSubTcsdMap;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,6 +61,8 @@ public class ComboActivity extends AppCompatActivity {
         mComboMoneyView = (TextView) findViewById(R.id.tv_combo_money);
         mListView = (ListView) findViewById(R.id.list);
         mOkButton = (Button) findViewById(R.id.btn_ok);
+
+        mOkButton.setOnClickListener(mOkButtonClickLinstener);
     }
 
     private void initData() {
@@ -72,9 +79,9 @@ public class ComboActivity extends AppCompatActivity {
 
         List<TCSD> oneTcsdList = DataSupport.where("xmbh = ? and tm = ?", mXmbh, "A").find(TCSD.class);
         if (oneTcsdList.size() == 1) {
-            TCSD tcsd = oneTcsdList.get(0);
-            mComboNameView.setText(tcsd.getXMMC1());
-            mComboMoneyView.setText("¥" + tcsd.getDJ());
+            mMainTcsd = oneTcsdList.get(0);
+            mComboNameView.setText(mMainTcsd.getXMMC1());
+            mComboMoneyView.setText("¥" + mMainTcsd.getDJ());
         } else {
             Toast.makeText(this, "oneTcsdList.size() != 1", Toast.LENGTH_SHORT).show();
         }
@@ -86,12 +93,48 @@ public class ComboActivity extends AppCompatActivity {
             tmList.add(cursor.getString(cursor.getColumnIndex("tm")));
         }
 
-        LinkedHashMap<String, List<TCSD>> map = new LinkedHashMap<>();
+        mSubTcsdMap = new LinkedHashMap<>();
         for (int i = 0; i < tmList.size(); i++) {
-            map.put(tmList.get(i), DataSupport.where("xmbh = ? and tm = ?", mXmbh, tmList.get(i)).find(TCSD.class));
+            mSubTcsdMap.put(tmList.get(i), DataSupport.where("xmbh = ? and tm = ?", mXmbh, tmList.get(i)).find(TCSD.class));
         }
 
-        ComboAdapter adapter = new ComboAdapter(this, map, mOkButton);
+        ComboAdapter adapter = new ComboAdapter(this, mSubTcsdMap, mOkButton);
         mListView.setAdapter(adapter);
     }
+
+    private View.OnClickListener mOkButtonClickLinstener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // 添加选择好的套餐子项
+            if (mMainTcsd != null) {
+                if (mSubTcsdMap != null && mSubTcsdMap.size() > 0) {
+                    String datetime = DateTimeUtils.getCurrentDatetime();
+
+                    ArrayList<AddTcsdItem> addTcsdItemArrayList = new ArrayList<>();
+                    addTcsdItemArrayList.add(new AddTcsdItem(mMainTcsd, "1", datetime));
+
+                    String[] tmArray = mSubTcsdMap.keySet().toArray(new String[mSubTcsdMap.size()]);
+                    for (int i = 0; i < mSubTcsdMap.size(); i++) {
+                        List<TCSD> tcsdList = mSubTcsdMap.get(tmArray[i]);
+                        for (int j = 0; j < tcsdList.size(); j++) {
+                            TCSD tcsd = tcsdList.get(j);
+
+                            if ("1".equals(tcsd.SFXZ)) {
+                                addTcsdItemArrayList.add(new AddTcsdItem(tcsd, "0", datetime));
+                                break;
+                            }
+                        }
+                    }
+
+                    CartList.newInstance().add(addTcsdItemArrayList);
+
+                    finish();
+                } else {
+                    Toast.makeText(ComboActivity.this, "没有一个套餐子项", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(ComboActivity.this, "没有套餐主项", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 }

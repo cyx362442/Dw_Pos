@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
+    android:padding="12dp"
     android:background="@drawable/header_bg"
     android:gravity="center"
-    android:textSize="16sp"
+    android:textSize="18sp"
     tools:text="Text">
 
 </TextView>

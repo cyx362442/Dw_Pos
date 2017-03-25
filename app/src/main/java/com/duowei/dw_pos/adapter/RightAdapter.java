@@ -7,11 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.duowei.dw_pos.ComboActivity;
 import com.duowei.dw_pos.R;
@@ -39,8 +38,15 @@ public class RightAdapter extends BaseAdapter implements Filterable {
     private List mOriginalValues;
     private ArrayFilter mFilter;
 
+    private List mAllList;
+    private List mAllOriginalValues;
+
+    private boolean isAll = false;
+
     public RightAdapter(Context context) {
         mContext = context;
+
+        mAllList = new ArrayList();
         mList = new ArrayList();
 
         mCartList = CartList.newInstance();
@@ -48,11 +54,19 @@ public class RightAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public int getCount() {
+        if (isAll) {
+            return mAllList.size();
+        }
+
         return mList.size();
     }
 
     @Override
     public Object getItem(int position) {
+        if (isAll) {
+            return mAllList.get(position);
+        }
+
         return mList.get(position);
     }
 
@@ -69,7 +83,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
             holder = new ViewHolder();
             holder.tv_name = (TextView) convertView.findViewById(R.id.tv_name);
             holder.tv_money = (TextView) convertView.findViewById(R.id.tv_money);
-            holder.btn_add = (Button) convertView.findViewById(R.id.btn_add);
+            holder.btn_add = (ImageButton) convertView.findViewById(R.id.btn_add);
 
             convertView.setTag(holder);
         } else {
@@ -113,15 +127,25 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         return convertView;
     }
 
-    public void setList(List list) {
+    public void setList(List list, List allList) {
+        isAll = false;
+
         mList = list;
+        mAllList = allList;
+
         notifyDataSetChanged();
 
         if (mOriginalValues == null) {
             mOriginalValues = new ArrayList();
         }
         mOriginalValues.clear();
-        mOriginalValues.addAll(list);
+        mOriginalValues.addAll(mList);
+
+        if (mAllOriginalValues == null) {
+            mAllOriginalValues = new ArrayList();
+        }
+        mAllOriginalValues.clear();
+        mAllOriginalValues.addAll(allList);
     }
 
     @Override
@@ -132,10 +156,10 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         return mFilter;
     }
 
-    static class ViewHolder {
+    private static class ViewHolder {
         TextView tv_name;
         TextView tv_money;
-        Button btn_add;
+        ImageButton btn_add;
     }
 
     private class ArrayFilter extends Filter {
@@ -144,6 +168,8 @@ public class RightAdapter extends BaseAdapter implements Filterable {
             FilterResults results = new FilterResults();
 
             if (TextUtils.isEmpty(constraint)) {
+                isAll = false;
+
                 ArrayList list;
                 synchronized (mLock) {
                     list = new ArrayList(mOriginalValues);
@@ -152,11 +178,14 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                 results.count = list.size();
 
             } else {
+                isAll = true;
+
+
                 String prefixString = constraint.toString().toUpperCase();
 
                 ArrayList values;
                 synchronized (mLock) {
-                    values = new ArrayList(mOriginalValues);
+                    values = new ArrayList(mAllOriginalValues);
                 }
 
                 final int count = values.size();
@@ -168,7 +197,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                     if (object instanceof JYXMSZ) {
                         // 单品搜索
                         JYXMSZ item = (JYXMSZ) object;
-                        if (item.getXMMC().startsWith(prefixString) || item.getPY().contains(prefixString)) {
+                        if (item.getXMMC().contains(prefixString) || item.getPY().contains(prefixString)) {
                             newValues.add(item);
                         }
                     } else if (object instanceof TCMC) {
@@ -189,8 +218,12 @@ public class RightAdapter extends BaseAdapter implements Filterable {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            mList = (List) results.values;
-            notifyDataSetChanged();
+            if (isAll) {
+                mAllList = (List) results.values;
+            } else {
+                mList = (List) results.values;
+            }
+
             if (results.count > 0) {
                 notifyDataSetChanged();
 

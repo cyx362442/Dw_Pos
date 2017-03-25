@@ -28,8 +28,8 @@ public class TCSD extends DataSupport {
     public String XMMC1;
     public String DW1;
     public String TM;
-    public String SL;
-    public String DJ;
+    public float SL;
+    public float DJ;
     public String SFXZ;
     public String GQ;
     public String LBBM;
@@ -58,11 +58,11 @@ public class TCSD extends DataSupport {
         return TM;
     }
 
-    public String getSL() {
+    public float getSL() {
         return SL;
     }
 
-    public String getDJ() {
+    public float getDJ() {
         return DJ;
     }
 
@@ -102,11 +102,11 @@ public class TCSD extends DataSupport {
         this.TM = TM;
     }
 
-    public void setSL(String SL) {
+    public void setSL(float SL) {
         this.SL = SL;
     }
 
-    public void setDJ(String DJ) {
+    public void setDJ(float DJ) {
         this.DJ = DJ;
     }
 

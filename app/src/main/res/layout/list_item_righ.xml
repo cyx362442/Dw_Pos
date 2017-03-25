@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/temp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:orientation="vertical">
+        android:paddingTop="8dp">
 
         <TextView
             android:id="@+id/tv_name"
@@ -19,6 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:textColor="#5a5a5a"
+            android:textSize="17sp"
             tools:text="食物名"/>
 
         <TextView
@@ -26,18 +30,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#1fb5ac"
+            android:textSize="17sp"
             tools:text="¥10.0"/>
 
     </LinearLayout>
 
-    <Button
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
+    <ImageButton
         android:id="@+id/btn_add"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:text="添加"/>
+        android:minHeight="48dp"
+        android:minWidth="48dp"
+        android:src="@drawable/ic_add_circle_black"
+        android:tint="#1fb5ac"/>
 
-</RelativeLayout>
+</LinearLayout>

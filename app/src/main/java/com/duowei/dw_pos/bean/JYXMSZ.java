@@ -45,7 +45,7 @@ public class JYXMSZ extends DataSupport{
     public String DW;
     public String LBBM;
     public String LBMC;
-    public String XSJG;
+    public float XSJG;
     public String SFTC;
     public String GQ;
     public String SFQX;
@@ -93,7 +93,7 @@ public class JYXMSZ extends DataSupport{
         return LBMC;
     }
 
-    public String getXSJG() {
+    public float getXSJG() {
         return XSJG;
     }
 
@@ -197,7 +197,7 @@ public class JYXMSZ extends DataSupport{
         this.LBMC = LBMC;
     }
 
-    public void setXSJG(String XSJG) {
+    public void setXSJG(float XSJG) {
         this.XSJG = XSJG;
     }
 
