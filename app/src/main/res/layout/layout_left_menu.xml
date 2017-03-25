@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+              android:background="@mipmap/homebackgroundtwo"
     android:orientation="vertical">
     <LinearLayout
         style="@style/linearLayout_setting"
@@ -9,6 +10,7 @@
         <TextView
             style="@style/textview_setting"
             android:text="设置"
+            android:textColor="@color/colorGreen"
             android:textStyle="bold"/>
         <View
             android:layout_width="match_parent"
@@ -56,17 +58,20 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center">
-        <Button
+            <Button
             android:id="@+id/btn_connect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="连接测试"/>
         <Button
             android:id="@+id/btn_load"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/shape_land"
+            android:textColor="@color/colorWhite"
             android:layout_toRightOf="@+id/btn_connect"
-            android:layout_marginLeft="20dp"
             android:text="下载数据库"/>
     </RelativeLayout>
 </LinearLayout>

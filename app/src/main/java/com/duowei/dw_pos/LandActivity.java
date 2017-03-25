@@ -98,6 +98,7 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                 if(yhjbqk.size()<=0){
                     Toast.makeText(this,"账号不存在",Toast.LENGTH_SHORT).show();
                 }else if(yhjbqk.get(0).getYHMM().equals(password)){
+                    saveData(ip, port);
                     Users.YHBH=account;
                     List<YHJBQK> yhmc = DataSupport.select("YHMC").where("YHBH=?", account).find(YHJBQK.class);
                     Users.YHMC=yhmc.get(0).YHMC;
@@ -137,6 +138,7 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void saveData(String ip, String port) {
+        Net.url="http://"+ip+":"+port+"/server/ServerSvlt?";
         mEdit.putString("ip",ip);
         mEdit.putString("port",port);
         mEdit.putString("pad",mPad.getText().toString().trim());

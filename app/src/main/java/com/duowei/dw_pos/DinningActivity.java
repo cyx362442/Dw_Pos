@@ -52,19 +52,23 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         mSp = (Spinner) findViewById(R.id.spinnner);
         mGv = (GridView) findViewById(R.id.gridView);
         mGv.setOnItemClickListener(this);
+        Http_TalbeUse();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Http_TalbeUse();
         mUser.setText(Users.YHMC);
-//        initSpinner();
-//        initGridView("FCSBH!=?","");
         mSp.setOnItemSelectedListener(this);
     }
 
-    private void Http_TalbeUse() {
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Http_TalbeUse();
+    }
+
+    private synchronized void Http_TalbeUse() {
         DownHTTP.postVolley6(Net.url, sqlUse, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -119,25 +123,21 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
             }
             @Override
             public void onResponse(String response) {
-                Log.e("======",response);
                 if(response.equals("]")){//餐桌未占用
                     mIntent = new Intent(DinningActivity.this, OpenTableActivity.class);
                     mIntent.putExtra("csmc",csmc);
                     startActivity(mIntent);
                 }else{//餐桌己被占用，获取相关信息
-//                    try {
-//                        JSONArray jsonArray = new JSONArray(s);
-//                        JSONObject jsonObject = jsonArray.getJSONObject(0);
-//                        String wmdbh = jsonObject.getString("WMDBH");//单据编号
-//                        Intent intent = new Intent(DiningTableActivity.this, CashierDeskActivity.class);
-//                        intent.putExtra("Dnum2",wmdbh);
-//                        startActivityForResult(intent,1);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-                    mIntent=new Intent(DinningActivity.this,CheckOutActivity.class);
-                    mIntent.putExtra("response",response);
-                    startActivity(mIntent);
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        JSONObject jsonObject = jsonArray.getJSONObject(0);
+                        String wmdbh = jsonObject.getString("WMDBH");//单据编号
+                        Intent intent = new Intent(DinningActivity.this, CheckOutActivity.class);
+                        intent.putExtra("WMDBH",wmdbh);
+                        startActivity(intent);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
