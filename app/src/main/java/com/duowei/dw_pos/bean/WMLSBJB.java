@@ -29,7 +29,7 @@ public class WMLSBJB{
     private String XTBZ;
     private String YHBH;
     private String ZH;
-    private String YS;
+    private float YS;
     private String JYSJ;
     private String SFYJZ;
     private String JSJ;
@@ -74,11 +74,11 @@ public class WMLSBJB{
         this.ZH = ZH;
     }
 
-    public String getYS() {
+    public float getYS() {
         return YS;
     }
 
-    public void setYS(String YS) {
+    public void setYS(float YS) {
         this.YS = YS;
     }
 
@@ -168,5 +168,44 @@ public class WMLSBJB{
 
     public void setBY12(String BY12) {
         this.BY12 = BY12;
+    }
+
+    public WMLSBJB() {
+    }
+
+    /**
+     * @param wmdbh 单据编号
+     * @param yhbh  当前用户名称
+     * @param zh    桌号
+     * @param sfyjz 是否已结账（0未结账 1已结账）
+     * @param jsj   计算机名
+     * @param jcrs  就餐人数
+     * @param ys    总计金额
+     * @param by12  1开台 2点餐 默认1
+     * @param jcfs  来客类型
+     */
+    public WMLSBJB(String wmdbh, String yhbh, String zh, String sfyjz,
+                   String jsj, String jcrs, float ys, String by12, String jcfs) {
+        this.WMDBH = wmdbh;
+        this.XTBZ = "1";
+        this.YHBH = yhbh;
+        this.ZH = zh;
+//        this.jysj = jysj;
+        this.SFYJZ = sfyjz;
+        this.JSJ = jsj;
+        this.JCRS = jcrs;
+        this.YS = ys;
+        this.BY12 = by12;
+        this.jcfs = jcfs;
+    }
+
+    /**
+     * 例子:
+     * INSERT INTO GSCYDB.dbo.WMLSBJB (WMDBH, XTBZ, YHBH, ZH, YS, JYSJ, SFYJZ, YSJE, HYKH, JSJ, QBDB, JCRS, ZK, ZR, BCWNJS, SS, HYKDJ, ZKFS, jcfs, by1, by2, by3, by4, by5, JZBZ, JSKSSJ, JSJSSJ, DJLSH, BY6, BY7, BY8, BY9, BY10, BY11, SFFS, BY12, BY13, BY14, BY15, BY16, BY17, BY18, BY19, BY20)
+     * VALUES ('ZYB20170221140319921', '1', '店长', '101,', 10.00, '2017-02-21 14:03:24.000', '0', null, null, 'ZYB', null, 1, null, null, null, null, null, null, '堂食', '备注', '329', null, null, null, null, '2017-02-21 14:03:19.000', null, null, '', null, null, null, null, null, '', '2', null, null, null, null, null, null, null, null);
+     */
+    public String toInsertString() {
+        return "INSERT INTO WMLSBJB (WMDBH,           XTBZ,           YHBH,           ZH,           YS,     JYSJ,           SFYJZ,      YSJE, HYKH,      JSJ,      QBDB,     JCRS,     ZK,   ZR,   BCWNJS, SS,   HYKDJ, ZKFS,      jcfs,     by1,by2, by3,  by4,  by5,  JZBZ,       JSKSSJ,    JSJSSJ, DJLSH, BY6, BY7,  BY8,  BY9,  BY10, BY11, SFFS,    BY12,      BY13, BY14, BY15, BY16, BY17, BY18, BY19, BY20) " +
+                "       VALUES ('" + WMDBH + "', '" + XTBZ + "', '" + YHBH + "', '" + ZH + "', " + YS + ", GETDATE(), '" + SFYJZ + "', null, null, '" + JSJ + "', null, " + JCRS + ", null, null, null,   null, null,  null, '" + jcfs + "', '', '', null, null, null, null, GETDATE(), null,  null,  '',  null, null, null, null, null, '', '" + BY12 + "', null, null, null, null, null, null, null, null)|";
     }
 }

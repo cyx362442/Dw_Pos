@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.duowei.dw_pos.bean.AddTcsdItem;
 import com.duowei.dw_pos.bean.CartInfo;
 import com.duowei.dw_pos.bean.JYXMSZ;
+import com.duowei.dw_pos.bean.OpenInfo;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.event.CartUpdateEvent;
 
@@ -20,6 +21,8 @@ public class CartList {
     private static CartList mInstance;
 
     private ArrayList<WMLSB> mList;
+
+    private OpenInfo mOpenInfo;
 
     private CartList() {
         mList = new ArrayList<>();
@@ -157,5 +160,13 @@ public class CartList {
 
     public void remove(Object object) {
         // TODO: 2017-03-24
+    }
+
+    public OpenInfo getOpenInfo() {
+        return mOpenInfo;
+    }
+
+    public void setOpenInfo(OpenInfo openInfo) {
+        mOpenInfo = openInfo;
     }
 }

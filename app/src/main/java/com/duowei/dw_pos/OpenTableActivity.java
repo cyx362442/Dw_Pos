@@ -3,12 +3,14 @@ package com.duowei.dw_pos;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.duowei.dw_pos.bean.OpenInfo;
+import com.duowei.dw_pos.tools.CartList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,6 +33,8 @@ public class OpenTableActivity extends AppCompatActivity {
     @BindView(R.id.btn_confirm)
     Button mBtnConfirm;
 
+    String csmc;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +45,7 @@ public class OpenTableActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        String csmc = getIntent().getStringExtra("csmc");
+        csmc = getIntent().getStringExtra("csmc");
         mTvTitle.setText("开台—"+csmc);
     }
 
@@ -52,6 +56,13 @@ public class OpenTableActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.btn_confirm:
+                CartList.newInstance().setOpenInfo(new OpenInfo(
+                        csmc,
+                        mEditText1.getText().toString(),
+                        mEditText2.getText().toString(),
+                        mEditText3.getText().toString()
+                ));
+
                 Intent intent = new Intent(this, CashierDeskActivity.class);
                 startActivity(intent);
                 finish();

@@ -6,10 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.duowei.dw_pos.adapter.CartDetailItemAdapter;
 import com.duowei.dw_pos.tools.CartList;
+import com.duowei.dw_pos.tools.SqlNetHandler;
 
 /**
  * 订单详情
@@ -42,7 +42,8 @@ public class CartDetailActivity extends AppCompatActivity {
         mSubmitBtuuon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(CartDetailActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(CartDetailActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+                new SqlNetHandler().handleCommit(CartDetailActivity.this);
             }
         });
     }

@@ -44,7 +44,7 @@ public class WMLSB {
     private String DW;
     private float SL;
     private float DJ;
-    private String XJ;
+    private float XJ;
     private String PZ;
     private String TCBH;
     private String SFYXD;
@@ -141,11 +141,11 @@ public class WMLSB {
         this.DJ = DJ;
     }
 
-    public String getXJ() {
+    public float getXJ() {
         return XJ;
     }
 
-    public void setXJ(String XJ) {
+    public void setXJ(float XJ) {
         this.XJ = XJ;
     }
 
@@ -291,6 +291,10 @@ public class WMLSB {
         this.by2 = jyxmsz.LBBM;
         this.by3 = jyxmsz.YHJ;
         this.SL = 1;
+
+        this.XJ = this.DJ * this.SL;
+
+        this.SFYXD = "1";
     }
 
     /**
@@ -302,17 +306,35 @@ public class WMLSB {
      */
     public WMLSB(TCSD tcsd, String sfxs, String tcbh) {
         this.XMBH = tcsd.XMBH1;
-        this.XMMC = tcsd.XMMC1;
         this.TCXMBH = tcsd.XMBH;
         this.DW = tcsd.DW1;
         this.DJ = tcsd.DJ;
         this.YSJG = tcsd.DJ;
         this.sfxs = sfxs;
+        if (this.sfxs.equals("1")) {
+            this.XMMC = tcsd.XMMC1;
+        } else {
+            this.XMMC = "  " + tcsd.XMMC1;
+        }
         this.BY15 = tcsd.TM;
         this.TCBH = tcbh;
         this.DWSL = tcsd.SL;
         this.by2 = tcsd.LBBM;
 //        this.by3 = tcsd.
         this.SL = tcsd.SL;
+
+        this.XJ = this.DJ * this.SL;
+
+        this.SFYXD = "1";
+    }
+
+
+
+    /**
+     *
+     */
+    public String toInsertString() {
+        return "INSERT INTO WMLSB (WMDBH,           XMBH,           XMMC,           TM,           DW,          SL,         DJ,         XJ,          PZ,            TCBH,           SFYXD,      XSZT, FTJE,   YSJG,     SFZS,      SYYXM,      SQRXM, ZSSJ,    DWSL,          sfxs,      by1,       by2,    by3, by4,   by5,      SJC,  BY6,  BY7,  BY8,  BY9,  BY10, BY11,     TCXMBH,  BY12, BY13, PBJSJM, PBXH, BY14, BY15, BY16, BY17, BY18, BY19, BY20, BY21, BY22, BY23, BY24, BY25) " +
+                "     VALUES ('" + WMDBH + "', '" + XMBH + "', '" + XMMC + "', '" + TM + "', '" + DW + "', " + SL + ", " + DJ + ", " + XJ + ", '" + PZ + "', '" +  TCBH + "', '" + SFYXD + "', '', null, " + YSJG + ", null, '" + SYYXM + "', null, null, " + DWSL + ", '" + sfxs + "', null, '" + by2 + "', 0, null, GETDATE(), null, null, null, null, null, null, null, '" + TCXMBH + "', '', '', null, null, null, '" + BY15 + "', null, null, null, null, null, null, null, null, null, null)|";
     }
 }
