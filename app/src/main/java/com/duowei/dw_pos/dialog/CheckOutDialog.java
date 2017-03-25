@@ -36,18 +36,23 @@ public class CheckOutDialog implements View.OnClickListener {
         mDialog.setView(mLayout);
         mDialog.show();
         WindowManager.LayoutParams params = mDialog.getWindow().getAttributes();
-        params.width = 500;
+        params.width = 550;
         params.height = 400 ;
         mDialog.getWindow().setAttributes(params);
         initWidget();
     }
 
+    public void cancel(){
+        mDialog.dismiss();
+    }
+
     private void initWidget() {
         mTitle=(TextView)mLayout.findViewById(R.id.tv_title);
         mEtInput=(EditText)mLayout.findViewById(R.id.et_input);
-        mConfirm=(Button)mLayout.findViewById(R.id.btn_cancel);
-        mCancel=(Button)mLayout.findViewById(R.id.btn_confirm);
+        mConfirm=(Button)mLayout.findViewById(R.id.btn_confirm);
+        mCancel=(Button)mLayout.findViewById(R.id.btn_cancel);
         mCancel.setOnClickListener(this);
+        mTitle.setText(title);
     }
 
     @Override
