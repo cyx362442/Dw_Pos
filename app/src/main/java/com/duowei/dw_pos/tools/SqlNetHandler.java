@@ -1,10 +1,12 @@
 package com.duowei.dw_pos.tools;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.duowei.dw_pos.DinningActivity;
 import com.duowei.dw_pos.bean.Pbdyxxb;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
@@ -74,7 +76,14 @@ public class SqlNetHandler {
 
             @Override
             public void onResponse(String response) {
-
+                if (response.contains("richado")) {
+                    Toast.makeText(context, "提交成功！", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, DinningActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    context.startActivity(intent);
+                } else {
+                    Toast.makeText(context, "提交失败！", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
