@@ -3,6 +3,7 @@ package com.duowei.dw_pos.tools;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -43,7 +44,8 @@ public class SqlNetHandler {
                 cartList.getOpenInfo().getPeopleNum(),
                 cartList.getCartInfo().getPrice(),
                 "1",
-                cartList.getOpenInfo().getPeopleType()
+                cartList.getOpenInfo().getPeopleType(),
+                cartList.getOpenInfo().getRemark()
         );
         localSql += wmlsbjb.toInsertString();
 

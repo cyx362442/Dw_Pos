@@ -62,7 +62,6 @@
             android:layout_centerHorizontal="true"
             android:background="@drawable/shape_land"
             android:textColor="@color/colorWhite"
-            android:layout_toRightOf="@+id/btn_connect"
             android:text="下载数据库"/>
     </RelativeLayout>
 </LinearLayout>

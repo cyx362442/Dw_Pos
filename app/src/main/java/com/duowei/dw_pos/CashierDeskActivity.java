@@ -1,6 +1,7 @@
 package com.duowei.dw_pos;
 
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -8,8 +9,10 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -19,6 +22,7 @@ import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.fragment.CartFragment;
+import com.duowei.dw_pos.tools.AnimUtils;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.DateTimeUtils;
 import com.duowei.dw_pos.view.ToggleButton;
@@ -82,6 +86,9 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         clearEditText();
         // 清空购物车
         CartList.newInstance().clear();
+
+
+
     }
 
     @Override
@@ -134,7 +141,19 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         mRightAdapter = new RightAdapter(this);
         mRightListView.setAdapter(mRightAdapter);
 
+        final AnimUtils animUtils = AnimUtils.getInstance(this);
+        final ImageView img_cart = (ImageView) findViewById(R.id.img_cart);
+        final FrameLayout animLayout = createAnimLayout();
+        mRightAdapter.setOnSetHolderClickListener(new RightAdapter.HolderClickListener() {
+            @Override
+            public void onHolderClick(Drawable drawable, int[] start_location) {
+                animUtils.setPX(50);
+                animUtils.doAnim(animLayout, img_cart, drawable, start_location);
+            }
+        });
+
         setupData();
+
     }
 
     /**
@@ -266,5 +285,21 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         mEditText.removeTextChangedListener(mTextWatcher);
         mEditText.setText(null);
         mEditText.addTextChangedListener(mTextWatcher);
+    }
+
+    /**
+     * @param
+     * @return void
+     * @throws
+     * @Description: 创建动画层
+     */
+    private FrameLayout createAnimLayout() {
+        ViewGroup rootView = (ViewGroup) this.getWindow().getDecorView();
+        FrameLayout animLayout = new FrameLayout(this);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+        animLayout.setLayoutParams(lp);
+        animLayout.setBackgroundResource(android.R.color.transparent);
+        rootView.addView(animLayout);
+        return animLayout;
     }
 }

@@ -2,14 +2,18 @@ package com.duowei.dw_pos.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.duowei.dw_pos.ComboActivity;
@@ -29,6 +33,8 @@ import java.util.List;
  */
 
 public class RightAdapter extends BaseAdapter implements Filterable {
+    private static HolderClickListener mHolderClickListener;
+
     private Context mContext;
     private List mList;
 
@@ -77,13 +83,14 @@ public class RightAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
+        final ViewHolder holder;
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_righ, parent, false);
             holder = new ViewHolder();
             holder.tv_name = (TextView) convertView.findViewById(R.id.tv_name);
             holder.tv_money = (TextView) convertView.findViewById(R.id.tv_money);
             holder.btn_add = (ImageButton) convertView.findViewById(R.id.btn_add);
+            holder.ll_view=(LinearLayout)convertView.findViewById(R.id.temp);
 
             convertView.setTag(holder);
         } else {
@@ -101,6 +108,15 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                 @Override
                 public void onClick(View v) {
                     mCartList.add(item);
+
+                    if (mHolderClickListener != null) {
+                        int[] start_location = new int[2];
+                        holder.btn_add.getLocationInWindow(start_location);//获取点击商品图片的位置
+                        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.anim_goods);
+                        holder.ll_view.startAnimation(animation);
+                        Drawable drawable = holder.btn_add.getDrawable();//复制一个新的商品图标
+                        mHolderClickListener.onHolderClick(drawable, start_location);
+                    }
                 }
             });
 
@@ -156,10 +172,11 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         return mFilter;
     }
 
-    private static class ViewHolder {
+    private  class ViewHolder {
         TextView tv_name;
         TextView tv_money;
         ImageButton btn_add;
+        LinearLayout ll_view;
     }
 
     private class ArrayFilter extends Filter {
@@ -231,6 +248,12 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                 notifyDataSetInvalidated();
             }
         }
+    }
+    public static void setOnSetHolderClickListener(HolderClickListener holderClickListener) {
+        mHolderClickListener = holderClickListener;
+    }
+    public interface HolderClickListener {
+        void onHolderClick(Drawable drawable, int[] start_location);
     }
 
 }

@@ -3,6 +3,7 @@ package com.duowei.dw_pos;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -31,8 +32,6 @@ public class OpenTableActivity extends AppCompatActivity {
     TextView mTvTitle;
     @BindView(R.id.rlTop)
     RelativeLayout mRlTop;
-    @BindView(R.id.editText1)
-    EditText mEditText1;
     @BindView(R.id.editText2)
     EditText mEditText2;
     @BindView(R.id.editText3)
@@ -68,7 +67,6 @@ public class OpenTableActivity extends AppCompatActivity {
         for(GKLX G:gklx){
             gkName.add(G.getGKLX());
         }
-
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, gkName);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinnerOpen.setAdapter(adapter);
@@ -81,9 +79,10 @@ public class OpenTableActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.btn_confirm:
+                String stytle = mSpinnerOpen.getSelectedItem().toString();//顾客类型
                 CartList.newInstance().setOpenInfo(new OpenInfo(
                         csmc,
-                        mEditText1.getText().toString(),
+                        stytle,
                         mEditText2.getText().toString(),
                         mEditText3.getText().toString()
                 ));

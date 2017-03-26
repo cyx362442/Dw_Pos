@@ -59,6 +59,8 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
         mPad = (EditText) findViewById(R.id.et_pad);
         findViewById(R.id.btn_load).setOnClickListener(this);
         findViewById(R.id.btn_land).setOnClickListener(this);
+        findViewById(R.id.btn_exit).setOnClickListener(this);
+
 
         mIp.setText(mSp.getString("ip",""));
         mPort.setText(mSp.getString("port",""));
@@ -111,6 +113,9 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                 Net.url="http://"+ip+":"+port+"/server/ServerSvlt?";
                 DataLoad dataLoad = new DataLoad(this);
                 dataLoad.startLoad();
+                break;
+            case R.id.btn_exit:
+                finish();
                 break;
         }
     }

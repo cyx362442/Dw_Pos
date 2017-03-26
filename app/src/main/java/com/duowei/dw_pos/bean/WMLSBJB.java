@@ -185,7 +185,7 @@ public class WMLSBJB{
      * @param jcfs  来客类型
      */
     public WMLSBJB(String wmdbh, String yhbh, String zh, String sfyjz,
-                   String jsj, String jcrs, float ys, String by12, String jcfs) {
+                   String jsj, String jcrs, float ys, String by12, String jcfs,String by1) {
         this.WMDBH = wmdbh;
         this.XTBZ = "1";
         this.YHBH = yhbh;
@@ -197,6 +197,7 @@ public class WMLSBJB{
         this.YS = ys;
         this.BY12 = by12;
         this.jcfs = jcfs;
+        this.by1=by1;
     }
 
     /**
@@ -206,6 +207,6 @@ public class WMLSBJB{
      */
     public String toInsertString() {
         return "INSERT INTO WMLSBJB (WMDBH,           XTBZ,           YHBH,           ZH,           YS,     JYSJ,           SFYJZ,      YSJE, HYKH,      JSJ,      QBDB,     JCRS,     ZK,   ZR,   BCWNJS, SS,   HYKDJ, ZKFS,      jcfs,     by1,by2, by3,  by4,  by5,  JZBZ,       JSKSSJ,    JSJSSJ, DJLSH, BY6, BY7,  BY8,  BY9,  BY10, BY11, SFFS,    BY12,      BY13, BY14, BY15, BY16, BY17, BY18, BY19, BY20) " +
-                "       VALUES ('" + WMDBH + "', '" + XTBZ + "', '" + YHBH + "', '" + ZH + "', " + YS + ", GETDATE(), '" + SFYJZ + "', null, null, '" + JSJ + "', null, " + JCRS + ", null, null, null,   null, null,  null, '" + jcfs + "', '', '', null, null, null, null, GETDATE(), null,  null,  '',  null, null, null, null, null, '', '" + BY12 + "', null, null, null, null, null, null, null, null)|";
+                "       VALUES ('" + WMDBH + "', '" + XTBZ + "', '" + YHBH + "', '" + ZH + "', " + YS + ", GETDATE(), '" + SFYJZ + "', null, null, '" + JSJ + "', null, " + JCRS + ", null, null, null,   null, null,  null, '" + jcfs + "', '"+by1+"', '', null, null, null, null, GETDATE(), null,  null,  '',  null, null, null, null, null, '', '" + BY12 + "', null, null, null, null, null, null, null, null)|";
     }
 }
