@@ -9,11 +9,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -85,12 +85,14 @@ public class CheckOutActivity extends AppCompatActivity {
     TextView mTvOpener;
     @BindView(R.id.ll_cashier)
     LinearLayout mLlCashier;
+    @BindView(R.id.progressBar)
+    ProgressBar mProgressBar;
     private float mTotalMoney = 0;//总额(原始价格总额)
     private float mActualMoney = 0;//实际金额
     private float mYishou = 0.00f;
-    private float mYingshou=0.00f;
-    private float mZhaoling=0.00f;
-    private float mDaishou=0.00f;
+    private float mYingshou = 0.00f;
+    private float mZhaoling = 0.00f;
+    private float mDaishou = 0.00f;
 
     private IWoyouService woyouService;
     private ICallback callback = null;
@@ -149,12 +151,13 @@ public class CheckOutActivity extends AppCompatActivity {
         super.onStart();
         mTvUser.setText(Users.YHMC);
 
+        mProgressBar.setVisibility(View.VISIBLE);
         String sqlWmlsb = "SELECT convert(varchar(30),getdate(),121) ZSSJ2, isnull(BY3,0)BY3,* FROM WMLSB WHERE WMDBH = '" + mWmdbh + "'|";
         DownHTTP.postVolley6(Net.url, sqlWmlsb, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                mProgressBar.setVisibility(View.GONE);
             }
-
             @Override
             public void onResponse(String response) {
                 Gson gson = new Gson();
@@ -163,12 +166,12 @@ public class CheckOutActivity extends AppCompatActivity {
                     mTotalMoney = mTotalMoney + W.getYSJG() * W.getSL();
                     mActualMoney = mActualMoney + W.getDJ() * W.getSL();
                 }
-                mYingshou=mActualMoney - mYishou;
+                mYingshou = mActualMoney - mYishou;
                 mTvZonger.setText("￥" + mTotalMoney);
                 mTvZekou.setText("￥" + (mTotalMoney - mActualMoney));
                 mTvYishou.setText("￥" + mYishou);
                 mTvDaishou.setText("￥" + mYingshou);
-                mDaishou=mYingshou;
+                mDaishou = mYingshou;
                 Moneys.wfjr = mActualMoney - mYishou;
 
                 String sqlWmlsbjb = "select convert(varchar(10),getdate(),120) as sj,WMDBH,ZH,JCRS,YS,isnull(BY1,'')BY1,ZKFS,convert(varchar(19), JYSJ,120)JYSJ,jcfs,DJLSH,YHBH,JSJ " +
@@ -176,8 +179,8 @@ public class CheckOutActivity extends AppCompatActivity {
                 DownHTTP.postVolley6(Net.url, sqlWmlsbjb, new VolleyResultListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        mProgressBar.setVisibility(View.GONE);
                     }
-
                     @Override
                     public void onResponse(String response) {
                         Gson gson1 = new Gson();
@@ -187,13 +190,14 @@ public class CheckOutActivity extends AppCompatActivity {
                         mTvTime.setText(mWmlsbjb.getJYSJ());
                         mTvPersons.setText(mWmlsbjb.getJCRS() + "人");
                         mTvOpener.setText(mWmlsbjb.getYHBH());
+                        mProgressBar.setVisibility(View.GONE);
                     }
                 });
             }
         });
     }
 
-    @OnClick({R.id.img_return, R.id.btn_dayin, R.id.btn_dingdan, R.id.rl_zhifubao, R.id.rl_weixin, R.id.rl_jiezhang,R.id.ll_cashier})
+    @OnClick({R.id.img_return, R.id.btn_dayin, R.id.btn_dingdan, R.id.rl_zhifubao, R.id.rl_weixin, R.id.rl_jiezhang, R.id.ll_cashier})
     public void onClick(View view) {
         Float daishou;
         switch (view.getId()) {
@@ -256,16 +260,19 @@ public class CheckOutActivity extends AppCompatActivity {
                 inputMoney();
                 break;
             case R.id.rl_jiezhang:
-                if(mDaishou>0){
+                if (mDaishou > 0) {
                     inputMoney();
-                }else{
+                } else {
+                    mProgressBar.setVisibility(View.VISIBLE);
                     String sj = mWmlsbjb.getSj().replaceAll("-", "");
                     String exec = "exec prc_AADBPRK_android_001 '" + sj + "',1|";
                     DownHTTP.postVolley6(Net.url, exec, new VolleyResultListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            Toast.makeText(CheckOutActivity.this,"网络异常",Toast.LENGTH_SHORT).show();
+                            mProgressBar.setVisibility(View.GONE);
+                            Toast.makeText(CheckOutActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
                         }
+
                         @Override
                         public void onResponse(String s) {
                             try {
@@ -273,30 +280,30 @@ public class CheckOutActivity extends AppCompatActivity {
                                 JSONObject jsonObject = jsonArray.getJSONObject(0);
                                 int prk = jsonObject.getInt("prk");
                                 String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS,DDSJ,JYSJ,BZ,JZFSBM,BMMC,WMBS,ZH,KHBH,QKJE,JCRS,BY7)" +
-                                        "VALUES('" + mWmlsbjb.getWMDBH() + "','" + mWmlsbjb.getYHBH() + "','" + Users.YHMC + "','无折扣','" + Moneys.xfzr + "','" + Moneys.zkjr + "',"+mYingshou+",'" + mWmlsbjb.getYS() + "',0,'无'," +
-                                        "'" + mWmlsbjb.getJYSJ() + "',GETDATE(),'"+mPad+"','" + mWmlsbjb.getJcfs() + "','','" + prk + "','" + mWmlsbjb.getZH() + "',"+mYishou+","+mZhaoling+",'" + mWmlsbjb.getJCRS() + "','')|";
+                                        "VALUES('" + mWmlsbjb.getWMDBH() + "','" + mWmlsbjb.getYHBH() + "','" + Users.YHMC + "','无折扣','" + Moneys.xfzr + "','" + Moneys.zkjr + "'," + mYingshou + ",'" + mWmlsbjb.getYS() + "',0,'无'," +
+                                        "'" + mWmlsbjb.getJYSJ() + "',GETDATE(),'" + mPad + "','" + mWmlsbjb.getJcfs() + "','','" + prk + "','" + mWmlsbjb.getZH() + "'," + mYishou + "," + mZhaoling + ",'" + mWmlsbjb.getJCRS() + "','')|";
                                 String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
                                         "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mWmlsbjb.getWMDBH() + "'|";
-                                String updateWMLSBJB = "update WMLSBJB set JSJ='"+mPad+"',SFYJZ='1',DJLSH='" + prk + "',YSJE='" + Moneys.xfzr + "',JSKSSJ=getdate() where WMDBH='" + mWmlsbjb.getWMDBH() + "'|";
+                                String updateWMLSBJB = "update WMLSBJB set JSJ='" + mPad + "',SFYJZ='1',DJLSH='" + prk + "',YSJE='" + Moneys.xfzr + "',JSKSSJ=getdate() where WMDBH='" + mWmlsbjb.getWMDBH() + "'|";
                                 String sql = insertXSJBXX + insertXSMXXX + updateWMLSBJB;
                                 DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
                                     @Override
                                     public void onErrorResponse(VolleyError error) {
+                                        mProgressBar.setVisibility(View.GONE);
                                     }
                                     @Override
                                     public void onResponse(String response) {
-                                       if(response.contains("richado")){
-                                           finish();
-                                       }
+                                        if (response.contains("richado")) {
+                                            mProgressBar.setVisibility(View.GONE);
+                                            finish();
+                                        }
                                     }
                                 });
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
                     });
-
 
 
                 }
@@ -310,12 +317,12 @@ public class CheckOutActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String money = dialog.mEtInput.getText().toString().trim();
-                mYishou=Float.parseFloat(money);
-                mTvYishou.setText("￥"+String.format(Locale.CANADA,"%.2f",mYishou));
-                mZhaoling=(mYishou-mYingshou)>=0?mYishou-mYingshou:mYishou-mYingshou;
-                mTvZhaoling.setText("￥"+String.format(Locale.CANADA,"%.2f",mZhaoling));
-                mDaishou=mZhaoling>=0?0.00f:-mZhaoling;
-                mTvDaishou.setText("￥"+String.format(Locale.CANADA,"%.2f",mDaishou));
+                mYishou = Float.parseFloat(money);
+                mTvYishou.setText("￥" + String.format(Locale.CANADA, "%.2f", mYishou));
+                mZhaoling = (mYishou - mYingshou) >= 0 ? mYishou - mYingshou : mYishou - mYingshou;
+                mTvZhaoling.setText("￥" + String.format(Locale.CANADA, "%.2f", mZhaoling));
+                mDaishou = mZhaoling >= 0 ? 0.00f : -mZhaoling;
+                mTvDaishou.setText("￥" + String.format(Locale.CANADA, "%.2f", mDaishou));
                 dialog.cancel();
             }
         });

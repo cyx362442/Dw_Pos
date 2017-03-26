@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +45,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     private TableUse[] mTableUses=new TableUse[]{};
     private Intent mIntent;
     private String mUrl;
+    private ProgressBar mPb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         mUser = (TextView) findViewById(R.id.tv_user);
         mSp = (Spinner) findViewById(R.id.spinnner);
         mGv = (GridView) findViewById(R.id.gridView);
+        mPb = (ProgressBar) findViewById(R.id.progressBar);
         mGv.setOnItemClickListener(this);
     }
 
@@ -73,9 +76,11 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     }
 
     private synchronized void Http_TalbeUse() {
+        mPb.setVisibility(View.VISIBLE);
         DownHTTP.postVolley6(mUrl, sqlUse, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                mPb.setVisibility(View.GONE);
             }
             @Override
             public void onResponse(String response) {
@@ -95,6 +100,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         mJycssz = DataSupport.select("CSMC").where(str1, str2).order("CSBH ASC").find(JYCSSZ.class);
         mGv_adapter = new MyGridAdapter(this, mJycssz,mTableUses);
         mGv.setAdapter(mGv_adapter);
+        mPb.setVisibility(View.GONE);
     }
 
     private void initSpinner() {

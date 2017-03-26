@@ -110,31 +110,15 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.btn_load:
-                Net.url="http://"+ip+":"+port+"/server/ServerSvlt?";
+//                Net.url="http://"+ip+":"+port+"/server/ServerSvlt?";
                 DataLoad dataLoad = new DataLoad(this);
                 dataLoad.startLoad();
+                saveData(ip, port);
                 break;
             case R.id.btn_exit:
                 finish();
                 break;
         }
-    }
-
-    private void Http_connect(final String ip, final String port, String url) {
-        DownHTTP.getVolley(url, new VolleyResultListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(LandActivity.this,"连接失败",Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void onResponse(String response) {
-               if(response.contains("Sucess")){
-                   Toast.makeText(LandActivity.this,"数据库连接成功",Toast.LENGTH_SHORT).show();
-                   Net.url="http://"+ip+":"+port+"/server/ServerSvlt?";
-                   saveData(ip, port);
-               }
-            }
-        });
     }
 
     private void saveData(String ip, String port) {
