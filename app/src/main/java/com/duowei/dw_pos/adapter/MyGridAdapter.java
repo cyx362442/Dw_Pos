@@ -68,7 +68,6 @@ public class MyGridAdapter extends BaseAdapter{
         viewHolder.tv1.setText(list.get(position).CSMC);
         for(int i=0;i<used.length;i++){//已开台
             if((list.get(position).CSMC+",").equals(used[i].getZH())){
-                Log.e("===",list.get(position).CSMC+":"+used[i].getCsmc());
                 viewHolder.ll_table.setBackgroundResource(R.drawable.table_used);
                 viewHolder.ll_tv.setVisibility(View.VISIBLE);
                 viewHolder.tv1.setTextColor(Color.parseColor("#ffffff"));

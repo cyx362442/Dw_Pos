@@ -57,7 +57,6 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
         mIp = (EditText) findViewById(R.id.et_ip);
         mPort = (EditText) findViewById(R.id.et_port);
         mPad = (EditText) findViewById(R.id.et_pad);
-        findViewById(R.id.btn_connect).setOnClickListener(this);
         findViewById(R.id.btn_load).setOnClickListener(this);
         findViewById(R.id.btn_land).setOnClickListener(this);
 
@@ -107,10 +106,6 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                 }else{
                     Toast.makeText(this,"密码错误",Toast.LENGTH_SHORT).show();
                 }
-                break;
-            case R.id.btn_connect:
-                String url="http://"+ip+":"+port+"/server/index.htm";
-                Http_connect(ip, port, url);
                 break;
             case R.id.btn_load:
                 Net.url="http://"+ip+":"+port+"/server/ServerSvlt?";

@@ -1,6 +1,8 @@
 package com.duowei.dw_pos;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -31,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DinningActivity extends AppCompatActivity implements  View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
-    private final String sqlUse="select datediff(mi,jysj,getdate())scjc,a.csmc,b.* from wmlsbjb b,jycssz a where (charindex('@'+a.csmc+',@',b.zh)>0 or charindex(a.csmc+',',b.zh)>0) and isnull(sfyjz,'0')<>'1' and wmdbh in(select wmdbh from wmlsb)|";
+    private String sqlUse="select datediff(mi,jysj,getdate())scjc,a.csmc,b.* from wmlsbjb b,jycssz a where (charindex('@'+a.csmc+',@',b.zh)>0 or charindex(a.csmc+',',b.zh)>0) and isnull(sfyjz,'0')<>'1' and wmdbh in(select wmdbh from wmlsb)|";
 
     private List<String>listName=new ArrayList<>();
     private Spinner mSp;
@@ -41,18 +43,20 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     private TextView mUser;
     private TableUse[] mTableUses=new TableUse[]{};
     private Intent mIntent;
+    private String mUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dinning);
         findViewById(R.id.btn_exit).setOnClickListener(this);
+        SharedPreferences user = getSharedPreferences("user", Context.MODE_PRIVATE);
+        mUrl = user.getString("url", "");
 
         mUser = (TextView) findViewById(R.id.tv_user);
         mSp = (Spinner) findViewById(R.id.spinnner);
         mGv = (GridView) findViewById(R.id.gridView);
         mGv.setOnItemClickListener(this);
-        Http_TalbeUse();
     }
 
     @Override
@@ -63,13 +67,13 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onResume() {
+        super.onResume();
         Http_TalbeUse();
     }
 
     private synchronized void Http_TalbeUse() {
-        DownHTTP.postVolley6(Net.url, sqlUse, new VolleyResultListener() {
+        DownHTTP.postVolley6(mUrl, sqlUse, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
             }
@@ -78,6 +82,8 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
                 if(!response.equals("]")){
                     Gson gson = new Gson();
                     mTableUses = gson.fromJson(response, TableUse[].class);
+                }else{
+                    mTableUses=new TableUse[0];
                 }
                 initSpinner();
                 initGridView("FCSBH!=?","");
@@ -116,7 +122,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         final String csmc = mJycssz.get(position).getCSMC();
         String sql="select * from wmlsbjb where '@'+zh like '%@"+csmc+"%' and isnull(sfyjz,'0')<>'1' and wmdbh in(select wmdbh from wmlsb)|";
-        DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
+        DownHTTP.postVolley6(mUrl, sql, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(DinningActivity.this,"餐桌数据获取失败",Toast.LENGTH_SHORT).show();
