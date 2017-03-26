@@ -25,7 +25,6 @@
         <EditText
             android:id="@+id/et_ip"
             style="@style/editText_setting"
-            android:hint="192.168.1.78"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             />
@@ -38,7 +37,6 @@
         <EditText
             android:id="@+id/et_port"
             style="@style/editText_setting"
-            android:hint="2233"
             android:selectAllOnFocus="true" />
     </LinearLayout>
     <LinearLayout
@@ -49,7 +47,6 @@
         <EditText
             android:id="@+id/et_pad"
             style="@style/editText_setting"
-            android:hint="P1"
             android:selectAllOnFocus="true"
             />
     </LinearLayout>

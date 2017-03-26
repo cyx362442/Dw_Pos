@@ -12,4 +12,8 @@ public class GKLX extends DataSupport {
     public String getGKLX() {
         return GKLX;
     }
+
+    public void setGKLX(String GKLX) {
+        this.GKLX = GKLX;
+    }
 }

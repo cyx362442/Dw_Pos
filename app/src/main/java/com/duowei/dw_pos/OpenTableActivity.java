@@ -4,13 +4,22 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.duowei.dw_pos.bean.GKLX;
+import com.duowei.dw_pos.bean.JYCSSZ;
 import com.duowei.dw_pos.bean.OpenInfo;
 import com.duowei.dw_pos.tools.CartList;
+
+import org.litepal.crud.DataSupport;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,21 +41,37 @@ public class OpenTableActivity extends AppCompatActivity {
     Button mBtnCancel;
     @BindView(R.id.btn_confirm)
     Button mBtnConfirm;
-
+    @BindView(R.id.spinner_open)
+    Spinner mSpinnerOpen;
     String csmc;
+    private List<String>gkName=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_table);
         ButterKnife.bind(this);
+        initSpinner();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         csmc = getIntent().getStringExtra("csmc");
-        mTvTitle.setText("开台—"+csmc);
+        mTvTitle.setText("开台—" + csmc);
+    }
+
+    private void initSpinner() {
+        gkName.clear();
+        gkName.add("未选择……");
+        List<GKLX> gklx = DataSupport.findAll(GKLX.class);
+        for(GKLX G:gklx){
+            gkName.add(G.getGKLX());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, gkName);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinnerOpen.setAdapter(adapter);
     }
 
     @OnClick({R.id.btn_cancel, R.id.btn_confirm})
