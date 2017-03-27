@@ -184,6 +184,10 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
 
+            if (mAllList == null) {
+                return results;
+            }
+
             if (TextUtils.isEmpty(constraint)) {
                 isAll = false;
 
@@ -235,6 +239,10 @@ public class RightAdapter extends BaseAdapter implements Filterable {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
+            if (results.values == null) {
+                return;
+            }
+
             if (isAll) {
                 mAllList = (List) results.values;
             } else {

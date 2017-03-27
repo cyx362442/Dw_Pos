@@ -7,14 +7,12 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.duowei.dw_pos.CartDetailActivity;
@@ -55,7 +53,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: ");
         EventBus.getDefault().register(this);
     }
 
@@ -82,22 +79,8 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart: ");
-        
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop: ");
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
         EventBus.getDefault().unregister(this);
         getActivity().unregisterReceiver(mBroadcastReceiver);
     }
@@ -130,7 +113,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         int id = v.getId();
 
         if (id == R.id.btn_commit) {
-//            Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getContext(), CartDetailActivity.class);
             getContext().startActivity(intent);
         }

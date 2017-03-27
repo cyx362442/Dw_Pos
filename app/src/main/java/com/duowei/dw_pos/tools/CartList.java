@@ -12,6 +12,7 @@ import com.duowei.dw_pos.event.CartUpdateEvent;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * 购物车
@@ -148,18 +149,68 @@ public class CartList {
      */
     public void add(WMLSB wmlsb) {
         String by15 = wmlsb.getBY15();
+
         if (!TextUtils.isEmpty(by15)) {
             // 套餐
+            if (by15.equals("A")) {
+                // 主
+                wmlsb.setSL(wmlsb.getSL() + 1);
+
+                // 子
+                for (int i = 0; i < mList.size(); i++) {
+                    WMLSB w = mList.get(i);
+                    if (w.getTCBH().equals(wmlsb.getTCBH()) && !w.getBY15().equals("A")) {
+                        w.setSL(w.getSL() + w.getDWSL());
+                    }
+                }
+            }
         } else {
             // 单品
-            for (int i = 0; i < mList.size(); i++) {
-//                if (mList.get(i).getXMBH().e)
-            }
+            wmlsb.setSL(wmlsb.getSL() + 1);
         }
+
+        EventBus.getDefault().post(new CartUpdateEvent());
     }
 
-    public void remove(Object object) {
-        // TODO: 2017-03-24
+    public void remove(WMLSB wmlsb) {
+        String by15 = wmlsb.getBY15();
+
+        if (!TextUtils.isEmpty(by15)) {
+            // 套餐
+            if (wmlsb.getSL() == 1) {
+                mList.remove(wmlsb);
+
+                Iterator<WMLSB> it = mList.iterator();
+                while (it.hasNext()) {
+                    WMLSB w = it.next();
+                    if (w.getTCBH().equals(wmlsb.getTCBH()) && !w.getBY15().equals("A")) {
+                        it.remove();
+                    }
+                }
+
+            } else {
+                // -1
+                wmlsb.setSL(wmlsb.getSL() - 1);
+
+                for (int i = 0; i < mList.size(); i++) {
+                    WMLSB w = mList.get(i);
+                    if (w.getTCBH().equals(wmlsb.getTCBH()) && !w.getBY15().equals("A")) {
+                        w.setSL(w.getSL() - w.getDWSL());
+                    }
+                }
+
+            }
+
+        } else {
+            // 单品
+            if (wmlsb.getSL() == 1) {
+                mList.remove(wmlsb);
+            } else {
+                wmlsb.setSL(wmlsb.getSL() - 1);
+            }
+        }
+
+        EventBus.getDefault().post(new CartUpdateEvent());
     }
 
     public OpenInfo getOpenInfo() {

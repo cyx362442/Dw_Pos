@@ -30,6 +30,11 @@ public class CartDetailItemAdapter extends BaseAdapter {
         mList = list;
     }
 
+    public void setList(List<WMLSB> list) {
+        mList = list;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
         return mList.size();
@@ -76,11 +81,15 @@ public class CartDetailItemAdapter extends BaseAdapter {
             if ("A".equals(item.getBY15())) {
                 // 主项
                 holder.tv_name.setText(item.getXMMC());
-                holder.ll_right.setVisibility(View.VISIBLE);
+//                holder.ll_right.setVisibility(View.VISIBLE);
+                holder.iv_remove.setVisibility(View.VISIBLE);
+                holder.iv_add.setVisibility(View.VISIBLE);
             } else {
                 // 子项
                 holder.tv_name.setText("  " + item.getXMMC());
-                holder.ll_right.setVisibility(View.INVISIBLE);
+//                holder.ll_right.setVisibility(View.INVISIBLE);
+                holder.iv_remove.setVisibility(View.INVISIBLE);
+                holder.iv_add.setVisibility(View.INVISIBLE);
             }
         } else {
             // 单品
