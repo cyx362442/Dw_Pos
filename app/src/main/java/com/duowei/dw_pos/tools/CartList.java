@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.duowei.dw_pos.bean.AddTcsdItem;
 import com.duowei.dw_pos.bean.CartInfo;
 import com.duowei.dw_pos.bean.JYXMSZ;
+import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.OpenInfo;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.event.CartUpdateEvent;
@@ -19,6 +20,12 @@ import java.util.Iterator;
  */
 
 public class CartList {
+    public String sql="";
+
+    public String getSql() {
+        return sql;
+    }
+
     private static CartList mInstance;
 
     private ArrayList<WMLSB> mList;
@@ -39,6 +46,10 @@ public class CartList {
 
     public ArrayList<WMLSB> getList() {
         return mList;
+    }
+
+    public void setList(ArrayList<WMLSB>list){
+        this.mList=list;
     }
 
     public void clear() {
@@ -198,15 +209,25 @@ public class CartList {
                         w.setSL(w.getSL() - w.getDWSL());
                     }
                 }
-
             }
 
         } else {
             // 单品
             if (wmlsb.getSL() == 1) {
                 mList.remove(wmlsb);
+                /**己下单打印提交服务器更新*/
+                if(wmlsb.getSFYXD().equals("1")){
+                   sql="update  wmlsbjb set YS=" + (Moneys.yfjr-wmlsb.getDJ()) + " where wmdbh='" + wmlsb.getWMDBH() + "'|"+
+                           "delete from  wmlsb where XH='" + wmlsb.getXH() + "'|";
+                }
             } else {
                 wmlsb.setSL(wmlsb.getSL() - 1);
+                /**己下单打印提交服务器更新*/
+                if(wmlsb.getSFYXD().equals("1")){
+                    float xj = wmlsb.getSL() * wmlsb.getDJ();
+                    sql="update  WMLSB set SL='" + wmlsb.getSL() + "',XJ=" + xj + " where XH='" + wmlsb.getXH() + "'|"+
+                            "update  wmlsbjb set YS="+(Moneys.yfjr-wmlsb.getDJ())+" where wmdbh='" + wmlsb.getWMDBH() + "'|";
+                }
             }
         }
 

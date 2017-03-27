@@ -27,7 +27,7 @@
             style="@style/editText_setting"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:inputType="number"
+            android:inputType="textEmailAddress"
             />
     </LinearLayout>
     <LinearLayout
