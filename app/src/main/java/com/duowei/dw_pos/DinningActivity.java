@@ -104,8 +104,8 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         for(JYCSSZ J:jycxxz){
             listName.add(J.getCSMC());
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listName);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.simple_spinner_item2, R.id.tv_spinner,listName);
+        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item2);
         mSp.setAdapter(adapter);
     }
 

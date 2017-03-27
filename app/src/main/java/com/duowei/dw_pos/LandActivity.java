@@ -5,16 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.YHJBQK;
-import com.duowei.dw_pos.httputils.DownHTTP;
-import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.tools.DataLoad;
 import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.Users;
@@ -118,23 +113,6 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
                 break;
         }
-    }
-
-    private void Http_connect(final String ip, final String port, String url) {
-        DownHTTP.getVolley(url, new VolleyResultListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(LandActivity.this,"连接失败",Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void onResponse(String response) {
-               if(response.contains("Sucess")){
-                   Toast.makeText(LandActivity.this,"数据库连接成功",Toast.LENGTH_SHORT).show();
-                   Net.url="http://"+ip+":"+port+"/server/ServerSvlt?";
-                   saveData(ip, port);
-               }
-            }
-        });
     }
 
     private void saveData(String ip, String port) {
