@@ -8,8 +8,12 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.duowei.dw_pos.adapter.CartDetailItemAdapter;
+import com.duowei.dw_pos.event.CartUpdateEvent;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.SqlNetHandler;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 /**
  * 订单详情
@@ -20,12 +24,26 @@ public class CartDetailActivity extends AppCompatActivity {
     private ListView mListView;
     private Button mSubmitBtuuon;
 
+    private CartDetailItemAdapter mAdapter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_detail);
         initViews();
         loadData();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initViews() {
@@ -42,14 +60,24 @@ public class CartDetailActivity extends AppCompatActivity {
         mSubmitBtuuon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(CartDetailActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
                 new SqlNetHandler().handleCommit(CartDetailActivity.this);
             }
         });
     }
 
     private void loadData() {
-        CartDetailItemAdapter adapter = new CartDetailItemAdapter(this, CartList.newInstance().getList());
-        mListView.setAdapter(adapter);
+        mAdapter = new CartDetailItemAdapter(this, CartList.newInstance().getList());
+        mListView.setAdapter(mAdapter);
+    }
+
+    @Subscribe
+    public void updateUiData(CartUpdateEvent event) {
+        mAdapter.setList(CartList.newInstance().getList());
+
+        if (mAdapter.getCount() > 0) {
+            mSubmitBtuuon.setEnabled(true);
+        } else {
+            mSubmitBtuuon.setEnabled(false);
+        }
     }
 }

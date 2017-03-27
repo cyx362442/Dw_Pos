@@ -24,7 +24,6 @@ import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.fragment.CartFragment;
 import com.duowei.dw_pos.tools.AnimUtils;
 import com.duowei.dw_pos.tools.CartList;
-import com.duowei.dw_pos.tools.DateTimeUtils;
 import com.duowei.dw_pos.view.ToggleButton;
 
 import org.litepal.crud.DataSupport;
@@ -78,17 +77,23 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         SQLiteStudioService.instance().start(this);
         setContentView(R.layout.activity_cashier_desk);
-        mRightJyxmszAllList = getJyxmszAllList();
-        mRightTcmcAllList = getTcmcAllList();
 
         initViews();
+        loadAllData();
         initData();
         clearEditText();
         // 清空购物车
         CartList.newInstance().clear();
+    }
 
-
-
+    private void loadAllData() {
+        new Thread() {
+            @Override
+            public void run() {
+                mRightJyxmszAllList = getJyxmszAllList();
+                mRightTcmcAllList = getTcmcAllList();
+            }
+        }.start();
     }
 
     @Override
@@ -135,6 +140,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void initData() {
+        Log.d(TAG, "initData: start");
         mLeftAdapter = new LeftAdapter(this);
         mLeftListView.setAdapter(mLeftAdapter);
 
@@ -152,14 +158,16 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
+        Log.d(TAG, "initData: end");
         setupData();
-
     }
 
     /**
      * 设置单品数据
      */
     private void setupData() {
+        Log.d(TAG, "setupData: start");
+
         mLeftAdapter.setList(getDmjyxmsslbList());
         mLeftListView.setItemChecked(0, true);
         mLeftListView.smoothScrollToPosition(0);
@@ -168,6 +176,8 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         if (checkedPosition != ListView.INVALID_POSITION) {
             mRightAdapter.setList(getJyxmszList(((DMJYXMSSLB) mLeftAdapter.getItem(checkedPosition)).getLBBM()), mRightJyxmszAllList);
         }
+
+        Log.d(TAG, "setupData: end");
     }
 
     /**
@@ -209,9 +219,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         if (object instanceof DMJYXMSSLB) {
             // 单品项点击
             DMJYXMSSLB item = (DMJYXMSSLB) object;
-            Log.d(TAG, "onItemClick: before " + DateTimeUtils.getCurrentDatetime());
             mRightAdapter.setList(getJyxmszList(item.getLBBM()), mRightJyxmszAllList);
-            Log.d(TAG, "onItemClick: after " + DateTimeUtils.getCurrentDatetime());
 
         } else if (object instanceof String) {
             // 套餐项 点击
@@ -224,7 +232,10 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
      * @return 单品分类 列表
      */
     private List<DMJYXMSSLB> getDmjyxmsslbList() {
-        return DataSupport.where("sfty != ? and lbbm != ?", "1", "RICH").order("xl").find(DMJYXMSSLB.class);
+        Log.d(TAG, "getDmjyxmsslbList: start");
+        List<DMJYXMSSLB> list = DataSupport.where("sfty != ? and lbbm != ?", "1", "RICH").find(DMJYXMSSLB.class);
+        Log.d(TAG, "getDmjyxmsslbList: end");
+        return list;
     }
 
     /**
