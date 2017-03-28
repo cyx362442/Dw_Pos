@@ -215,22 +215,10 @@ public class CartList {
             // 单品
             if (wmlsb.getSL() == 1) {
                 mList.remove(wmlsb);
-                /**己下单打印提交服务器更新*/
-                if(wmlsb.getSFYXD().equals("1")){
-                   sql="update  wmlsbjb set YS=" + (Moneys.yfjr-wmlsb.getDJ()) + " where wmdbh='" + wmlsb.getWMDBH() + "'|"+
-                           "delete from  wmlsb where XH='" + wmlsb.getXH() + "'|";
-                }
             } else {
                 wmlsb.setSL(wmlsb.getSL() - 1);
-                /**己下单打印提交服务器更新*/
-                if(wmlsb.getSFYXD().equals("1")){
-                    float xj = wmlsb.getSL() * wmlsb.getDJ();
-                    sql="update  WMLSB set SL='" + wmlsb.getSL() + "',XJ=" + xj + " where XH='" + wmlsb.getXH() + "'|"+
-                            "update  wmlsbjb set YS="+(Moneys.yfjr-wmlsb.getDJ())+" where wmdbh='" + wmlsb.getWMDBH() + "'|";
-                }
             }
         }
-
         EventBus.getDefault().post(new CartUpdateEvent());
     }
 

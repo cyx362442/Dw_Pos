@@ -4,7 +4,12 @@ import android.net.http.LoggingEventHandler;
 import android.util.Log;
 
 import com.android.volley.VolleyError;
+import com.duowei.dw_pos.bean.WMLSB;
+import com.duowei.dw_pos.event.OrderUpdateEvent;
+import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.Net;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by Administrator on 2017-03-27.
@@ -20,7 +25,7 @@ public class Post7 {
         return post7;
     }
     String result;
-    public String getHttpResult(String sql){
+    public String getHttpResult(String sql, final WMLSB wmlsb){
         DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -29,8 +34,10 @@ public class Post7 {
             }
             @Override
             public void onResponse(String response) {
-                result=response;
-                Log.e("=====",response);
+               if(response.contains("richado")){
+                   EventBus.getDefault().post(new OrderUpdateEvent(response));
+                   CartList.newInstance().remove(wmlsb);
+               }
             }
         });
         return result;

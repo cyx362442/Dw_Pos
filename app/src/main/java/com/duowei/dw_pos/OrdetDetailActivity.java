@@ -1,10 +1,8 @@
 package com.duowei.dw_pos;
 
-import android.net.http.LoggingEventHandler;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,16 +10,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.android.volley.VolleyError;
 import com.duowei.dw_pos.adapter.OrderListAdapter;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.dialog.SalesReturnDialog;
 import com.duowei.dw_pos.event.CartUpdateEvent;
-import com.duowei.dw_pos.httputils.DownHTTP;
-import com.duowei.dw_pos.httputils.Post7;
-import com.duowei.dw_pos.httputils.VolleyResultListener;
+import com.duowei.dw_pos.event.OrderUpdateEvent;
 import com.duowei.dw_pos.tools.CartList;
-import com.duowei.dw_pos.tools.Net;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -70,17 +64,10 @@ public class OrdetDetailActivity extends AppCompatActivity {
     }
 
     @Subscribe
-    public void updateUiData(CartUpdateEvent event) {
-        mAdapter.setList(CartList.newInstance().getList());
-        final String sql = CartList.newInstance().getSql();
-        if(!TextUtils.isEmpty(sql)){
-            final SalesReturnDialog dialog = new SalesReturnDialog(this);
-            dialog.mConfirm.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    String result = Post7.getInstance().getHttpResult(sql);
-                }
-            });
+    public void updateOrderData(OrderUpdateEvent event){
+        Toast.makeText(this,event.msg,Toast.LENGTH_LONG).show();
+        if(event.msg.contains("richado")){
+            mAdapter.setList(CartList.newInstance().getList());
         }
     }
 

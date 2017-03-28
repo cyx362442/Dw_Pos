@@ -5,7 +5,6 @@ package com.duowei.dw_pos.event;
  */
 
 public class CartUpdateEvent {
-
     public CartUpdateEvent() {
     }
 }
