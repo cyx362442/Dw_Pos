@@ -6,7 +6,6 @@ import android.util.Log;
 import com.duowei.dw_pos.bean.AddTcsdItem;
 import com.duowei.dw_pos.bean.CartInfo;
 import com.duowei.dw_pos.bean.JYXMSZ;
-import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.OpenInfo;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.event.CartUpdateEvent;
@@ -17,29 +16,29 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * 购物车
+ * Created by Administrator on 2017-03-29.
  */
 
-public class CartList {
+public class OrderList {
     public String sql="";
 
     public String getSql() {
         return sql;
     }
 
-    private static CartList mInstance;
+    private static OrderList mInstance;
 
     private ArrayList<WMLSB> mList;
 
     private OpenInfo mOpenInfo;
 
-    private CartList() {
+    private OrderList() {
         mList = new ArrayList<>();
     }
 
-    public static CartList newInstance() {
+    public static OrderList newInstance() {
         if (mInstance == null) {
-            mInstance = new CartList();
+            mInstance = new OrderList();
         }
 
         return mInstance;
@@ -185,8 +184,9 @@ public class CartList {
     }
 
     public void remove(WMLSB wmlsb) {
-        String by15 = wmlsb.getBY15();
+        sql="";
 
+        String by15 = wmlsb.getBY15();
         if (!TextUtils.isEmpty(by15)) {
             // 套餐
             if (wmlsb.getSL() == 1) {
@@ -197,29 +197,53 @@ public class CartList {
                     WMLSB w = it.next();
                     if (w.getTCBH().equals(wmlsb.getTCBH()) && !w.getBY15().equals("A")) {
                         it.remove();
+
+                        sql=sql+"delete from  wmlsb where TCBH='" + wmlsb.getTCBH() + "'|";
                     }
                 }
-
+                sql=sql+"update  wmlsbjb set YS='" + getTotoalMoney()  + "',BY12='2' where wmdbh='" + wmlsb.getWMDBH() + "'|";
             } else {
                 // -1
                 wmlsb.setSL(wmlsb.getSL() - 1);
+
+                float xj = wmlsb.getDJ() * (wmlsb.getSL());
+                sql =sql+ "update  WMLSB set SL='" +(wmlsb.getSL()) + "',XJ='" + xj + "' where tcbh='" + wmlsb.getTCBH() + "' and xh='" + wmlsb.getXH() + "'|";
                 for (int i = 0; i < mList.size(); i++) {
                     WMLSB w = mList.get(i);
                     if (w.getTCBH().equals(wmlsb.getTCBH()) && !w.getBY15().equals("A")) {
                         w.setSL(w.getSL() - w.getDWSL());
+
+                        float xj2 = w.getDJ() * (w.getSL());
+                        sql =sql+ "update  WMLSB set SL='" +(w.getSL()) + "',XJ='" + xj2 + "' where tcbh='" + w.getTCBH() + "' and xh='" + w.getXH() + "'|";
                     }
                 }
+                sql=sql+"update  wmlsbjb set YS='" + getTotoalMoney() + "',BY12='2' where wmdbh='" + wmlsb.getWMDBH() + "'|";
             }
 
         } else {
             // 单品
             if (wmlsb.getSL() == 1) {
                 mList.remove(wmlsb);
+
+                sql="update  wmlsbjb set YS=" + getTotoalMoney() + " where wmdbh='" + wmlsb.getWMDBH() + "'|"+
+                        "delete from  wmlsb where XH='" + wmlsb.getXH() + "'|";
             } else {
                 wmlsb.setSL(wmlsb.getSL() - 1);
+
+                float xj = wmlsb.getSL() * wmlsb.getDJ();
+                sql="update  WMLSB set SL='" + wmlsb.getSL() + "',XJ=" + xj + " where XH='" + wmlsb.getXH() + "'|"+
+                        "update  wmlsbjb set YS="+getTotoalMoney()+" where wmdbh='" + wmlsb.getWMDBH() + "'|";
             }
         }
-        EventBus.getDefault().post(new CartUpdateEvent());
+    }
+
+    private float getTotoalMoney() {
+        float totalMoney=0.00f;
+        for(int i=0;i<mList.size();i++){
+            float xj = mList.get(i).getSL() * mList.get(i).getDJ();
+            totalMoney=totalMoney+xj;
+        }
+        return totalMoney;
     }
 
     public OpenInfo getOpenInfo() {

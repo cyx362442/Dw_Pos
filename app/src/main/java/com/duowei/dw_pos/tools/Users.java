@@ -7,4 +7,5 @@ package com.duowei.dw_pos.tools;
 public class Users {
     public static String YHBH;
     public static String YHMC;
+    public static String pad;
 }

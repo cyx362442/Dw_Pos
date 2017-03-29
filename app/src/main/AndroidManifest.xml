@@ -43,6 +43,8 @@
         </activity>
         <activity android:name=".WebViewPayActivity">
         </activity>
+        <activity android:name=".OrdetDetailActivity">
+        </activity>
     </application>
 
 </manifest>

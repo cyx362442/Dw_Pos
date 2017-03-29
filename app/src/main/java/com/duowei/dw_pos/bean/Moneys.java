@@ -7,9 +7,9 @@ import java.io.Serializable;
  */
 
 public class Moneys implements Serializable {
-    public static float xfzr;
-    public static float ysjr;
-    public static float zkjr;
-    public static float yfjr;
-    public static float wfjr;
+    public static float xfzr;//销费总额
+    public static float ysjr;//应收金额
+    public static float zkjr;//拆扣金额
+    public static float yfjr;//己付金额
+    public static float wfjr;//未付金额
 }
