@@ -195,9 +195,9 @@ public class CheckOutActivity extends AppCompatActivity {
                                 mTvDaishou.setText("￥" + mYingshou);
                                 mDaishou=mYingshou;
 
-                                Moneys.xfzr=mActualMoney;
+                                Moneys.xfzr=mTotalMoney;
                                 Moneys.zkjr=mTotalMoney-mActualMoney;
-                                Moneys.yfjr=mYingshou;
+                                Moneys.ysjr=mYingshou;
                                 Moneys.wfjr = mActualMoney - mYishou;
                             }
                         });
@@ -219,6 +219,7 @@ public class CheckOutActivity extends AppCompatActivity {
             case R.id.btn_dingdan:
                 mIntent=new Intent(this,OrdetDetailActivity.class);
                 mIntent.putExtra("listWmlsb",list_wmlsb);
+                mIntent.putExtra("wmlsbjb",mWmlsbjb);
                 startActivity(mIntent);
                 break;
             case R.id.rl_zhifubao:

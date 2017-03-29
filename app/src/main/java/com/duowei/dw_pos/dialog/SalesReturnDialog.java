@@ -14,9 +14,14 @@ import android.widget.Spinner;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.SZLB;
 import com.duowei.dw_pos.bean.WMLSB;
+import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.event.OrderUpdateEvent;
 import com.duowei.dw_pos.httputils.Post7;
+import com.duowei.dw_pos.tools.CartList;
+import com.duowei.dw_pos.tools.OrderList;
+import com.duowei.dw_pos.tools.Users;
 
+import org.greenrobot.eventbus.EventBus;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
@@ -33,13 +38,13 @@ public class SalesReturnDialog implements View.OnClickListener{
     public Button mConfirm;
     private Button mCancel;
     private Spinner mSpinner;
-    private String sql;
     private WMLSB wmlsb;
+    private Wmslbjb_jiezhang wmlsbjb;
     private ArrayList<String>list=new ArrayList<>();
-    public SalesReturnDialog(Context context, String sql,WMLSB wmlsb) {
+    public SalesReturnDialog(Context context,WMLSB wmlsb,Wmslbjb_jiezhang wmlsbjb) {
         this.context = context;
-        this.sql=sql;
         this.wmlsb=wmlsb;
+        this.wmlsbjb=wmlsbjb;
         mDialog = new AlertDialog.Builder(context).create();
         //必须先setView，否则在dialog\popuwindow中无法自动弹出软健盘
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -79,8 +84,14 @@ public class SalesReturnDialog implements View.OnClickListener{
                 mDialog.dismiss();
                 break;
             case R.id.btn_confirm:
-//                org.greenrobot.eventbus.EventBus.getDefault().post(new OrderUpdateEvent("确定"));
-                Post7.getInstance().getHttpResult(sql,wmlsb);
+                OrderList.newInstance().remove(wmlsb);
+                String sql = OrderList.newInstance().getSql();
+                //插入平板打印信息
+                String str = (String) mSpinner.getSelectedItem();
+                String insertPBDYXXB = "insert into pbdyxxb(xh,wmdbh,xmbh,xmmc,dw,sl,dj,xj,pz,ysjg,syyxm,sfxs,tcbh,tcxmbh,tcfz,xtbz,czsj,zh,jsj,thyy) " +
+                        "select xh,wmdbh,xmbh,xmmc,dw,'1',dj,'" + wmlsb.getDJ() + "',pz,ysjg,syyxm,sfxs,tcbh,tcxmbh,BY15,'2',getdate(),'" +wmlsbjb.getZH()+ "','" + Users.pad + "','" + str + "'  " +
+                        "from wmlsb where wmdbh='" + wmlsb.getWMDBH() + "' and isnull(sfyxd,'0')='1'and  XH='" + wmlsb.getXH() + "'|";
+                Post7.getInstance().getHttpResult(sql +insertPBDYXXB,wmlsb);
                 cancel();
                 break;
         }

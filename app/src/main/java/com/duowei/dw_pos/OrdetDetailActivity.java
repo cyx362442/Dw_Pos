@@ -12,14 +12,17 @@ import android.widget.Toast;
 
 import com.duowei.dw_pos.adapter.OrderListAdapter;
 import com.duowei.dw_pos.bean.WMLSB;
+import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.dialog.SalesReturnDialog;
 import com.duowei.dw_pos.event.CartUpdateEvent;
 import com.duowei.dw_pos.event.OrderUpdateEvent;
 import com.duowei.dw_pos.tools.CartList;
+import com.duowei.dw_pos.tools.OrderList;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -38,6 +41,7 @@ public class OrdetDetailActivity extends AppCompatActivity {
     Button mBtnOrderConfirm;
     private ArrayList<WMLSB> mListWmlsb;
     private OrderListAdapter mAdapter;
+    private Wmslbjb_jiezhang mWmlsbjb;
 
 
     @Override
@@ -46,13 +50,14 @@ public class OrdetDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ordet_detail);
         ButterKnife.bind(this);
         mListWmlsb = (ArrayList<WMLSB>) getIntent().getSerializableExtra("listWmlsb");
-        CartList.newInstance().setList(mListWmlsb);
+        mWmlsbjb = (Wmslbjb_jiezhang) getIntent().getSerializableExtra("wmlsbjb");
+        OrderList.newInstance().setList(mListWmlsb);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mAdapter = new OrderListAdapter(this, mListWmlsb);
+        mAdapter = new OrderListAdapter(this, mListWmlsb,mWmlsbjb);
         mLvOrder.setAdapter(mAdapter);
         EventBus.getDefault().register(this);
     }
@@ -65,9 +70,8 @@ public class OrdetDetailActivity extends AppCompatActivity {
 
     @Subscribe
     public void updateOrderData(OrderUpdateEvent event){
-        Toast.makeText(this,event.msg,Toast.LENGTH_LONG).show();
         if(event.msg.contains("richado")){
-            mAdapter.setList(CartList.newInstance().getList());
+            mAdapter.setList(OrderList.newInstance().getList());
         }
     }
 

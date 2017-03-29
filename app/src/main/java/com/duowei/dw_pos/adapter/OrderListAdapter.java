@@ -17,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.WMLSB;
+import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.dialog.SalesReturnDialog;
 import com.duowei.dw_pos.event.CartUpdateEvent;
 import com.duowei.dw_pos.event.OrderUpdateEvent;
@@ -25,6 +26,7 @@ import com.duowei.dw_pos.httputils.Post7;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.Net;
+import com.duowei.dw_pos.tools.Users;
 import com.google.common.eventbus.EventBus;
 
 import java.util.ArrayList;
@@ -37,10 +39,11 @@ import java.util.Iterator;
 public class OrderListAdapter extends BaseAdapter {
     Context context;
     ArrayList<WMLSB>list;
-
-    public OrderListAdapter(Context context, ArrayList<WMLSB> list) {
+    Wmslbjb_jiezhang wmlsbjb;
+    public OrderListAdapter(Context context, ArrayList<WMLSB> list, Wmslbjb_jiezhang wmlsbjb) {
         this.context = context;
         this.list = list;
+        this.wmlsbjb=wmlsbjb;
     }
 
     public void setList(ArrayList<WMLSB> list) {
@@ -124,7 +127,8 @@ public class OrderListAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 //                CartList.newInstance().remove(item);
-                new SalesReturnDialog(context,removeSql(item),item);
+
+                new SalesReturnDialog(context,item,wmlsbjb);
             }
         });
 
@@ -146,57 +150,5 @@ public class OrderListAdapter extends BaseAdapter {
         ImageView iv_remove;
         TextView tv_num;
         ImageView iv_add;
-    }
-    public String removeSql(WMLSB wmlsb) {
-        String by15 = wmlsb.getBY15();
-        String updateSql="";
-        if (!TextUtils.isEmpty(by15)) {
-            // 套餐
-            if (wmlsb.getSL() == 1) {
-                Moneys.yfjr=Moneys.yfjr-wmlsb.getDJ();
-                Iterator<WMLSB> it = list.iterator();
-                while (it.hasNext()) {
-                    WMLSB w = it.next();
-                    if (w.getTCBH().equals(wmlsb.getTCBH()) && !w.getBY15().equals("A")) {
-                        Moneys.yfjr=Moneys.yfjr-w.getDJ();
-                        updateSql=updateSql+"delete from  wmlsb where TCBH='" + wmlsb.getTCBH() + "'|";
-                    }
-                }
-                updateSql=updateSql+"update  wmlsbjb set YS='" + Moneys.yfjr  + "',BY12='2' where wmdbh='" + wmlsb.getWMDBH() + "'|";
-            } else {
-                // -1
-                Moneys.yfjr=Moneys.yfjr-wmlsb.getDJ();
-                float xj = wmlsb.getDJ() * (wmlsb.getSL()-1);
-                updateSql =updateSql+ "update  WMLSB set SL='" +(wmlsb.getSL()-1) + "',XJ='" + xj + "' where tcbh='" + wmlsb.getTCBH() + "' and xh='" + wmlsb.getXH() + "'|";
-                for (int i = 0; i < list.size(); i++) {
-                    WMLSB w = list.get(i);
-                    if (w.getTCBH().equals(wmlsb.getTCBH()) && !w.getBY15().equals("A")) {
-
-                        float xj2 = w.getDJ() * (w.getSL()-1);
-                        Moneys.yfjr=Moneys.yfjr-w.getDJ();
-                        updateSql =updateSql+ "update  WMLSB set SL='" +(w.getSL()-1) + "',XJ='" + xj2 + "' where tcbh='" + w.getTCBH() + "' and xh='" + w.getXH() + "'|";
-                    }
-                }
-                updateSql=updateSql+"update  wmlsbjb set YS='" + Moneys.yfjr + "',BY12='2' where wmdbh='" + wmlsb.getWMDBH() + "'|";
-            }
-        } else {
-            // 单品
-            Moneys.yfjr=Moneys.yfjr-wmlsb.getDJ();
-            if (wmlsb.getSL() == 1) {
-                /**己下单打印提交服务器更新*/
-                if(wmlsb.getSFYXD().equals("1")){
-                    updateSql="update  wmlsbjb set YS=" + Moneys.yfjr + " where wmdbh='" + wmlsb.getWMDBH() + "'|"+
-                            "delete from  wmlsb where XH='" + wmlsb.getXH() + "'|";
-                }
-            } else {
-                /**己下单打印提交服务器更新*/
-                if(wmlsb.getSFYXD().equals("1")){
-                    float xj = (wmlsb.getSL()-1) * wmlsb.getDJ();
-                    updateSql="update  WMLSB set SL='" + (wmlsb.getSL()-1) + "',XJ=" + xj + " where XH='" + wmlsb.getXH() + "'|"+
-                            "update  wmlsbjb set YS="+Moneys.yfjr+" where wmdbh='" + wmlsb.getWMDBH() + "'|";
-                }
-            }
-        }
-        return updateSql;
     }
 }

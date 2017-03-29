@@ -2,6 +2,7 @@ package com.duowei.dw_pos.adapter;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 
 public class CartDetailItemAdapter extends BaseAdapter {
-
+    float totalMoney=0f;
     private Context mContext;
     private List<WMLSB> mList;
 

@@ -30,13 +30,12 @@ public class Post7 {
             @Override
             public void onErrorResponse(VolleyError error) {
                 result="fail";
-                Log.e("=====",error+"");
             }
             @Override
             public void onResponse(String response) {
                if(response.contains("richado")){
                    EventBus.getDefault().post(new OrderUpdateEvent(response));
-                   CartList.newInstance().remove(wmlsb);
+//                   CartList.newInstance().remove(wmlsb);
                }
             }
         });

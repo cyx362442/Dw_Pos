@@ -117,9 +117,10 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
 
     private void saveData(String ip, String port) {
         Net.url="http://"+ip+":"+port+"/server/ServerSvlt?";
+        Users.pad=mPad.getText().toString().trim();
         mEdit.putString("ip",ip);
         mEdit.putString("port",port);
-        mEdit.putString("pad",mPad.getText().toString().trim());
+        mEdit.putString("pad",Users.pad);
         mEdit.putString("url", Net.url);
         mEdit.commit();
     }

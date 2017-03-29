@@ -79,7 +79,7 @@ public class Prints {
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     woyouService.printTextWithFont("原价合计：" + Moneys.xfzr + "\n", "", 30, callback);
                     woyouService.printTextWithFont("折扣：" + Moneys.zkjr + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("应付：" + Moneys.yfjr + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("应付：" + Moneys.ysjr + "\n", "", 30, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     woyouService.setAlignment(1, callback);
                     woyouService.printTextWithFont("此单据不作结账单使用", "", 32, callback);
