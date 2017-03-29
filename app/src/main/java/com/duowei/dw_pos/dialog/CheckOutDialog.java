@@ -20,15 +20,17 @@ import com.duowei.dw_pos.R;
 public class CheckOutDialog implements View.OnClickListener {
     Context context;
     String title;
+    float money;
     private AlertDialog mDialog;
     public EditText mEtInput;
     public Button mConfirm;
     private Button mCancel;
     private final LinearLayout mLayout;
     public TextView mTitle;
-    public CheckOutDialog(Context context, String title) {
+    public CheckOutDialog(Context context, String title,float money) {
         this.context = context;
         this.title = title;
+        this.money=money;
         mDialog = new AlertDialog.Builder(context).create();
         //必须先setView，否则在dialog\popuwindow中无法自动弹出软健盘
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -53,6 +55,8 @@ public class CheckOutDialog implements View.OnClickListener {
         mCancel=(Button)mLayout.findViewById(R.id.btn_cancel);
         mCancel.setOnClickListener(this);
         mTitle.setText(title);
+        mTitle.setFocusableInTouchMode(true);
+        mEtInput.setText(money+"");
     }
 
     @Override

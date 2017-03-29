@@ -27,6 +27,7 @@ import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.sunmiprint.BytesUtil;
 import com.duowei.dw_pos.sunmiprint.ThreadPoolManager;
+import com.duowei.dw_pos.tools.CloseActivity;
 import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.Prints;
 import com.duowei.dw_pos.tools.Users;
@@ -102,7 +103,6 @@ public class CheckOutActivity extends AppCompatActivity {
         public void onServiceDisconnected(ComponentName name) {
             woyouService = null;
         }
-
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             woyouService = IWoyouService.Stub.asInterface(service);
@@ -121,17 +121,13 @@ public class CheckOutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_out);
         ButterKnife.bind(this);
+        CloseActivity.addAcitity(this);
         SharedPreferences user = getSharedPreferences("user", Context.MODE_PRIVATE);
         mPad = user.getString("pad", "");
 
-        mPrinter = Prints.getPrinter();
-        Intent intent = new Intent();
-        intent.setPackage("woyou.aidlservice.jiuiv5");
-        intent.setAction("woyou.aidlservice.jiuiv5.IWoyouService");
-        startService(intent);
-        bindService(intent, connService, Context.BIND_AUTO_CREATE);
-        mPrinter.setWoyouService(woyouService);
         mWmdbh = getIntent().getStringExtra("WMDBH");
+        mPrinter = Prints.getPrinter();
+        mPrinter.bindPrintService(this,connService);
     }
 
     @Override
@@ -189,16 +185,18 @@ public class CheckOutActivity extends AppCompatActivity {
                                     list_wmlsb.add(W);
                                 }
                                 mYingshou=mActualMoney - mYishou;
-                                mTvZonger.setText("￥" + mTotalMoney);
-                                mTvZekou.setText("￥" + (mTotalMoney - mActualMoney));
-                                mTvYishou.setText("￥" + mYishou);
-                                mTvDaishou.setText("￥" + mYingshou);
+                                mTvZonger.setText("￥"+String.format(Locale.CHINA, "%.2f", mTotalMoney));
+                                mTvZekou.setText("￥" + String.format(Locale.CHINA, "%.2f", mTotalMoney - mActualMoney));
+                                mTvYishou.setText("￥" + String.format(Locale.CHINA, "%.2f", mYishou));
+                                mTvDaishou.setText("￥" + String.format(Locale.CHINA, "%.2f", mYingshou));
+
                                 mDaishou=mYingshou;
 
                                 Moneys.xfzr=mTotalMoney;
                                 Moneys.zkjr=mTotalMoney-mActualMoney;
                                 Moneys.ysjr=mYingshou;
                                 Moneys.wfjr = mActualMoney - mYishou;
+                                mPrinter.setPrintMsg(mWmlsbjb,mWmlsbs);
                             }
                         });
                     }
@@ -212,7 +210,6 @@ public class CheckOutActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.btn_dayin:
-                mPrinter.setPrintMsg(mWmlsbjb,mWmlsbs);
                 mPrinter.setWoyouService(woyouService);
                 mPrinter.print_yudayin();
                 break;
@@ -225,12 +222,14 @@ public class CheckOutActivity extends AppCompatActivity {
             case R.id.rl_zhifubao:
                 mIntent = new Intent(this, WebViewPayActivity.class);
                 mIntent.putExtra("WMLSBJB", mWmlsbjb);
+                mIntent.putExtra("listWmlsb",list_wmlsb);
                 mIntent.putExtra("from", "支付宝");
                 startActivity(mIntent);
                 break;
             case R.id.rl_weixin:
                 mIntent = new Intent(this, WebViewPayActivity.class);
                 mIntent.putExtra("WMLSBJB", mWmlsbjb);
+                mIntent.putExtra("listWmlsb",list_wmlsb);
                 mIntent.putExtra("from", "微信");
                 startActivity(mIntent);
                 break;
@@ -275,6 +274,9 @@ public class CheckOutActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(String response) {
                            if(response.contains("richado")){
+                               mPrinter.setWoyouService(woyouService);
+                               mPrinter.print_jiezhang(String.format(Locale.CANADA,"%.2f",mYingshou),
+                                       String.format(Locale.CANADA,"%.2f",mYishou),String.format(Locale.CANADA,"%.2f",mZhaoling));
                                finish();
                            }
                         }
@@ -288,7 +290,7 @@ public class CheckOutActivity extends AppCompatActivity {
     }
 
     private void inputMoney() {
-        final CheckOutDialog dialog = new CheckOutDialog(this, "收现");
+        final CheckOutDialog dialog = new CheckOutDialog(this, "现金支付",mYingshou);
         dialog.mConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

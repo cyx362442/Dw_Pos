@@ -78,6 +78,7 @@ public class OrderListAdapter extends BaseAdapter {
             holder.iv_remove = (ImageView) convertView.findViewById(R.id.iv_remove);
             holder.tv_num = (TextView) convertView.findViewById(R.id.tv_num);
             holder.iv_add = (ImageView) convertView.findViewById(R.id.iv_add);
+            holder.ll_taste= (LinearLayout) convertView.findViewById(R.id.taste_layout);
 
             convertView.setTag(holder);
         } else {
@@ -116,11 +117,13 @@ public class OrderListAdapter extends BaseAdapter {
             holder.tv_name.setTextColor(context.getResources().getColor(R.color.colorAccent));
             holder.tv_price.setTextColor(context.getResources().getColor(R.color.colorAccent));
             holder.iv_add.setVisibility(View.INVISIBLE);
+            holder.ll_taste.setVisibility(View.GONE);
         }else{
             holder.tv_no.setTextColor(Color.parseColor("#4c4c4c"));
             holder.tv_name.setTextColor(Color.parseColor("#4c4c4c"));
             holder.tv_price.setTextColor(Color.parseColor("#4c4c4c"));
             holder.iv_add.setVisibility(View.VISIBLE);
+            holder.ll_taste.setVisibility(View.VISIBLE);
         }
 
         holder.iv_remove.setOnClickListener(new View.OnClickListener() {
@@ -150,5 +153,6 @@ public class OrderListAdapter extends BaseAdapter {
         ImageView iv_remove;
         TextView tv_num;
         ImageView iv_add;
+        LinearLayout ll_taste;
     }
 }

@@ -3,26 +3,20 @@ package com.duowei.dw_pos;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.duowei.dw_pos.adapter.OrderListAdapter;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
-import com.duowei.dw_pos.dialog.SalesReturnDialog;
-import com.duowei.dw_pos.event.CartUpdateEvent;
 import com.duowei.dw_pos.event.OrderUpdateEvent;
-import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.OrderList;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import butterknife.BindView;
