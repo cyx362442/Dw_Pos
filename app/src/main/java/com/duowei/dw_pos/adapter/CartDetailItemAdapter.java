@@ -1,19 +1,25 @@
 package com.duowei.dw_pos.adapter;
 
-import android.content.Context;
+import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.duowei.dw_pos.CartDetailActivity;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.WMLSB;
+import com.duowei.dw_pos.fragment.TasteChoiceDialogFragment;
 import com.duowei.dw_pos.tools.CartList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,11 +28,11 @@ import java.util.List;
 
 public class CartDetailItemAdapter extends BaseAdapter {
 
-    private Context mContext;
+    private CartDetailActivity mActivity;
     private List<WMLSB> mList;
 
-    public CartDetailItemAdapter(Context context, List<WMLSB> list) {
-        mContext = context;
+    public CartDetailItemAdapter(CartDetailActivity activity, List<WMLSB> list) {
+        mActivity = activity;
         mList = list;
     }
 
@@ -54,7 +60,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_cart_detail, parent, false);
+            convertView = LayoutInflater.from(mActivity).inflate(R.layout.list_item_cart_detail, parent, false);
             holder = new ViewHolder();
             holder.tv_no = (TextView) convertView.findViewById(R.id.tv_no);
             holder.tv_name = (TextView) convertView.findViewById(R.id.tv_name);
@@ -63,6 +69,9 @@ public class CartDetailItemAdapter extends BaseAdapter {
             holder.iv_remove = (ImageView) convertView.findViewById(R.id.iv_remove);
             holder.tv_num = (TextView) convertView.findViewById(R.id.tv_num);
             holder.iv_add = (ImageView) convertView.findViewById(R.id.iv_add);
+            holder.taste_layout = (LinearLayout) convertView.findViewById(R.id.taste_layout);
+            holder.btn_taste = (Button) convertView.findViewById(R.id.btn_taste);
+            holder.recycler_view_taste = (RecyclerView) convertView.findViewById(R.id.recycler_view_taste);
 
             convertView.setTag(holder);
         } else {
@@ -84,17 +93,26 @@ public class CartDetailItemAdapter extends BaseAdapter {
 //                holder.ll_right.setVisibility(View.VISIBLE);
                 holder.iv_remove.setVisibility(View.VISIBLE);
                 holder.iv_add.setVisibility(View.VISIBLE);
+                holder.taste_layout.setVisibility(View.GONE);
             } else {
                 // 子项
                 holder.tv_name.setText("  " + item.getXMMC());
 //                holder.ll_right.setVisibility(View.INVISIBLE);
                 holder.iv_remove.setVisibility(View.INVISIBLE);
                 holder.iv_add.setVisibility(View.INVISIBLE);
+                holder.taste_layout.setVisibility(View.VISIBLE);
+                holder.btn_taste.setTag(item);
+                holder.btn_taste.setOnClickListener(mTasteClickListener);
+                setTasteShow(holder.recycler_view_taste, item.getPZ());
             }
         } else {
             // 单品
             holder.tv_name.setText(item.getXMMC());
             holder.ll_right.setVisibility(View.VISIBLE);
+            holder.taste_layout.setVisibility(View.VISIBLE);
+            holder.btn_taste.setTag(item);
+            holder.btn_taste.setOnClickListener(mTasteClickListener);
+            setTasteShow(holder.recycler_view_taste, item.getPZ());
         }
 
         holder.iv_remove.setOnClickListener(new View.OnClickListener() {
@@ -114,6 +132,35 @@ public class CartDetailItemAdapter extends BaseAdapter {
         return convertView;
     }
 
+    private void setTasteShow(RecyclerView recyclerView, String pz) {
+        if (TextUtils.isEmpty(pz))
+            return;
+
+        // pz = (番茄鸡肉)(加冰)(不加冰)(餐前)<备注>
+        String[] array = pz.split("[()<>]");
+        List<String> list = new ArrayList<String>();
+        for (String s: array) {
+            if (s.length() != 0)
+                list.add(s);
+        }
+
+        TasteShowAdapter tasteAdapter = new TasteShowAdapter(list);
+        recyclerView.setAdapter(tasteAdapter);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+    }
+
+    private View.OnClickListener mTasteClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            TasteChoiceDialogFragment fragment = new TasteChoiceDialogFragment();
+            Bundle args = new Bundle();
+            args.putSerializable("wmlsb", (WMLSB) v.getTag());
+            fragment.setArguments(args);
+            fragment.show(mActivity.getSupportFragmentManager(), null);
+        }
+    };
+
     private static class ViewHolder {
         TextView tv_no;
         TextView tv_name;
@@ -123,5 +170,9 @@ public class CartDetailItemAdapter extends BaseAdapter {
         ImageView iv_remove;
         TextView tv_num;
         ImageView iv_add;
+
+        LinearLayout taste_layout;
+        Button btn_taste;
+        RecyclerView recycler_view_taste;
     }
 }
