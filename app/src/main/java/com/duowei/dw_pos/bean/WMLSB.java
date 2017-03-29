@@ -4,11 +4,13 @@ import android.text.TextUtils;
 
 import com.duowei.dw_pos.tools.DateTimeUtils;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2017-03-24.
  */
 
-public class WMLSB {
+public class WMLSB implements Serializable {
 
     /**
      * ZSSJ2 : 2017-03-24 09:59:28.057
