@@ -26,7 +26,7 @@ import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.tools.CloseActivity;
 import com.duowei.dw_pos.tools.Net;
-import com.duowei.dw_pos.tools.Prints;
+import com.duowei.dw_pos.sunmiprint.Prints;
 import com.duowei.dw_pos.tools.Users;
 import com.google.gson.Gson;
 
@@ -234,7 +234,8 @@ public class CheckOutActivity extends AppCompatActivity {
                 startActivity(mIntent);
                 break;
             case R.id.rl_yun:
-                new YunDialog(this);
+                mIntent=new Intent(this,YunLandActivity.class);
+                startActivity(mIntent);
                 break;
             case R.id.ll_cashier:
                 inputMoney();

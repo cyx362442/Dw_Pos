@@ -1,17 +1,13 @@
-package com.duowei.dw_pos.tools;
+package com.duowei.dw_pos.sunmiprint;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.IBinder;
 import android.os.RemoteException;
 
 import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
-import com.duowei.dw_pos.sunmiprint.BytesUtil;
-import com.duowei.dw_pos.sunmiprint.ThreadPoolManager;
 
 import woyou.aidlservice.jiuiv5.ICallback;
 import woyou.aidlservice.jiuiv5.IWoyouService;

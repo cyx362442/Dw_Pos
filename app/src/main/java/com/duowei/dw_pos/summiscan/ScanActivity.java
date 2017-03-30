@@ -1,5 +1,6 @@
-package com.duowei.dw_pos;
+package com.duowei.dw_pos.summiscan;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.AsyncTask;
@@ -12,8 +13,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.TextView;
 
-import com.duowei.dw_pos.tools.SoundUtils;
-import com.duowei.dw_pos.view.FinderView;
+import com.duowei.dw_pos.R;
 import com.sunmi.scan.Config;
 import com.sunmi.scan.Image;
 import com.sunmi.scan.ImageScanner;
@@ -131,13 +131,14 @@ public class ScanActivity extends AppCompatActivity implements SurfaceHolder.Cal
                 playBeepSoundAndVibrate();// 解码成功播放提示音
 
                 decode_count++;
-                sb.append("计数: " + String.valueOf(decode_count) + ", 耗时: "
-                        + String.valueOf(cost_time) + " ms \n");
+//                sb.append("计数: " + String.valueOf(decode_count) + ", 耗时: "
+//                        + String.valueOf(cost_time) + " ms \n");
 
                 SymbolSet syms = scanner.getResults();// 获取解码结果
                 for (Symbol sym : syms) {
-                    sb.append("[ " + sym.getSymbolName() + " ]: "
-                            + sym.getResult() + "\n");
+//                    sb.append("[ " + sym.getSymbolName() + " ]: "
+//                            + sym.getResult() + "\n");
+                    sb.append(sym.getResult());
                 }
             }
             str = sb.toString();
@@ -152,7 +153,11 @@ public class ScanActivity extends AppCompatActivity implements SurfaceHolder.Cal
             stoped = true;
             if (null == str || str.equals("")) {
             } else {
-                textview.setText(str);// 显示解码结果
+//                textview.setText(str);// 显示解码结果
+                Intent intent = new Intent();
+                intent.putExtra("result",str);
+                setResult(1,intent);
+                finish();
             }
         }
 

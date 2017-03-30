@@ -6,15 +6,11 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.duowei.dw_pos.R;
-import com.duowei.dw_pos.ScanActivity;
-
-import butterknife.BindView;
-import butterknife.OnClick;
+import com.duowei.dw_pos.summiscan.ScanActivity;
 
 /**
  * Created by Administrator on 2017-03-30.

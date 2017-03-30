@@ -1,4 +1,4 @@
-package com.duowei.dw_pos.tools;
+package com.duowei.dw_pos.summiscan;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

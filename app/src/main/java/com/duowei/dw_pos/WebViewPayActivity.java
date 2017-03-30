@@ -28,15 +28,13 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.PaySet;
-import com.duowei.dw_pos.bean.WMLSB;
-import com.duowei.dw_pos.bean.WMLSBJB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.tools.CloseActivity;
 import com.duowei.dw_pos.tools.DateTimes;
 import com.duowei.dw_pos.tools.Net;
-import com.duowei.dw_pos.tools.Prints;
+import com.duowei.dw_pos.sunmiprint.Prints;
 import com.duowei.dw_pos.tools.Users;
 
 import org.json.JSONArray;
@@ -44,9 +42,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Random;
 
 import butterknife.BindView;

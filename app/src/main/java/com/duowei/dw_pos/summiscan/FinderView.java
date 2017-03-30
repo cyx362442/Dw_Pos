@@ -1,4 +1,4 @@
-package com.duowei.dw_pos.view;
+package com.duowei.dw_pos.summiscan;
 
 import android.content.Context;
 import android.graphics.Canvas;
