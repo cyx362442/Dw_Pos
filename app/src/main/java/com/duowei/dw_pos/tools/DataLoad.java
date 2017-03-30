@@ -9,6 +9,7 @@ import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.DMKWDYDP;
 import com.duowei.dw_pos.bean.DMPZSD;
+import com.duowei.dw_pos.bean.FXHYKSZ;
 import com.duowei.dw_pos.bean.GKLX;
 import com.duowei.dw_pos.bean.JYCSSZ;
 import com.duowei.dw_pos.bean.JYXMSZ;
@@ -337,7 +338,7 @@ public class DataLoad {
             @Override
             public void onResponse(final String response) {
                 if(response.equals("]")){
-                    Http_PaySet();
+                    Http_WXFWQDZ();
                 }else{
                     new Thread(new Runnable() {
                         @Override
@@ -366,7 +367,7 @@ public class DataLoad {
             @Override
             public void onResponse(final String response) {
                 if(response.equals("]")){
-                    Http_PaySet();
+                    Http_FXHYKSZ();
                 }else{
                     new Thread(new Runnable() {
                         @Override
@@ -379,12 +380,41 @@ public class DataLoad {
                             }
                         }
                     }).start();
-                    Http_PaySet();
+                    Http_FXHYKSZ();
                 }
             }
         });
     }
 
+    private void Http_FXHYKSZ() {
+        mProgressDialog.setMessage("会员价格信息……");
+        String sql="select * from  FXHYKSZ|";
+        DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+            @Override
+            public void onResponse(final String response) {
+                if(response.equals("]")){
+                    Http_PaySet();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DataSupport.deleteAll(FXHYKSZ.class);
+                            Gson gson = new Gson();
+                            FXHYKSZ[] fxhykszs = gson.fromJson(response, FXHYKSZ[].class);
+                            for(FXHYKSZ F:fxhykszs){
+                                F.save();
+                            }
+                        }
+                    }).start();
+                    Http_PaySet();
+                }
+            }
+        });
+    }
+    //微信、支付宝支付信息
     private void Http_PaySet() {
         mProgressDialog.setMessage("扫码支付设置……");
         String sql="SELECT isnull(PID,'')PID,isnull(BY1,'')BY1,isnull(BY2,'')BY2,isnull(BY3,'')BY3,isnull(FWQDZ,'')FWQDZ,isnull(BY6,'')BY6,isnull(BY7,'')BY7 FROM payset|";

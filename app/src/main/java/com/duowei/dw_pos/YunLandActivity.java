@@ -1,6 +1,7 @@
 package com.duowei.dw_pos;
 
 import android.content.Intent;
+import android.net.http.LoggingEventHandler;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -9,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.duowei.dw_pos.bean.FXHYKSZ;
+import com.duowei.dw_pos.bean.ImsCardMember;
 import com.duowei.dw_pos.bean.WXFWQDZ;
 import com.duowei.dw_pos.event.CartUpdateEvent;
 import com.duowei.dw_pos.event.ImsCardMembers;
@@ -17,6 +20,7 @@ import com.duowei.dw_pos.summiscan.ScanActivity;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.Net;
 import com.google.common.eventbus.EventBus;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.litepal.crud.DataSupport;
@@ -69,7 +73,7 @@ public class YunLandActivity extends AppCompatActivity {
             }else{
                 mEtPhone.setText(mPhone=result.substring(0,result.indexOf(",")));
                 mEtPassword.setText(mPassword=result.substring(result.indexOf(",")+1,result.length()).trim());
-                mPost6.post_ims_card_members(mPhone,mPassword,mWeid);//云会员登录
+                mPost6.post_ims_card_members(mPhone,mPassword,mWeid);//发送post请求云会员登录
             }
         }
     }
@@ -87,8 +91,19 @@ public class YunLandActivity extends AppCompatActivity {
     }
 
     @Subscribe
-    public void updateUiData(ImsCardMembers event) {
-
+    public void getImsCardLand(ImsCardMembers event) {
+        if(event.response.equals("]")||event.response.equals("")||event.response.equals("error")){
+            Toast.makeText(this,"登录失败",Toast.LENGTH_SHORT).show();
+        }else{
+            Gson gson = new Gson();
+            ImsCardMember[] cards = gson.fromJson(event.response, ImsCardMember[].class);
+            String cardgrade = cards[0].getCardgrade();
+            List<FXHYKSZ> list = DataSupport.select("ZKFS").where("HYKDJ=?",cardgrade).find(FXHYKSZ.class);
+            String zkfs = list.get(0).getZKFS();
+            String hyj=zkfs.equals("会员价1")?"HYJ":zkfs.equals("会员价2")?"HYJ2":zkfs.equals("会员价3")?"HYJ3":zkfs.equals("会员价4")?"HYJ4":
+                    zkfs.equals("会员价5")?"HYJ5":zkfs.equals("会员价6")?"HYJ6":zkfs.equals("会员价7")?"HYJ7":zkfs.equals("会员价8")?"HYJ8":"HYJ9";
+            Log.e("hyj=====",hyj);
+        }
     }
 
     @OnClick({R.id.btn_cancel, R.id.btn_confirm, R.id.btn_shama})
