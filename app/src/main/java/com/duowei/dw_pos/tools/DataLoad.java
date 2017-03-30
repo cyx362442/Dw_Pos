@@ -16,6 +16,7 @@ import com.duowei.dw_pos.bean.PaySet;
 import com.duowei.dw_pos.bean.SZLB;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.bean.TCSD;
+import com.duowei.dw_pos.bean.WXFWQDZ;
 import com.duowei.dw_pos.bean.YHJBQK;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
@@ -349,11 +350,41 @@ public class DataLoad {
                             }
                         }
                     }).start();
+                    Http_WXFWQDZ();
+                }
+            }
+        });
+    }
+
+    private void Http_WXFWQDZ() {
+        mProgressDialog.setMessage("微信服务器配置……");
+        String sql="select SIP,isnull(WXGZH,'')WXGZH,isnull(YSID,'')YSID,isnull(BMBH,'')BMBH,storeid,weid from WXFWQDZ|";
+        DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+            @Override
+            public void onResponse(final String response) {
+                if(response.equals("]")){
+                    Http_PaySet();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DataSupport.deleteAll(WXFWQDZ.class);
+                            Gson gson = new Gson();
+                            WXFWQDZ[] wxfwqdz = gson.fromJson(response, WXFWQDZ[].class);
+                            for(WXFWQDZ W:wxfwqdz){
+                                W.save();
+                            }
+                        }
+                    }).start();
                     Http_PaySet();
                 }
             }
         });
     }
+
     private void Http_PaySet() {
         mProgressDialog.setMessage("扫码支付设置……");
         String sql="SELECT isnull(PID,'')PID,isnull(BY1,'')BY1,isnull(BY2,'')BY2,isnull(BY3,'')BY3,isnull(FWQDZ,'')FWQDZ,isnull(BY6,'')BY6,isnull(BY7,'')BY7 FROM payset|";
