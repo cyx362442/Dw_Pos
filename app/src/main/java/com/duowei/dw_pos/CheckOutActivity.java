@@ -7,9 +7,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,10 +21,9 @@ import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.dialog.CheckOutDialog;
+import com.duowei.dw_pos.dialog.YunDialog;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
-import com.duowei.dw_pos.sunmiprint.BytesUtil;
-import com.duowei.dw_pos.sunmiprint.ThreadPoolManager;
 import com.duowei.dw_pos.tools.CloseActivity;
 import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.Prints;
@@ -37,14 +34,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import woyou.aidlservice.jiuiv5.ICallback;
 import woyou.aidlservice.jiuiv5.IWoyouService;
 
 public class CheckOutActivity extends AppCompatActivity {
@@ -89,13 +84,15 @@ public class CheckOutActivity extends AppCompatActivity {
     TextView mTvOpener;
     @BindView(R.id.ll_cashier)
     LinearLayout mLlCashier;
-    private ArrayList<WMLSB>list_wmlsb=new ArrayList<>();
+    @BindView(R.id.rl_yun)
+    RelativeLayout mRlYun;
+    private ArrayList<WMLSB> list_wmlsb = new ArrayList<>();
     private float mTotalMoney = 0;//总额(原始价格总额)
     private float mActualMoney = 0;//实际金额
     private float mYishou = 0.00f;
-    private float mYingshou=0.00f;
-    private float mZhaoling=0.00f;
-    private float mDaishou=0.00f;
+    private float mYingshou = 0.00f;
+    private float mZhaoling = 0.00f;
+    private float mDaishou = 0.00f;
 
     private IWoyouService woyouService;
     private ServiceConnection connService = new ServiceConnection() {
@@ -103,6 +100,7 @@ public class CheckOutActivity extends AppCompatActivity {
         public void onServiceDisconnected(ComponentName name) {
             woyouService = null;
         }
+
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             woyouService = IWoyouService.Stub.asInterface(service);
@@ -127,7 +125,7 @@ public class CheckOutActivity extends AppCompatActivity {
 
         mWmdbh = getIntent().getStringExtra("WMDBH");
         mPrinter = Prints.getPrinter();
-        mPrinter.bindPrintService(this,connService);
+        mPrinter.bindPrintService(this, connService);
     }
 
     @Override
@@ -144,66 +142,68 @@ public class CheckOutActivity extends AppCompatActivity {
 
     private void Http_initData() {
         list_wmlsb.clear();
-        mTotalMoney=0.00f;
-        mActualMoney=0.00f;
+        mTotalMoney = 0.00f;
+        mActualMoney = 0.00f;
         String sqlWmlsbjb = "select convert(varchar(10),getdate(),120) as sj,WMDBH,ZH,JCRS,YS,isnull(BY1,'')BY1,ZKFS,convert(varchar(19), JYSJ,120)JYSJ,jcfs,DJLSH,YHBH,JSJ " +
-                        "from WMLSBJB where WMDBH='" + mWmdbh + "'|";
-                DownHTTP.postVolley6(Net.url, sqlWmlsbjb, new VolleyResultListener() {
+                "from WMLSBJB where WMDBH='" + mWmdbh + "'|";
+        DownHTTP.postVolley6(Net.url, sqlWmlsbjb, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+
+            @Override
+            public void onResponse(String response) {
+                Gson gson1 = new Gson();
+                Wmslbjb_jiezhang[] wmslbjb = gson1.fromJson(response, Wmslbjb_jiezhang[].class);
+                mWmlsbjb = wmslbjb[0];
+                mTvTable.setText(mWmlsbjb.getZH());
+                mTvTime.setText(mWmlsbjb.getJYSJ());
+                mTvPersons.setText(mWmlsbjb.getJCRS() + "人");
+                mTvOpener.setText(mWmlsbjb.getYHBH());
+
+                String sqlWmlsb = "SELECT convert(varchar(30),getdate(),121) ZSSJ2, isnull(BY3,0)BY3,* FROM WMLSB WHERE WMDBH = '" + mWmdbh + "'|";
+                DownHTTP.postVolley6(Net.url, sqlWmlsb, new VolleyResultListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+
                     }
+
                     @Override
                     public void onResponse(String response) {
-                        Gson gson1 = new Gson();
-                        Wmslbjb_jiezhang[] wmslbjb = gson1.fromJson(response, Wmslbjb_jiezhang[].class);
-                        mWmlsbjb = wmslbjb[0];
-                        mTvTable.setText(mWmlsbjb.getZH());
-                        mTvTime.setText(mWmlsbjb.getJYSJ());
-                        mTvPersons.setText(mWmlsbjb.getJCRS() + "人");
-                        mTvOpener.setText(mWmlsbjb.getYHBH());
+                        if (response.equals("]")) {
+                            mTvZonger.setText("￥" + 0.00);
+                            mTvZekou.setText("￥" + 0.00);
+                            mTvYishou.setText("￥" + 0.00);
+                            mTvDaishou.setText("￥" + 0.00);
+                            return;
+                        }
+                        Gson gson = new Gson();
+                        mWmlsbs = gson.fromJson(response, WMLSB[].class);
+                        for (WMLSB W : mWmlsbs) {
+                            mTotalMoney = mTotalMoney + W.getYSJG() * W.getSL();
+                            mActualMoney = mActualMoney + W.getDJ() * W.getSL();
+                            list_wmlsb.add(W);
+                        }
+                        mYingshou = mActualMoney - mYishou;
+                        mTvZonger.setText("￥" + String.format(Locale.CHINA, "%.2f", mTotalMoney));
+                        mTvZekou.setText("￥" + String.format(Locale.CHINA, "%.2f", mTotalMoney - mActualMoney));
+                        mTvYishou.setText("￥" + String.format(Locale.CHINA, "%.2f", mYishou));
+                        mTvDaishou.setText("￥" + String.format(Locale.CHINA, "%.2f", mYingshou));
 
-                        String sqlWmlsb = "SELECT convert(varchar(30),getdate(),121) ZSSJ2, isnull(BY3,0)BY3,* FROM WMLSB WHERE WMDBH = '" + mWmdbh + "'|";
-                        DownHTTP.postVolley6(Net.url, sqlWmlsb, new VolleyResultListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
+                        mDaishou = mYingshou;
 
-                            }
-                            @Override
-                            public void onResponse(String response) {
-                                if(response.equals("]")){
-                                    mTvZonger.setText("￥" + 0.00);
-                                    mTvZekou.setText("￥" + 0.00);
-                                    mTvYishou.setText("￥" + 0.00);
-                                    mTvDaishou.setText("￥" + 0.00);
-                                    return;
-                                }
-                                Gson gson = new Gson();
-                                mWmlsbs = gson.fromJson(response, WMLSB[].class);
-                                for (WMLSB W : mWmlsbs) {
-                                    mTotalMoney = mTotalMoney + W.getYSJG() * W.getSL();
-                                    mActualMoney = mActualMoney + W.getDJ() * W.getSL();
-                                    list_wmlsb.add(W);
-                                }
-                                mYingshou=mActualMoney - mYishou;
-                                mTvZonger.setText("￥"+String.format(Locale.CHINA, "%.2f", mTotalMoney));
-                                mTvZekou.setText("￥" + String.format(Locale.CHINA, "%.2f", mTotalMoney - mActualMoney));
-                                mTvYishou.setText("￥" + String.format(Locale.CHINA, "%.2f", mYishou));
-                                mTvDaishou.setText("￥" + String.format(Locale.CHINA, "%.2f", mYingshou));
-
-                                mDaishou=mYingshou;
-
-                                Moneys.xfzr=mTotalMoney;
-                                Moneys.zkjr=mTotalMoney-mActualMoney;
-                                Moneys.ysjr=mYingshou;
-                                Moneys.wfjr = mActualMoney - mYishou;
-                                mPrinter.setPrintMsg(mWmlsbjb,mWmlsbs);
-                            }
-                        });
+                        Moneys.xfzr = mTotalMoney;
+                        Moneys.zkjr = mTotalMoney - mActualMoney;
+                        Moneys.ysjr = mYingshou;
+                        Moneys.wfjr = mActualMoney - mYishou;
+                        mPrinter.setPrintMsg(mWmlsbjb, mWmlsbs);
                     }
                 });
             }
+        });
+    }
 
-    @OnClick({R.id.img_return, R.id.btn_dayin, R.id.btn_dingdan, R.id.rl_zhifubao, R.id.rl_weixin, R.id.rl_jiezhang,R.id.ll_cashier})
+    @OnClick({R.id.img_return, R.id.btn_dayin, R.id.btn_dingdan, R.id.rl_zhifubao, R.id.rl_weixin, R.id.rl_jiezhang, R.id.ll_cashier,R.id.rl_yun})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.img_return:
@@ -214,46 +214,53 @@ public class CheckOutActivity extends AppCompatActivity {
                 mPrinter.print_yudayin();
                 break;
             case R.id.btn_dingdan:
-                mIntent=new Intent(this,OrdetDetailActivity.class);
-                mIntent.putExtra("listWmlsb",list_wmlsb);
-                mIntent.putExtra("wmlsbjb",mWmlsbjb);
+                mIntent = new Intent(this, OrdetDetailActivity.class);
+                mIntent.putExtra("listWmlsb", list_wmlsb);
+                mIntent.putExtra("wmlsbjb", mWmlsbjb);
                 startActivity(mIntent);
                 break;
             case R.id.rl_zhifubao:
                 mIntent = new Intent(this, WebViewPayActivity.class);
                 mIntent.putExtra("WMLSBJB", mWmlsbjb);
-                mIntent.putExtra("listWmlsb",list_wmlsb);
+                mIntent.putExtra("listWmlsb", list_wmlsb);
                 mIntent.putExtra("from", "支付宝");
                 startActivity(mIntent);
                 break;
             case R.id.rl_weixin:
                 mIntent = new Intent(this, WebViewPayActivity.class);
                 mIntent.putExtra("WMLSBJB", mWmlsbjb);
-                mIntent.putExtra("listWmlsb",list_wmlsb);
+                mIntent.putExtra("listWmlsb", list_wmlsb);
                 mIntent.putExtra("from", "微信");
                 startActivity(mIntent);
+                break;
+            case R.id.rl_yun:
+                new YunDialog(this);
                 break;
             case R.id.ll_cashier:
                 inputMoney();
                 break;
             case R.id.rl_jiezhang:
-                if(mDaishou>0){
+                if (mDaishou > 0) {
                     inputMoney();
-                }else{
+                } else {
                     Http_cashier();
                 }
                 break;
         }
     }
-    /**现金结账*/
+
+    /**
+     * 现金结账
+     */
     private void Http_cashier() {
         String sj = mWmlsbjb.getSj().replaceAll("-", "");
         String exec = "exec prc_AADBPRK_android_001 '" + sj + "',1|";
         DownHTTP.postVolley6(Net.url, exec, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                Toast.makeText(CheckOutActivity.this,"网络异常",Toast.LENGTH_SHORT).show();
+                Toast.makeText(CheckOutActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
             }
+
             @Override
             public void onResponse(String s) {
                 try {
@@ -261,24 +268,25 @@ public class CheckOutActivity extends AppCompatActivity {
                     JSONObject jsonObject = jsonArray.getJSONObject(0);
                     int prk = jsonObject.getInt("prk");
                     String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS,DDSJ,JYSJ,BZ,JZFSBM,BMMC,WMBS,ZH,KHBH,QKJE,JCRS,BY7)" +
-                            "VALUES('" + mWmlsbjb.getWMDBH() + "','" + mWmlsbjb.getYHBH() + "','" + Users.YHMC + "','无折扣','" + Moneys.xfzr + "','" + Moneys.zkjr + "',"+mYingshou+",'" + mWmlsbjb.getYS() + "',0,'无'," +
-                            "'" + mWmlsbjb.getJYSJ() + "',GETDATE(),'"+mPad+"','" + mWmlsbjb.getJcfs() + "','','" + prk + "','" + mWmlsbjb.getZH() + "',"+mYishou+","+mZhaoling+",'" + mWmlsbjb.getJCRS() + "','')|";
+                            "VALUES('" + mWmlsbjb.getWMDBH() + "','" + mWmlsbjb.getYHBH() + "','" + Users.YHMC + "','无折扣','" + Moneys.xfzr + "','" + Moneys.zkjr + "'," + mYingshou + ",'" + mWmlsbjb.getYS() + "',0,'无'," +
+                            "'" + mWmlsbjb.getJYSJ() + "',GETDATE(),'" + mPad + "','" + mWmlsbjb.getJcfs() + "','','" + prk + "','" + mWmlsbjb.getZH() + "'," + mYishou + "," + mZhaoling + ",'" + mWmlsbjb.getJCRS() + "','')|";
                     String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
                             "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mWmlsbjb.getWMDBH() + "'|";
-                    String updateWMLSBJB = "update WMLSBJB set JSJ='"+mPad+"',SFYJZ='1',DJLSH='" + prk + "',YSJE='" + Moneys.xfzr + "',JSKSSJ=getdate() where WMDBH='" + mWmlsbjb.getWMDBH() + "'|";
+                    String updateWMLSBJB = "update WMLSBJB set JSJ='" + mPad + "',SFYJZ='1',DJLSH='" + prk + "',YSJE='" + Moneys.xfzr + "',JSKSSJ=getdate() where WMDBH='" + mWmlsbjb.getWMDBH() + "'|";
                     String sql = insertXSJBXX + insertXSMXXX + updateWMLSBJB;
                     DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                         }
+
                         @Override
                         public void onResponse(String response) {
-                           if(response.contains("richado")){
-                               mPrinter.setWoyouService(woyouService);
-                               mPrinter.print_jiezhang(String.format(Locale.CANADA,"%.2f",mYingshou),
-                                       String.format(Locale.CANADA,"%.2f",mYishou),String.format(Locale.CANADA,"%.2f",mZhaoling));
-                               finish();
-                           }
+                            if (response.contains("richado")) {
+                                mPrinter.setWoyouService(woyouService);
+                                mPrinter.print_jiezhang(String.format(Locale.CANADA, "%.2f", mYingshou),
+                                        String.format(Locale.CANADA, "%.2f", mYishou), String.format(Locale.CANADA, "%.2f", mZhaoling));
+                                finish();
+                            }
                         }
                     });
 
@@ -290,17 +298,17 @@ public class CheckOutActivity extends AppCompatActivity {
     }
 
     private void inputMoney() {
-        final CheckOutDialog dialog = new CheckOutDialog(this, "现金支付",mYingshou);
+        final CheckOutDialog dialog = new CheckOutDialog(this, "现金支付", mYingshou);
         dialog.mConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String money = dialog.mEtInput.getText().toString().trim();
-                mYishou=Float.parseFloat(money);
-                mTvYishou.setText("￥"+String.format(Locale.CANADA,"%.2f",mYishou));
-                mZhaoling=(mYishou-mYingshou)>=0?mYishou-mYingshou:mYishou-mYingshou;
-                mTvZhaoling.setText("￥"+String.format(Locale.CANADA,"%.2f",mZhaoling));
-                mDaishou=mZhaoling>=0?0.00f:-mZhaoling;
-                mTvDaishou.setText("￥"+String.format(Locale.CANADA,"%.2f",mDaishou));
+                mYishou = Float.parseFloat(money);
+                mTvYishou.setText("￥" + String.format(Locale.CANADA, "%.2f", mYishou));
+                mZhaoling = (mYishou - mYingshou) >= 0 ? mYishou - mYingshou : mYishou - mYingshou;
+                mTvZhaoling.setText("￥" + String.format(Locale.CANADA, "%.2f", mZhaoling));
+                mDaishou = mZhaoling >= 0 ? 0.00f : -mZhaoling;
+                mTvDaishou.setText("￥" + String.format(Locale.CANADA, "%.2f", mDaishou));
                 dialog.cancel();
             }
         });
@@ -311,4 +319,5 @@ public class CheckOutActivity extends AppCompatActivity {
         super.onDestroy();
         unbindService(connService);
     }
+
 }

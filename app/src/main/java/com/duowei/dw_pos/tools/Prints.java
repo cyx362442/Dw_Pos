@@ -135,7 +135,7 @@ public class Prints {
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_________________________________________________________________________________
                     woyouService.printTextWithFont("应收现金:￥" + ys + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("收现:￥"+sx+"    找零:"+zl+"\n","",30,callback);
+                    woyouService.printTextWithFont("收现:￥"+sx+"  找零:"+zl+"\n","",30,callback);
                     woyouService.setAlignment(1, callback);// 对齐方式
                     woyouService.lineWrap(1, callback);
                     woyouService.printTextWithFont("谢谢光临！", "", 30, callback);
