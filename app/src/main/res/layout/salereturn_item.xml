@@ -45,19 +45,10 @@
         >
         <Button
             android:id="@+id/btn_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_cancel"
-            android:textSize="20dp"
-            android:text="取消"/>
+          style="@style/ButtonCancel"/>
         <Button
             android:id="@+id/btn_confirm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_land"
             android:layout_marginLeft="80dp"
-            android:textSize="20dp"
-            android:textColor="@color/colorWhite"
-            android:text="确定"/>
+       style="@style/ButtonConfirm"/>
     </LinearLayout>
 </LinearLayout>

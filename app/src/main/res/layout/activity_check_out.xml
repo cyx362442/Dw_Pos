@@ -159,7 +159,7 @@
             android:id="@+id/ll_cashier"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.9"
+            android:layout_weight="0.8"
             android:background="@drawable/shape_check"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"
@@ -287,6 +287,35 @@
                     android:layout_alignParentRight="true"/>
             </RelativeLayout>
             <RelativeLayout
+                android:id="@+id/rl_yun"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:background="@drawable/shape_check"
+                android:layout_marginTop="5dp"
+                >
+                <ImageView
+                    android:id="@+id/imgyun"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:src="@drawable/ic_cloud_circle_light_blue_300_48dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="云会员支付"
+                    android:textSize="@dimen/textSize20"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/imgyun"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_keyboard_arrow_right_black_36dp"
+                    android:layout_alignParentRight="true"/>
+            </RelativeLayout>
+            <RelativeLayout
                 android:id="@+id/rl_jiezhang"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -301,6 +330,7 @@
                     android:textSize="@dimen/textSize20"
                     android:background="@drawable/shape_land"/>
             </RelativeLayout>
+
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

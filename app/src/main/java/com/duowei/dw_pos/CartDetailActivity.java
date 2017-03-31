@@ -69,13 +69,13 @@ public class CartDetailActivity extends AppCompatActivity {
     }
 
     private void loadData() {
-        mAdapter = new CartDetailItemAdapter(this, CartList.newInstance(this).getList());
+        mAdapter = new CartDetailItemAdapter(this, CartList.newInstance().getList());
         mListView.setAdapter(mAdapter);
     }
 
     @Subscribe
     public void updateUiData(CartUpdateEvent event) {
-        mAdapter.setList(CartList.newInstance(this).getList());
+        mAdapter.setList(CartList.newInstance().getList());
 
         if (mAdapter.getCount() > 0) {
             mSubmitBtuuon.setEnabled(true);

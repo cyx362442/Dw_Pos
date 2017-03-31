@@ -8,4 +8,6 @@
     <color name="colorGreen">#1FB5AC</color>
     <color name="colorBlack">#434459</color>
     <color name="colorOrange">#E98B56</color>
+    <color name="finder_mask">#60000000</color>
+    <color name="rea">#ffff0000</color>
 </resources>

@@ -1,17 +1,13 @@
-package com.duowei.dw_pos.tools;
+package com.duowei.dw_pos.sunmiprint;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.IBinder;
 import android.os.RemoteException;
 
 import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
-import com.duowei.dw_pos.sunmiprint.BytesUtil;
-import com.duowei.dw_pos.sunmiprint.ThreadPoolManager;
 
 import woyou.aidlservice.jiuiv5.ICallback;
 import woyou.aidlservice.jiuiv5.IWoyouService;
@@ -135,7 +131,7 @@ public class Prints {
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_________________________________________________________________________________
                     woyouService.printTextWithFont("应收现金:￥" + ys + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("收现:￥"+sx+"    找零:"+zl+"\n","",30,callback);
+                    woyouService.printTextWithFont("收现:￥"+sx+"  找零:"+zl+"\n","",30,callback);
                     woyouService.setAlignment(1, callback);// 对齐方式
                     woyouService.lineWrap(1, callback);
                     woyouService.printTextWithFont("谢谢光临！", "", 30, callback);

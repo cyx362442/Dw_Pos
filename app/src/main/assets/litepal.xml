@@ -45,4 +45,10 @@
     <list>
         <mapping class="com.duowei.dw_pos.bean.MZSZMXXX"></mapping>
     </list>
+    <list>
+        <mapping class="com.duowei.dw_pos.bean.WXFWQDZ"></mapping>
+    </list>
+    <list>
+        <mapping class="com.duowei.dw_pos.bean.FXHYKSZ"></mapping>
+    </list>
 </litepal>
