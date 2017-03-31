@@ -3,13 +3,15 @@ package com.duowei.dw_pos;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 
 import com.duowei.dw_pos.adapter.CartDetailItemAdapter;
+import com.duowei.dw_pos.event.CartMsgDialogEvent;
 import com.duowei.dw_pos.event.CartUpdateEvent;
+import com.duowei.dw_pos.fragment.MessageDialogFragment;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.SqlNetHandler;
 
@@ -67,18 +69,24 @@ public class CartDetailActivity extends AppCompatActivity {
     }
 
     private void loadData() {
-        mAdapter = new CartDetailItemAdapter(this, CartList.newInstance().getList());
+        mAdapter = new CartDetailItemAdapter(this, CartList.newInstance(this).getList());
         mListView.setAdapter(mAdapter);
     }
 
     @Subscribe
     public void updateUiData(CartUpdateEvent event) {
-        mAdapter.setList(CartList.newInstance().getList());
+        mAdapter.setList(CartList.newInstance(this).getList());
 
         if (mAdapter.getCount() > 0) {
             mSubmitBtuuon.setEnabled(true);
         } else {
             mSubmitBtuuon.setEnabled(false);
         }
+    }
+
+    @Subscribe
+    public void showDialog(CartMsgDialogEvent event) {
+        AppCompatDialogFragment fragment = MessageDialogFragment.newInstance(event.title, event.message);
+        fragment.show(getSupportFragmentManager(), null);
     }
 }

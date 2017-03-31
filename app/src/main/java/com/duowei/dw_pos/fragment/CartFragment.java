@@ -94,7 +94,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
     @Subscribe
     public void updateUiDate(CartUpdateEvent event) {
-        CartList cartList = CartList.newInstance();
+        CartList cartList = CartList.newInstance(getContext());
 
         if (cartList.getSize() > 0) {
             mRootView.setVisibility(View.VISIBLE);

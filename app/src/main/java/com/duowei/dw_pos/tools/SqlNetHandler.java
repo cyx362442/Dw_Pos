@@ -3,7 +3,6 @@ package com.duowei.dw_pos.tools;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -26,7 +25,7 @@ public class SqlNetHandler {
      * 提交订单
      */
     public void handleCommit(final Context context) {
-        CartList cartList = CartList.newInstance();
+        CartList cartList = CartList.newInstance(context);
         String localSql = "";
 
         SharedPreferences sharedPref = context.getSharedPreferences("user", Context.MODE_PRIVATE);

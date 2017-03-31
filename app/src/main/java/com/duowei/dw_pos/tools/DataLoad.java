@@ -2,16 +2,18 @@ package com.duowei.dw_pos.tools;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.duowei.dw_pos.bean.CXDMXXX;
 import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.DMKWDYDP;
 import com.duowei.dw_pos.bean.DMPZSD;
 import com.duowei.dw_pos.bean.GKLX;
 import com.duowei.dw_pos.bean.JYCSSZ;
 import com.duowei.dw_pos.bean.JYXMSZ;
+import com.duowei.dw_pos.bean.MZSZJBXX;
+import com.duowei.dw_pos.bean.MZSZMXXX;
 import com.duowei.dw_pos.bean.PaySet;
 import com.duowei.dw_pos.bean.SZLB;
 import com.duowei.dw_pos.bean.TCMC;
@@ -374,6 +376,93 @@ public class DataLoad {
                             PaySet[] payset = gson.fromJson(response, PaySet[].class);
                             for(PaySet P:payset){
                                 P.save();
+                            }
+                        }
+                    }).start();
+                    Http_CXDMXXX();
+                }
+            }
+        });
+    }
+
+    private void Http_CXDMXXX() {
+        mProgressDialog.setMessage("促销单明细信息……");
+        String sql="select * from cxdmxxx|";
+        DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+            @Override
+            public void onResponse(final String response) {
+                if(response.equals("]")){
+                    mProgressDialog.dismiss();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DataSupport.deleteAll(CXDMXXX.class);
+                            Gson gson = new Gson();
+                            CXDMXXX[] cxdmxxxes = gson.fromJson(response, CXDMXXX[].class);
+                            for(CXDMXXX c: cxdmxxxes){
+                                c.save();
+                            }
+                        }
+                    }).start();
+                    Http_MZSZJBXX();
+                }
+            }
+        });
+    }
+
+    private void Http_MZSZJBXX() {
+        mProgressDialog.setMessage("买赠/加价促销设置基本信息……");
+        String sql="select * from mzszjbxx|";
+        DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+            @Override
+            public void onResponse(final String response) {
+                if(response.equals("]")){
+                    mProgressDialog.dismiss();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DataSupport.deleteAll(MZSZJBXX.class);
+                            Gson gson = new Gson();
+                            MZSZJBXX[] mzszjbxxes = gson.fromJson(response, MZSZJBXX[].class);
+                            for(MZSZJBXX m : mzszjbxxes){
+                                m.save();
+                            }
+                        }
+                    }).start();
+                    Http_MZSZMXXX();
+                }
+            }
+        });
+    }
+
+    private void Http_MZSZMXXX() {
+        mProgressDialog.setMessage("买赠/加价促销设置明细信息……");
+        String sql="select * from mzszmxxx|";
+        DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+            @Override
+            public void onResponse(final String response) {
+                if(response.equals("]")){
+                    mProgressDialog.dismiss();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DataSupport.deleteAll(MZSZMXXX.class);
+                            Gson gson = new Gson();
+                            MZSZMXXX[] mzszjbxxes = gson.fromJson(response, MZSZMXXX[].class);
+                            for(MZSZMXXX m : mzszjbxxes){
+                                m.save();
                             }
                         }
                     }).start();

@@ -126,7 +126,7 @@ public class ComboActivity extends AppCompatActivity {
                         }
                     }
 
-                    CartList.newInstance().add(addTcsdItemArrayList);
+                    CartList.newInstance(ComboActivity.this).add(addTcsdItemArrayList);
 
                     finish();
                 } else {

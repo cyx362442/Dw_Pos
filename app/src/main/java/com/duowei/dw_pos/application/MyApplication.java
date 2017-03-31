@@ -2,6 +2,8 @@ package com.duowei.dw_pos.application;
 
 import com.duowei.dw_pos.httputils.MyVolley;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import org.litepal.LitePalApplication;
 
 /**
@@ -13,5 +15,6 @@ public class MyApplication extends LitePalApplication {
     public void onCreate() {
         super.onCreate();
         MyVolley.init(this);
+        JodaTimeAndroid.init(this);
     }
 }

@@ -3,7 +3,6 @@ package com.duowei.dw_pos;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,7 +12,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.duowei.dw_pos.bean.GKLX;
-import com.duowei.dw_pos.bean.JYCSSZ;
 import com.duowei.dw_pos.bean.OpenInfo;
 import com.duowei.dw_pos.tools.CartList;
 
@@ -80,7 +78,7 @@ public class OpenTableActivity extends AppCompatActivity {
                 break;
             case R.id.btn_confirm:
                 String stytle = mSpinnerOpen.getSelectedItem().toString();//顾客类型
-                CartList.newInstance().setOpenInfo(new OpenInfo(
+                CartList.newInstance(this).setOpenInfo(new OpenInfo(
                         csmc,
                         stytle,
                         mEditText2.getText().toString(),
