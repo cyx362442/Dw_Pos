@@ -235,6 +235,7 @@ public class CheckOutActivity extends AppCompatActivity {
                 break;
             case R.id.rl_yun:
                 mIntent=new Intent(this,YunLandActivity.class);
+                mIntent.putExtra("listWmlsb", list_wmlsb);
                 startActivity(mIntent);
                 break;
             case R.id.ll_cashier:
