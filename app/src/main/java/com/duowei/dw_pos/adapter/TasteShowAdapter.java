@@ -12,7 +12,7 @@ import com.duowei.dw_pos.R;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017-03-04.
+ * 口味显示Adapter
  */
 
 public class TasteShowAdapter extends RecyclerView.Adapter<TasteShowAdapter.ViewHolder>  {

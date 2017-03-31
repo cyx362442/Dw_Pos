@@ -55,7 +55,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         mAllList = new ArrayList();
         mList = new ArrayList();
 
-        mCartList = CartList.newInstance();
+        mCartList = CartList.newInstance(mContext);
     }
 
     @Override

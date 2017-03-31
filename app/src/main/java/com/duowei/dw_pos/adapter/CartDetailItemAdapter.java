@@ -1,9 +1,15 @@
 package com.duowei.dw_pos.adapter;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,26 +35,34 @@ import java.util.List;
 public class CartDetailItemAdapter extends BaseAdapter {
 
     private CartDetailActivity mActivity;
-    private List<WMLSB> mList;
+    private List<WMLSB> mAllList = new ArrayList<>();
 
     public CartDetailItemAdapter(CartDetailActivity activity, List<WMLSB> list) {
         mActivity = activity;
-        mList = list;
+        setList(list);
     }
 
     public void setList(List<WMLSB> list) {
-        mList = list;
+        mAllList.clear();
+
+        for (int i = 0; i < list.size(); i++) {
+            mAllList.add(list.get(i));
+            for (int j = 0; j < list.get(i).getSubWMLSBList().size(); j++) {
+                mAllList.add(list.get(i).getSubWMLSBList().get(j));
+            }
+        }
+
         notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        return mList.size();
+        return mAllList.size();
     }
 
     @Override
     public WMLSB getItem(int position) {
-        return mList.get(position);
+        return mAllList.get(position);
     }
 
     @Override
@@ -108,6 +122,16 @@ public class CartDetailItemAdapter extends BaseAdapter {
         } else {
             // 单品
             holder.tv_name.setText(item.getXMMC());
+
+            // 附加信息显示
+            String localMsg = item.getSubTitle();
+            if (!TextUtils.isEmpty(localMsg)) {
+                Spannable spannable = new SpannableString(localMsg);
+                spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, localMsg.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannable.setSpan(new RelativeSizeSpan(0.75f), 0, localMsg.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                holder.tv_name.append(spannable);
+            }
+
             holder.ll_right.setVisibility(View.VISIBLE);
             holder.taste_layout.setVisibility(View.VISIBLE);
             holder.btn_taste.setTag(item);
@@ -118,14 +142,14 @@ public class CartDetailItemAdapter extends BaseAdapter {
         holder.iv_remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CartList.newInstance().remove(item);
+                CartList.newInstance(v.getContext()).remove(item);
             }
         });
 
         holder.iv_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CartList.newInstance().add(item);
+                CartList.newInstance(v.getContext()).add(item);
             }
         });
 
@@ -139,7 +163,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
         // pz = (番茄鸡肉)(加冰)(不加冰)(餐前)<备注>
         String[] array = pz.split("[()<>]");
         List<String> list = new ArrayList<String>();
-        for (String s: array) {
+        for (String s : array) {
             if (s.length() != 0)
                 list.add(s);
         }

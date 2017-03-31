@@ -3,8 +3,11 @@ package com.duowei.dw_pos.bean;
 import android.text.TextUtils;
 
 import com.duowei.dw_pos.tools.DateTimeUtils;
+import com.duowei.dw_pos.tools.Users;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2017-03-24.
@@ -64,6 +67,10 @@ public class WMLSB implements Serializable {
     private String BY15;
     private String TCXMBH;
     private float DWSL;
+
+    /** 买赠 加价 使用字段 */
+    private List<WMLSB> mSubWMLSBList = new ArrayList<>();
+    private String subTitle;
 
     public String getZSSJ2() {
         return ZSSJ2;
@@ -281,7 +288,18 @@ public class WMLSB implements Serializable {
         this.DWSL = DWSL;
     }
 
+    public List<WMLSB> getSubWMLSBList() {
 
+        return mSubWMLSBList;
+    }
+
+    public String getSubTitle() {
+        return subTitle;
+    }
+
+    public void setSubTitle(String subTitle) {
+        this.subTitle = subTitle;
+    }
 
     public WMLSB() {
     }
@@ -337,12 +355,22 @@ public class WMLSB implements Serializable {
     }
 
 
-
     /**
      *
      */
     public String toInsertString() {
-        return "INSERT INTO WMLSB (WMDBH,           XMBH,           XMMC,           TM,           DW,          SL,         DJ,         XJ,          PZ,                TCBH,           SFYXD,      XSZT, FTJE,   YSJG,     SFZS,      SYYXM,      SQRXM, ZSSJ,    DWSL,          sfxs,      by1,       by2,    by3, by4,   by5,      SJC,  BY6,  BY7,  BY8,  BY9,  BY10, BY11,               TCXMBH,  BY12, BY13, PBJSJM, PBXH, BY14, BY15, BY16, BY17, BY18, BY19, BY20, BY21, BY22, BY23, BY24, BY25) " +
-                "     VALUES ('" + WMDBH + "', '" + XMBH + "', '" + XMMC + "', '" + TM + "', '" + DW + "', " + SL + ", " + DJ + ", " + getDJ()*getSL() + ", '" + getPZ() + "', '" +  getTCBH() + "', '" + SFYXD + "', '', null, " + YSJG + ", null, '" + SYYXM + "', null, null, " + DWSL + ", '" + sfxs + "', null, '" + by2 + "', 0, null, GETDATE(), null, null, null, null, null, null, null, '" + getTCXMBH() + "', '', '', null, null, null, '" + getBY15() + "', null, null, null, null, null, null, null, null, null, null)|";
+        String mainSql = "INSERT INTO WMLSB (WMDBH,           XMBH,           XMMC,           TM,           DW,          SL,         DJ,         XJ,          PZ,                TCBH,           SFYXD,      XSZT, FTJE,   YSJG,     SFZS,      SYYXM,      SQRXM, ZSSJ,    DWSL,          sfxs,      by1,       by2,    by3, by4,   by5,      SJC,  BY6,  BY7,  BY8,  BY9,  BY10, BY11,               TCXMBH,  BY12, BY13, PBJSJM, PBXH, BY14, BY15, BY16, BY17, BY18, BY19, BY20, BY21, BY22, BY23, BY24, BY25) " +
+                "     VALUES ('" + WMDBH + "', '" + XMBH + "', '" + XMMC + "', '" + TM + "', '" + DW + "', " + SL + ", " + DJ + ", " + getDJ() * getSL() + ", '" + getPZ() + "', '" + getTCBH() + "', '" + SFYXD + "', '', null, " + YSJG + ", null, '" + SYYXM + "', null, null, " + DWSL + ", '" + sfxs + "', null, '" + by2 + "', 0, null, GETDATE(), null, null, null, null, null, null, null, '" + getTCXMBH() + "', '', '', null, null, null, '" + getBY15() + "', null, null, null, null, null, null, null, null, null, null)|";
+
+        String subTotalSql = "";
+        for (int i = 0; i < mSubWMLSBList.size(); i++) {
+            WMLSB subWmlsb = mSubWMLSBList.get(i);
+            subWmlsb.setWMDBH(getWMDBH());
+            subWmlsb.setSYYXM(Users.YHMC);
+
+            subTotalSql += subWmlsb.toInsertString();
+        }
+
+        return mainSql + subTotalSql;
     }
 }

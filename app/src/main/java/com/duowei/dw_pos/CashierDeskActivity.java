@@ -21,11 +21,15 @@ import com.duowei.dw_pos.adapter.RightAdapter;
 import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
+import com.duowei.dw_pos.event.AddPriceEvent;
+import com.duowei.dw_pos.fragment.AddPriceDialogFragment;
 import com.duowei.dw_pos.fragment.CartFragment;
 import com.duowei.dw_pos.tools.AnimUtils;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.view.ToggleButton;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
@@ -83,7 +87,25 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         initData();
         clearEditText();
         // 清空购物车
-        CartList.newInstance().clear();
+        CartList.newInstance(this).clear();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        SQLiteStudioService.instance().stop();
+        super.onDestroy();
     }
 
     private void loadAllData() {
@@ -94,12 +116,6 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
                 mRightTcmcAllList = getTcmcAllList();
             }
         }.start();
-    }
-
-    @Override
-    protected void onDestroy() {
-        SQLiteStudioService.instance().stop();
-        super.onDestroy();
     }
 
     private void initViews() {
@@ -299,10 +315,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
     }
 
     /**
-     * @param
-     * @return void
-     * @throws
-     * @Description: 创建动画层
+     * 创建动画层
      */
     private FrameLayout createAnimLayout() {
         ViewGroup rootView = (ViewGroup) this.getWindow().getDecorView();
@@ -312,5 +325,13 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         animLayout.setBackgroundResource(android.R.color.transparent);
         rootView.addView(animLayout);
         return animLayout;
+    }
+
+    @Subscribe
+    public void addPrice(AddPriceEvent event) {
+        if (event.who == 1) {
+            AddPriceDialogFragment fragment = new AddPriceDialogFragment();
+            fragment.show(getSupportFragmentManager(), null);
+        }
     }
 }
