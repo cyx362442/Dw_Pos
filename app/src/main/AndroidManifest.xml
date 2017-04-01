@@ -53,6 +53,8 @@
         </activity>
         <activity android:name=".YunLandActivity">
         </activity>
+        <activity android:name=".YunPayActivity">
+        </activity>
     </application>
 
 </manifest>

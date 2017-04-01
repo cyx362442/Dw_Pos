@@ -1,10 +1,9 @@
 package com.duowei.dw_pos;
 
 import android.content.Intent;
-import android.net.http.LoggingEventHandler;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,19 +11,19 @@ import android.widget.Toast;
 
 import com.duowei.dw_pos.bean.FXHYKSZ;
 import com.duowei.dw_pos.bean.ImsCardMember;
+import com.duowei.dw_pos.bean.Moneys;
+import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WXFWQDZ;
-import com.duowei.dw_pos.event.CartUpdateEvent;
 import com.duowei.dw_pos.event.ImsCardMembers;
 import com.duowei.dw_pos.httputils.Post6;
 import com.duowei.dw_pos.summiscan.ScanActivity;
-import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.Net;
-import com.google.common.eventbus.EventBus;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.litepal.crud.DataSupport;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -50,6 +49,7 @@ public class YunLandActivity extends AppCompatActivity {
     private String mWeid;
     private Post6 mPost6;
     private String mSip;
+    private ArrayList<WMLSB> mListWmlsb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +57,11 @@ public class YunLandActivity extends AppCompatActivity {
         setContentView(R.layout.activity_yun_land);
         ButterKnife.bind(this);
         mPost6 = Post6.getInstance();
+        mListWmlsb = (ArrayList<WMLSB>) getIntent().getSerializableExtra("listWmlsb");
+        getYunData();
+    }
+
+    private void getYunData() {
         List<WXFWQDZ> list = DataSupport.select("weid","SIP").find(WXFWQDZ.class);
         mWeid = list.get(0).getWeid();
         mSip = list.get(0).getSIP();
@@ -66,7 +71,7 @@ public class YunLandActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==REQUESTCODE){
+        if(requestCode==REQUESTCODE&&data!=null){
             String result = data.getStringExtra("result").trim();
             if(result.length()<=0||!result.contains(",")){
                 Toast.makeText(YunLandActivity.this,"扫描失败，请重试",Toast.LENGTH_SHORT).show();
@@ -89,7 +94,7 @@ public class YunLandActivity extends AppCompatActivity {
         super.onStop();
        org.greenrobot.eventbus.EventBus.getDefault().unregister(this);
     }
-
+    /**Post请求返回的云会员等级信息*/
     @Subscribe
     public void getImsCardLand(ImsCardMembers event) {
         if(event.response.equals("]")||event.response.equals("")||event.response.equals("error")){
@@ -100,10 +105,36 @@ public class YunLandActivity extends AppCompatActivity {
             String cardgrade = cards[0].getCardgrade();
             List<FXHYKSZ> list = DataSupport.select("ZKFS").where("HYKDJ=?",cardgrade).find(FXHYKSZ.class);
             String zkfs = list.get(0).getZKFS();
-            String hyj=zkfs.equals("会员价1")?"HYJ":zkfs.equals("会员价2")?"HYJ2":zkfs.equals("会员价3")?"HYJ3":zkfs.equals("会员价4")?"HYJ4":
-                    zkfs.equals("会员价5")?"HYJ5":zkfs.equals("会员价6")?"HYJ6":zkfs.equals("会员价7")?"HYJ7":zkfs.equals("会员价8")?"HYJ8":"HYJ9";
-            Log.e("hyj=====",hyj);
+            String hyj=zkfs.equals("会员价1")?"hyj":zkfs.equals("会员价2")?"hyj2":zkfs.equals("会员价3")?"hyj3":zkfs.equals("会员价4")?"hyj4":
+                    zkfs.equals("会员价5")?"hyj5":zkfs.equals("会员价6")?"hyj6":zkfs.equals("会员价7")?"hyj7":zkfs.equals("会员价8")?"hyj8":"hyj9";
+            /**重新计算打折后的会员价*/
+            float totalMoney=0f;
+            for(WMLSB wmlsb:mListWmlsb){
+                //遍历每一项的会员价
+//                JYXMSZ jyxmsz = DataSupport.select(hyj, "XSJG").where("XMBH=?", wmlsb.getXMBH()).findFirst(JYXMSZ.class);
+                float hyPrice = getHyPrice(hyj, wmlsb.getXMBH());
+                wmlsb.setDJ(hyPrice>0&&wmlsb.getDJ()>hyPrice?hyPrice:wmlsb.getDJ());//未打折，按新的会员价重新计算单价.己打过折扣，还是按原来打折后的单价算;
+                wmlsb.setXJ(wmlsb.getDJ()*wmlsb.getSL());//重算小计金额
+                totalMoney=totalMoney+wmlsb.getXJ();//重算总金额
+            }
+            /**改变应收金额、折扣金额*/
+            Moneys.ysjr=totalMoney;
+            Moneys.zkjr=Moneys.xfzr-Moneys.ysjr;
+            Intent intent = new Intent(this, YunPayActivity.class);
+            startActivity(intent);
         }
+    }
+
+    private float getHyPrice(String hyj, String xmbh) {
+        float hyPrice=0f;
+        Cursor cursor = DataSupport.findBySQL("select * from jyxmsz where xmbh=?",xmbh);
+        for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()) {
+            float price = cursor.getFloat(cursor.getColumnIndex(hyj));
+            float xsjg = cursor.getFloat(cursor.getColumnIndex("xsjg"));
+            hyPrice=price>0?price:xsjg;
+        }
+        cursor.close();
+        return hyPrice;
     }
 
     @OnClick({R.id.btn_cancel, R.id.btn_confirm, R.id.btn_shama})
@@ -113,6 +144,9 @@ public class YunLandActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.btn_confirm:
+                mPhone=mEtPhone.getText().toString().trim();
+                mPassword=mEtPassword.getText().toString().trim();
+                mPost6.post_ims_card_members(mPhone,mPassword,mWeid);//发送post请求云会员登录
                 break;
             case R.id.btn_shama:
                 Intent intent = new Intent(this, ScanActivity.class);
