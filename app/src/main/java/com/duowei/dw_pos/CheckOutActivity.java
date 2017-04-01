@@ -43,11 +43,6 @@ import butterknife.OnClick;
 import woyou.aidlservice.jiuiv5.IWoyouService;
 
 public class CheckOutActivity extends AppCompatActivity {
-
-    @BindView(R.id.img_return)
-    ImageView mImgReturn;
-    @BindView(R.id.rlTop)
-    RelativeLayout mRlTop;
     @BindView(R.id.tv_user)
     TextView mTvUser;
     @BindView(R.id.btn_dayin)
@@ -203,12 +198,9 @@ public class CheckOutActivity extends AppCompatActivity {
         });
     }
 
-    @OnClick({R.id.img_return, R.id.btn_dayin, R.id.btn_dingdan, R.id.rl_zhifubao, R.id.rl_weixin, R.id.rl_jiezhang, R.id.ll_cashier,R.id.rl_yun})
+    @OnClick({R.id.btn_dayin, R.id.btn_dingdan, R.id.rl_zhifubao, R.id.rl_weixin, R.id.rl_jiezhang, R.id.ll_cashier,R.id.rl_yun})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.img_return:
-                finish();
-                break;
             case R.id.btn_dayin:
                 mPrinter.setWoyouService(woyouService);
                 mPrinter.print_yudayin();

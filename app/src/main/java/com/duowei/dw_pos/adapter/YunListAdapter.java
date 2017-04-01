@@ -22,7 +22,7 @@ public class YunListAdapter extends BaseAdapter{
     Context context;
     List<YunFu> listyf;
 
-    public YunListAdapter(Context context, ArrayList<YunFu> listyf) {
+    public YunListAdapter(Context context, List<YunFu> listyf) {
         this.context = context;
         this.listyf = listyf;
     }

@@ -12,7 +12,9 @@ import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.adapter.YunListAdapter;
 import com.duowei.dw_pos.bean.YunFu;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,8 +29,11 @@ public class YunPayFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View inflate = inflater.inflate(R.layout.fragment_yun_pay, container, false);
+        Bundle bundle = getArguments();
+        List<YunFu> list = (List<YunFu>) bundle.getSerializable("list");
+
         ListView lv = (ListView) inflate.findViewById(R.id.listView);
-        YunListAdapter adapter = new YunListAdapter(getActivity(), listYun);
+        YunListAdapter adapter = new YunListAdapter(getActivity(), list);
         lv.setAdapter(adapter);
         return inflate;
     }

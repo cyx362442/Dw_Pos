@@ -32,8 +32,8 @@ public class YunDialog implements View.OnClickListener {
         mDialog.setView(mLayout);
         mDialog.show();
         WindowManager.LayoutParams params = mDialog.getWindow().getAttributes();
-        params.width = 550;
-        params.height = 500;
+//        params.width = 550;
+//        params.height = 500;
         mDialog.getWindow().setAttributes(params);
         initUi();
     }

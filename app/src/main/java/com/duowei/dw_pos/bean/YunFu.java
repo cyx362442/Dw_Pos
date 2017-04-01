@@ -1,10 +1,12 @@
 package com.duowei.dw_pos.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2017-02-10.
  */
 
-public class YunFu {
+public class YunFu implements Serializable{
     public String cardgrade;
     public String title;
     public float credit1;

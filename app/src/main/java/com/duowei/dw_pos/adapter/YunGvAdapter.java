@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.duowei.dw_pos.R;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 public class YunGvAdapter extends BaseAdapter {
     Context context;
     ArrayList<ImsCardMember>mList;
-
+    public boolean isCreate2=false;//储值卡是否选中
     public YunGvAdapter(Context context, ArrayList<ImsCardMember> list) {
         this.context = context;
         this.mList = list;
@@ -46,12 +47,19 @@ public class YunGvAdapter extends BaseAdapter {
         if(contentView==null){
             hold=new ViewHold();
             contentView= LayoutInflater.from(context).inflate(R.layout.gridview_yun,null);
+            hold.ll= (LinearLayout) contentView.findViewById(R.id.linearLayout);
             hold.content= (TextView) contentView.findViewById(R.id.tv_content);
             hold.money= (TextView) contentView.findViewById(R.id.tv_money);
             contentView.setTag(hold);
         }else{
             hold= (ViewHold) contentView.getTag();
         }
+        if(mList.get(positon).getTicket()==0&&isCreate2==true){
+            hold.ll.setBackgroundResource(R.drawable.item_click);
+        }else if(mList.get(positon).getTicket()==0&&isCreate2==false){
+            hold.ll.setBackgroundResource(R.drawable.item_normal);
+        }
+
         if(mList.get(positon).getTicket()==0){
             hold.content.setText("储值消费");
             hold.money.setText("￥"+mList.get(positon).getCredit2());
@@ -69,5 +77,9 @@ public class YunGvAdapter extends BaseAdapter {
     class ViewHold{
         public TextView content;
         public TextView money;
+        public LinearLayout ll;
+    }
+    public void setisCreate2(boolean isCreate2){
+        this.isCreate2=isCreate2;
     }
 }

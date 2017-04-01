@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -27,6 +26,17 @@ public class CheckOutDialog implements View.OnClickListener {
     private Button mCancel;
     private final LinearLayout mLayout;
     public TextView mTitle;
+
+    public OnconfirmClick listener;
+
+    public interface OnconfirmClick{
+        void getDialogInput(String money);
+    }
+
+    public void setOnconfirmClick(OnconfirmClick listener){
+        this.listener=listener;
+    }
+
     public CheckOutDialog(Context context, String title,float money) {
         this.context = context;
         this.title = title;
@@ -38,8 +48,8 @@ public class CheckOutDialog implements View.OnClickListener {
         mDialog.setView(mLayout);
         mDialog.show();
         WindowManager.LayoutParams params = mDialog.getWindow().getAttributes();
-        params.width = 550;
-        params.height = 400 ;
+//        params.width = 550;
+//        params.height = 400 ;
         mDialog.getWindow().setAttributes(params);
         initWidget();
     }
@@ -53,6 +63,7 @@ public class CheckOutDialog implements View.OnClickListener {
         mEtInput=(EditText)mLayout.findViewById(R.id.et_input);
         mConfirm=(Button)mLayout.findViewById(R.id.btn_confirm);
         mCancel=(Button)mLayout.findViewById(R.id.btn_cancel);
+        mConfirm.setOnClickListener(this);
         mCancel.setOnClickListener(this);
         mTitle.setText(title);
         mTitle.setFocusableInTouchMode(true);
@@ -64,6 +75,9 @@ public class CheckOutDialog implements View.OnClickListener {
        switch (view.getId()){
            case R.id.btn_cancel:
                mDialog.dismiss();
+               break;
+           case R.id.btn_confirm:
+               listener.getDialogInput(mEtInput.getText().toString().trim());
                break;
        }
     }
