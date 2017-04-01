@@ -327,11 +327,14 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         return animLayout;
     }
 
+    /**
+     * 显示加价促销窗口
+     *
+     * @param event
+     */
     @Subscribe
     public void addPrice(AddPriceEvent event) {
-        if (event.who == 1) {
-            AddPriceDialogFragment fragment = new AddPriceDialogFragment();
-            fragment.show(getSupportFragmentManager(), null);
-        }
+        AddPriceDialogFragment fragment = new AddPriceDialogFragment();
+        fragment.show(getSupportFragmentManager(), null);
     }
 }

@@ -15,6 +15,7 @@ import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.event.AddPriceEvent;
 import com.duowei.dw_pos.event.CartMsgDialogEvent;
 import com.duowei.dw_pos.event.CartUpdateEvent;
+import com.duowei.dw_pos.fragment.AddPriceDialogFragment;
 
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.DateTime;
@@ -90,6 +91,7 @@ public class CartList {
                 for (int j = 0; j < wmlsb.getSubWMLSBList().size(); j++) {
                     WMLSB subWmlsb1 = wmlsb.getSubWMLSBList().get(j);
                     num += subWmlsb1.getSL();
+                    price += subWmlsb1.getDJ() * subWmlsb1.getSL();
                 }
             }
         }
@@ -213,16 +215,21 @@ public class CartList {
             }
         } else {
             // 单品
-            if (wmlsb.getDJ() > 0) {
+            if (wmlsb.getType() == 1) {
+                // 买赠项
+                EventBus.getDefault().post(new CartMsgDialogEvent("信息提示", "该单品是赠送品,因此您无法修改数量"));
+
+            } else if (wmlsb.getType() == 2){
+                // 加价项
+                EventBus.getDefault().post(new CartMsgDialogEvent("信息提示", "该单品是加价促销品,因此您无法修改数量"));
+
+            } else {
                 wmlsb.setSL(wmlsb.getSL() + 1);
 
                 for (int i = 0; i < wmlsb.getSubWMLSBList().size(); i++) {
                     WMLSB subWmlsb1 = wmlsb.getSubWMLSBList().get(i);
                     subWmlsb1.setSL(subWmlsb1.getSL() + 1);
                 }
-            } else {
-                // 买赠
-                EventBus.getDefault().post(new CartMsgDialogEvent("信息提示", "该单品是赠送品,因此您无法修改数量"));
             }
         }
 
@@ -258,6 +265,12 @@ public class CartList {
 
         } else {
             // 单品
+            if (wmlsb.getType() == 2) {
+                // 加价不允许修改
+                EventBus.getDefault().post(new CartMsgDialogEvent("信息提示", "该单品是加价促销品,因此您无法修改数量"));
+                return;
+            }
+
             if (wmlsb.getSL() == 1) {
                 mList.remove(wmlsb);
                 for (int i = 0; i < mList.size(); i++) {
@@ -366,10 +379,10 @@ public class CartList {
                             String jbby3 = mzszjbxx.getJBBY3();
                             if ("1".equals(jbby1) && Float.valueOf(jbby3) >= 1) {
                                 // 买赠
-                                processMz(wmlsb, mzszjbxx.getBM());
+                                processMzJj("1", wmlsb, mzszjbxx.getBM());
                             } else if ("2".equals(jbby1)) {
                                 // 加价促销
-                                EventBus.getDefault().post(new AddPriceEvent(1));
+                                processMzJj("2", wmlsb, mzszjbxx.getBM());
                             }
                         }
                     }
@@ -383,23 +396,38 @@ public class CartList {
     }
 
     /**
-     * 处理 买赠
+     * 处理 买赠 加价
      */
-    private void processMz(WMLSB wmlsb, String bm) {
+    private void processMzJj(String jbby1, WMLSB wmlsb, String bm) {
         List<MZSZMXXX> mzszmxxxList = DataSupport.where("bm = ?", bm).find(MZSZMXXX.class);
         if (mzszmxxxList != null && mzszmxxxList.size() > 0) {
+
             for (int i = 0; i < mzszmxxxList.size(); i++) {
-                // 添加买赠
                 MZSZMXXX mzszmxxx = mzszmxxxList.get(i);
                 JYXMSZ subJyxmsz = DataSupport.where("xmbh = ?", mzszmxxx.getXMBH()).findFirst(JYXMSZ.class);
 
-                WMLSB subWmlsb = new WMLSB(subJyxmsz);
-                subWmlsb.setSL(Float.valueOf(mzszmxxx.getSL()));
-                subWmlsb.setDJ(0);
-                subWmlsb.setSubTitle("买赠");
-                wmlsb.getSubWMLSBList().clear();
-                wmlsb.getSubWMLSBList().add(subWmlsb);
-                EventBus.getDefault().post(new CartUpdateEvent());
+                if ("1".equals(jbby1)) {
+                    // 添加买赠
+                    WMLSB subWmlsb = new WMLSB(subJyxmsz);
+                    subWmlsb.setSL(Float.valueOf(mzszmxxx.getSL()));
+                    subWmlsb.setDJ(0);
+                    subWmlsb.setSubTitle("买赠");
+                    subWmlsb.setType(1);
+                    wmlsb.getSubWMLSBList().clear();
+                    wmlsb.getSubWMLSBList().add(subWmlsb);
+                    EventBus.getDefault().post(new CartUpdateEvent());
+                }
+//                else if ("2".equals(jbby1)) {
+//                    // 加价
+//                    jyxmszList.add(subJyxmsz);
+//                }
+            }
+
+            if ("2".equals(jbby1) && mzszmxxxList.size() > 0) {
+                // 加价
+                AddPriceDialogFragment.sWMLSB = wmlsb;
+                AddPriceDialogFragment.sMZSZMXXXList = mzszmxxxList;
+                EventBus.getDefault().post(new AddPriceEvent());
             }
         }
     }

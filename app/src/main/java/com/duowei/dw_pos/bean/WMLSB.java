@@ -71,6 +71,8 @@ public class WMLSB implements Serializable {
     /** 买赠 加价 使用字段 */
     private List<WMLSB> mSubWMLSBList = new ArrayList<>();
     private String subTitle;
+    /** 1买赠 2加价 */
+    private int type;
 
     public String getZSSJ2() {
         return ZSSJ2;
@@ -299,6 +301,14 @@ public class WMLSB implements Serializable {
 
     public void setSubTitle(String subTitle) {
         this.subTitle = subTitle;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public WMLSB() {

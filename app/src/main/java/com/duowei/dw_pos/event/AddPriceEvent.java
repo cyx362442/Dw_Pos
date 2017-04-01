@@ -1,13 +1,15 @@
 package com.duowei.dw_pos.event;
 
+import com.duowei.dw_pos.bean.JYXMSZ;
+
+import java.util.List;
+
 /**
  * Created by Administrator on 2017-03-31.
  */
 
 public class AddPriceEvent {
-    public final int who;
 
-    public AddPriceEvent(int who) {
-        this.who = who;
+    public AddPriceEvent() {
     }
 }
