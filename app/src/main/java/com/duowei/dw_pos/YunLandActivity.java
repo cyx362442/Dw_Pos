@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import org.greenrobot.eventbus.Subscribe;
 import org.litepal.crud.DataSupport;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,10 +47,11 @@ public class YunLandActivity extends AppCompatActivity {
 
     private String mPhone;
     private String mPassword;
-    private String mWeid;
+    private int mWeid;
     private Post6 mPost6;
     private String mSip;
     private ArrayList<WMLSB> mListWmlsb;
+    private Serializable mWmlsbjb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,7 @@ public class YunLandActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mPost6 = Post6.getInstance();
         mListWmlsb = (ArrayList<WMLSB>) getIntent().getSerializableExtra("listWmlsb");
+        mWmlsbjb = getIntent().getSerializableExtra("WMLSBJB");
         getYunData();
     }
 
@@ -94,7 +97,7 @@ public class YunLandActivity extends AppCompatActivity {
         super.onStop();
        org.greenrobot.eventbus.EventBus.getDefault().unregister(this);
     }
-    /**Post请求返回的云会员等级信息*/
+    /**EventBus提起Post请求返回的云会员等级信息*/
     @Subscribe
     public void getImsCardLand(ImsCardMembers event) {
         if(event.response.equals("]")||event.response.equals("")||event.response.equals("error")){
@@ -111,7 +114,6 @@ public class YunLandActivity extends AppCompatActivity {
             float totalMoney=0f;
             for(WMLSB wmlsb:mListWmlsb){
                 //遍历每一项的会员价
-//                JYXMSZ jyxmsz = DataSupport.select(hyj, "XSJG").where("XMBH=?", wmlsb.getXMBH()).findFirst(JYXMSZ.class);
                 float hyPrice = getHyPrice(hyj, wmlsb.getXMBH());
                 wmlsb.setDJ(hyPrice>0&&wmlsb.getDJ()>hyPrice?hyPrice:wmlsb.getDJ());//未打折，按新的会员价重新计算单价.己打过折扣，还是按原来打折后的单价算;
                 wmlsb.setXJ(wmlsb.getDJ()*wmlsb.getSL());//重算小计金额
@@ -121,7 +123,10 @@ public class YunLandActivity extends AppCompatActivity {
             Moneys.ysjr=totalMoney;
             Moneys.zkjr=Moneys.xfzr-Moneys.ysjr;
             Intent intent = new Intent(this, YunPayActivity.class);
+            intent.putExtra("WMLSBJB",mWmlsbjb);
+            intent.putExtra("cards",cards[0]);
             startActivity(intent);
+            finish();
         }
     }
 

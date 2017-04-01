@@ -27,7 +27,6 @@ public class YunPayFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View inflate = inflater.inflate(R.layout.fragment_yun_pay, container, false);
-        listYun.add(new YunFu("","",0f,0f,0f,0,0));
         ListView lv = (ListView) inflate.findViewById(R.id.listView);
         YunListAdapter adapter = new YunListAdapter(getActivity(), listYun);
         lv.setAdapter(adapter);

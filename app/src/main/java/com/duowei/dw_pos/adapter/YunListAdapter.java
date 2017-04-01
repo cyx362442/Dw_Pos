@@ -48,24 +48,15 @@ public class YunListAdapter extends BaseAdapter{
         TextView fangshi = (TextView) inflate.findViewById(R.id.tv_fangshi);
         TextView jr = (TextView) inflate.findViewById(R.id.tv_jr);
         TextView quan = (TextView) inflate.findViewById(R.id.tv_quan);
-        if(i==0){
-            fangshi.setText("付款方式");
-            jr.setText("付款金额");
-            quan.setText("券张数");
-            fangshi.setBackgroundColor(Color.parseColor("#1FB5AC"));
-            jr.setBackgroundColor(Color.parseColor("#1FB5AC"));
-            quan.setBackgroundColor(Color.parseColor("#1FB5AC"));
-        }else{
-            if(listyf.get(i).ticket==0){
-                fangshi.setText("云会员-储值消费");
-            }else if(listyf.get(i).ticket==1){
-                fangshi.setText("云会员-积分消费");
-            }else if(listyf.get(i).ticket==2){
-                fangshi.setText(listyf.get(i).title);
-            }
-            jr.setText(listyf.get(i).money+"");
-            quan.setText(listyf.get(i).sl+"");
+        if(listyf.get(i).ticket==0){
+            fangshi.setText("云会员-储值消费");
+        }else if(listyf.get(i).ticket==1){
+            fangshi.setText("云会员-积分消费");
+        }else if(listyf.get(i).ticket==2){
+            fangshi.setText(listyf.get(i).title);
         }
+        jr.setText(listyf.get(i).money+"");
+        quan.setText(listyf.get(i).sl+"");
         return inflate;
     }
 }

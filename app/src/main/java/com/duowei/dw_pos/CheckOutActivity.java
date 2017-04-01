@@ -235,6 +235,7 @@ public class CheckOutActivity extends AppCompatActivity {
                 break;
             case R.id.rl_yun:
                 mIntent=new Intent(this,YunLandActivity.class);
+                mIntent.putExtra("WMLSBJB", mWmlsbjb);
                 mIntent.putExtra("listWmlsb", list_wmlsb);
                 startActivity(mIntent);
                 break;
@@ -262,7 +263,6 @@ public class CheckOutActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError volleyError) {
                 Toast.makeText(CheckOutActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
             }
-
             @Override
             public void onResponse(String s) {
                 try {
@@ -321,5 +321,4 @@ public class CheckOutActivity extends AppCompatActivity {
         super.onDestroy();
         unbindService(connService);
     }
-
 }

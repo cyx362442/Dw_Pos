@@ -1,10 +1,12 @@
 package com.duowei.dw_pos.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2017-03-30.
  */
 
-public class ImsCardMember {
+public class ImsCardMember implements Serializable{
 
     /**
      * id : 1069
@@ -20,23 +22,45 @@ public class ImsCardMember {
      * createtime : 20170210T00:00:00
      */
 
-    private String id;
+    private int id;
     private String from_user;
     private String cardsn;
-    private String credit1;
-    private String credit2;
+    private float credit1;
+    private float credit2;
     private String realname;
     private String mobile;
     private String status;
     private String cardgrade;
     private String occupation;
     private String createtime;
+    private String title;
+    private float couponmoney;
+    private float SL;
+    private int ticket;
 
-    public String getId() {
+    public ImsCardMember(int id, String from_user, String cardsn, float credit1, float credit2, String realname, String mobile, String status, String cardgrade, String occupation, String createtime, String title, float couponmoney, float SL, int ticket) {
+        this.id = id;
+        this.from_user = from_user;
+        this.cardsn = cardsn;
+        this.credit1 = credit1;
+        this.credit2 = credit2;
+        this.realname = realname;
+        this.mobile = mobile;
+        this.status = status;
+        this.cardgrade = cardgrade;
+        this.occupation = occupation;
+        this.createtime = createtime;
+        this.title = title;
+        this.couponmoney = couponmoney;
+        this.SL = SL;
+        this.ticket = ticket;
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -56,19 +80,19 @@ public class ImsCardMember {
         this.cardsn = cardsn;
     }
 
-    public String getCredit1() {
+    public float getCredit1() {
         return credit1;
     }
 
-    public void setCredit1(String credit1) {
+    public void setCredit1(float credit1) {
         this.credit1 = credit1;
     }
 
-    public String getCredit2() {
+    public float getCredit2() {
         return credit2;
     }
 
-    public void setCredit2(String credit2) {
+    public void setCredit2(float credit2) {
         this.credit2 = credit2;
     }
 
@@ -118,5 +142,37 @@ public class ImsCardMember {
 
     public void setCreatetime(String createtime) {
         this.createtime = createtime;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public float getCouponmoney() {
+        return couponmoney;
+    }
+
+    public void setCouponmoney(float couponmoney) {
+        this.couponmoney = couponmoney;
+    }
+
+    public float getSL() {
+        return SL;
+    }
+
+    public void setSL(float SL) {
+        this.SL = SL;
+    }
+
+    public int getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(int ticket) {
+        this.ticket = ticket;
     }
 }

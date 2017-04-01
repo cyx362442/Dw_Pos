@@ -23,7 +23,7 @@ public class WXFWQDZ extends DataSupport{
     private String YSID;
     private String BMBH;
     private String storeid;
-    private String weid;
+    private int weid;
 
     public String getSIP() {
         return SIP;
@@ -65,11 +65,11 @@ public class WXFWQDZ extends DataSupport{
         this.storeid = storeid;
     }
 
-    public String getWeid() {
+    public int getWeid() {
         return weid;
     }
 
-    public void setWeid(String weid) {
+    public void setWeid(int weid) {
         this.weid = weid;
     }
 }

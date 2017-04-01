@@ -8,6 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.duowei.dw_pos.R;
+import com.duowei.dw_pos.bean.ImsCardMember;
+
+import java.util.ArrayList;
 
 /**
  * Created by Administrator on 2017-03-31.
@@ -15,14 +18,16 @@ import com.duowei.dw_pos.R;
 
 public class YunGvAdapter extends BaseAdapter {
     Context context;
+    ArrayList<ImsCardMember>mList;
 
-    public YunGvAdapter(Context context) {
+    public YunGvAdapter(Context context, ArrayList<ImsCardMember> list) {
         this.context = context;
+        this.mList = list;
     }
 
     @Override
     public int getCount() {
-        return 6;
+        return mList.size();
     }
 
     @Override
@@ -46,6 +51,18 @@ public class YunGvAdapter extends BaseAdapter {
             contentView.setTag(hold);
         }else{
             hold= (ViewHold) contentView.getTag();
+        }
+        if(mList.get(positon).getTicket()==0){
+            hold.content.setText("储值消费");
+            hold.money.setText("￥"+mList.get(positon).getCredit2());
+        }
+        else if(mList.get(positon).getTicket()==1){
+            hold.content.setText("积分消费");
+            hold.money.setText(mList.get(positon).getCredit1()+"");
+        }
+        else if(mList.get(positon).getTicket()==2){
+            hold.content.setText(mList.get(positon).getTitle());
+            hold.money.setText(mList.get(positon).getSL()+"张");
         }
         return contentView;
     }
