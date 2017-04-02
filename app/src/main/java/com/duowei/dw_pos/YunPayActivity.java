@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.duowei.dw_pos.bean.ImsCardMember;
+import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WXFWQDZ;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
@@ -47,10 +48,10 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
     FrameLayout mFrame02;
     @BindView(R.id.frame03)
     FrameLayout mFrame03;
-    @BindView(R.id.btn_confirm)
-    Button mBtnConfirm;
-    @BindView(R.id.btn_cancel)
-    Button mBtnCancel;
+//    @BindView(R.id.btn_confirm)
+//    Button mBtnConfirm;
+//    @BindView(R.id.btn_cancel)
+//    Button mBtnCancel;
     @BindView(R.id.progressBar)
     ProgressBar mProgressBar;
     private Wmslbjb_jiezhang mWmlsbjb;
@@ -119,6 +120,8 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         YunAccountFragment fragment = new YunAccountFragment();
+        Bundle bundle = new Bundle();
+        fragment.setArguments(bundle);
         ft.replace(R.id.frame01, fragment);
         ft.commit();
     }
@@ -141,6 +144,7 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         Bundle bundle = new Bundle();
         bundle.putSerializable("cards", mYunList);
         bundle.putSerializable("WMLSB",mWmlsb);
+        bundle.putSerializable("mWmlsbjb",mWmlsbjb);
         fragment.setArguments(bundle);
         ft.replace(R.id.frame03, fragment);
         ft.commit();
@@ -162,16 +166,18 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         }
     }
 
-    @OnClick({R.id.btn_confirm, R.id.btn_cancel})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.btn_confirm:
-                break;
-            case R.id.btn_cancel:
-                finish();
-                break;
-        }
-    }
+//    @OnClick({R.id.btn_confirm, R.id.btn_cancel})
+//    public void onViewClicked(View view) {
+//        switch (view.getId()) {
+//            case R.id.btn_confirm:
+//                break;
+//            case R.id.btn_cancel:
+//                Moneys.yfjr=0;
+//                Moneys.wfjr=Moneys.ysjr;
+//                finish();
+//                break;
+//        }
+//    }
     /***接口回调，获取YunCardFragment中gridview点击事件传值*/
     @Override
     public void yunPayFragment(List<YunFu> listPay) {
@@ -179,5 +185,13 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         toYunPayFragment(listPay);
         //刷新yunaccountfragment
         toYunAccountFragment();
+    }
+    /**重写返回健*/
+    @Override
+    public void onBackPressed() {
+        //TODO something
+        Moneys.yfjr=0;
+        Moneys.wfjr=Moneys.ysjr;
+        super.onBackPressed();
     }
 }

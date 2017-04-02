@@ -12,10 +12,10 @@ public class YunFu implements Serializable{
     public float credit1;
     public float credit2;
     public float money;
-    public int sl;
+    public float sl;
     public int ticket;
 
-    public YunFu(String cardgrade, String title, float credit1, float credit2, float money, int sl, int ticket) {
+    public YunFu(String cardgrade, String title, float credit1, float credit2, float money, float sl, int ticket) {
         this.cardgrade = cardgrade;
         this.title = title;
         this.credit1 = credit1;

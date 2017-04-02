@@ -66,6 +66,12 @@ public class YunGvAdapter extends BaseAdapter {
         }else if(cards.getTicket()==1&& cards.isSelect()==false){
             hold.ll.setBackgroundResource(R.drawable.item_normal);
         }
+        /**电子券1消费*/
+        if(cards.getTicket()==2&& cards.isSelect()==true){
+            hold.ll.setBackgroundResource(R.drawable.item_click);
+        }else if(cards.getTicket()==2&& cards.isSelect()==false){
+            hold.ll.setBackgroundResource(R.drawable.item_normal);
+        }
 
         if(cards.getTicket()==0){
             hold.content.setText("储值消费");
