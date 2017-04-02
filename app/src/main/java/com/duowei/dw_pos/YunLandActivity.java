@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -122,8 +123,10 @@ public class YunLandActivity extends AppCompatActivity {
             /**改变应收金额、折扣金额*/
             Moneys.ysjr=totalMoney;
             Moneys.zkjr=Moneys.xfzr-Moneys.ysjr;
+            Moneys.wfjr=Moneys.ysjr;
             Intent intent = new Intent(this, YunPayActivity.class);
             intent.putExtra("WMLSBJB",mWmlsbjb);
+            intent.putExtra("WMLSB",mListWmlsb);
             intent.putExtra("cards",cards[0]);
             startActivity(intent);
             finish();

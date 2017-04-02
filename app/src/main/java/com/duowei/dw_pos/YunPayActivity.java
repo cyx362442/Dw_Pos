@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.duowei.dw_pos.bean.ImsCardMember;
+import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WXFWQDZ;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.bean.YunFu;
@@ -56,6 +57,7 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
     private ImsCardMember mImsCards;
     private List<YunFu>listYunFu=new ArrayList<>();
     private ArrayList<ImsCardMember> mYunList = new ArrayList<>();
+    private ArrayList<WMLSB> mWmlsb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         setContentView(R.layout.activity_yun_pay);
         ButterKnife.bind(this);
         mWmlsbjb = (Wmslbjb_jiezhang) getIntent().getSerializableExtra("WMLSBJB");
+        mWmlsb = (ArrayList<WMLSB>) getIntent().getSerializableExtra("WMLSB");
         mImsCards = (ImsCardMember) getIntent().getSerializableExtra("cards");
         /**获取会员卡储值余额、积分余额*/
         addImsCardData();
@@ -103,7 +106,8 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
             Gson gson = new Gson();
             ImsCardMember[] yunhuiyuen = gson.fromJson(respone, ImsCardMember[].class);
             for (int i = 0; i < yunhuiyuen.length; i++) {
-                yunhuiyuen[i].setTicket(2);
+                yunhuiyuen[i].setTicket(i+2);
+                yunhuiyuen[i].setSelect(false);
                 mYunList.add(yunhuiyuen[i]);
             }
             toYunCardFragment();
@@ -136,6 +140,7 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         YunCardFragment fragment = new YunCardFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("cards", mYunList);
+        bundle.putSerializable("WMLSB",mWmlsb);
         fragment.setArguments(bundle);
         ft.replace(R.id.frame03, fragment);
         ft.commit();
@@ -148,12 +153,12 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         if (mImsCards.getCredit2() >= 0) {//储值消费
             mYunList.add(new ImsCardMember(mImsCards.getId(), mImsCards.getFrom_user(), mImsCards.getCardsn(), mImsCards.getCredit1(), mImsCards.getCredit2(),
                     mImsCards.getRealname(), mImsCards.getMobile(), mImsCards.getStatus(), mImsCards.getCardgrade(), mImsCards.getOccupation(),
-                    mImsCards.getCreatetime(), mImsCards.getTitle(), mImsCards.getCouponmoney(), mImsCards.getSL(), 0));
+                    mImsCards.getCreatetime(), mImsCards.getTitle(), mImsCards.getCouponmoney(), mImsCards.getSL(), 0,false));
         }
         if (mImsCards.getCredit1() >= 0) {//积分消费
             mYunList.add(new ImsCardMember(mImsCards.getId(), mImsCards.getFrom_user(), mImsCards.getCardsn(), mImsCards.getCredit1(), -1f,
                     mImsCards.getRealname(), mImsCards.getMobile(), mImsCards.getStatus(), mImsCards.getCardgrade(), mImsCards.getOccupation(),
-                    mImsCards.getCreatetime(), mImsCards.getTitle(), mImsCards.getCouponmoney(), mImsCards.getSL(), 1));
+                    mImsCards.getCreatetime(), mImsCards.getTitle(), mImsCards.getCouponmoney(), mImsCards.getSL(), 1,false));
         }
     }
 

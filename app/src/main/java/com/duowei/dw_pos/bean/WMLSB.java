@@ -42,7 +42,7 @@ public class WMLSB implements Serializable {
      */
 
     private String ZSSJ2;
-    private String BY3;
+    private int BY3;
     private String XH;
     private String WMDBH;
     private String XMBH;
@@ -82,11 +82,11 @@ public class WMLSB implements Serializable {
         this.ZSSJ2 = ZSSJ2;
     }
 
-    public String getBY3() {
+    public int getBY3() {
         return BY3;
     }
 
-    public void setBY3(String BY3) {
+    public void setBY3(int BY3) {
         this.BY3 = BY3;
     }
 
