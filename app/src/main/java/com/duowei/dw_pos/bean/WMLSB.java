@@ -64,15 +64,20 @@ public class WMLSB implements Serializable {
     private String by5;
     private String BY12;
     private String BY13;
+    private String SFZS;
     private String BY15;
+    /** 买赠 1 */
+    private String BY17 = "";
+    private String BY18 = "";
+    /** 加价促销 */
+    private String BY21 = "";
     private String TCXMBH;
     private float DWSL;
 
+    private int remote = 0;
+
     /** 买赠 加价 使用字段 */
     private List<WMLSB> mSubWMLSBList = new ArrayList<>();
-    private String subTitle;
-    /** 1买赠 2加价 */
-    private int type;
 
     public String getZSSJ2() {
         return ZSSJ2;
@@ -255,6 +260,9 @@ public class WMLSB implements Serializable {
     }
 
     public String getBY13() {
+        if (TextUtils.isEmpty(BY13)) {
+            return "";
+        }
         return BY13;
     }
 
@@ -266,6 +274,17 @@ public class WMLSB implements Serializable {
         if (TextUtils.isEmpty(BY15))
             return "";
         return BY15;
+    }
+
+    public String getSFZS() {
+        if (TextUtils.isEmpty(SFZS)) {
+            return "";
+        }
+        return SFZS;
+    }
+
+    public void setSFZS(String SFZS) {
+        this.SFZS = SFZS;
     }
 
     public void setBY15(String BY15) {
@@ -295,20 +314,36 @@ public class WMLSB implements Serializable {
         return mSubWMLSBList;
     }
 
-    public String getSubTitle() {
-        return subTitle;
+    public String getBY17() {
+        return BY17;
     }
 
-    public void setSubTitle(String subTitle) {
-        this.subTitle = subTitle;
+    public void setBY17(String BY17) {
+        this.BY17 = BY17;
     }
 
-    public int getType() {
-        return type;
+    public String getBY18() {
+        return BY18;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setBY18(String BY18) {
+        this.BY18 = BY18;
+    }
+
+    public String getBY21() {
+        return BY21;
+    }
+
+    public void setBY21(String BY21) {
+        this.BY21 = BY21;
+    }
+
+    public int getRemote() {
+        return remote;
+    }
+
+    public void setRemote(int remote) {
+        this.remote = remote;
     }
 
     public WMLSB() {
@@ -331,8 +366,9 @@ public class WMLSB implements Serializable {
         this.by2 = jyxmsz.LBBM;
         this.by3 = jyxmsz.YHJ;
         this.SL = 1;
+        this.DWSL = this.SL;
 
-        this.SFYXD = "1";
+        this.SFYXD = "0";
     }
 
     /**
@@ -361,7 +397,7 @@ public class WMLSB implements Serializable {
 //        this.by3 = tcsd.
         this.SL = tcsd.SL;
 
-        this.SFYXD = "1";
+        this.SFYXD = "0";
     }
 
 
@@ -369,8 +405,26 @@ public class WMLSB implements Serializable {
      *
      */
     public String toInsertString() {
-        String mainSql = "INSERT INTO WMLSB (WMDBH,           XMBH,           XMMC,           TM,           DW,          SL,         DJ,         XJ,          PZ,                TCBH,           SFYXD,      XSZT, FTJE,   YSJG,     SFZS,      SYYXM,      SQRXM, ZSSJ,    DWSL,          sfxs,      by1,       by2,    by3, by4,   by5,      SJC,  BY6,  BY7,  BY8,  BY9,  BY10, BY11,               TCXMBH,  BY12, BY13, PBJSJM, PBXH, BY14, BY15, BY16, BY17, BY18, BY19, BY20, BY21, BY22, BY23, BY24, BY25) " +
-                "     VALUES ('" + WMDBH + "', '" + XMBH + "', '" + XMMC + "', '" + TM + "', '" + DW + "', " + SL + ", " + DJ + ", " + getDJ() * getSL() + ", '" + getPZ() + "', '" + getTCBH() + "', '" + SFYXD + "', '', null, " + YSJG + ", null, '" + SYYXM + "', null, null, " + DWSL + ", '" + sfxs + "', null, '" + by2 + "', 0, null, GETDATE(), null, null, null, null, null, null, null, '" + getTCXMBH() + "', '', '', null, null, null, '" + getBY15() + "', null, null, null, null, null, null, null, null, null, null)|";
+        String datetime1 = DateTimeUtils.getCurrentDatetime();
+        String datetime2 = datetime1 + "1";
+
+        if (mSubWMLSBList.size() > 0) {
+            // 有加价促销项
+            if ("加价促销".equals(mSubWMLSBList.get(0).getBY13())) {
+                setBY18(datetime1);
+                setBY21("1-" + datetime2);
+            }
+        }
+
+        String mainSql = "INSERT INTO WMLSB (WMDBH,           XMBH,           XMMC,           TM,           DW,          SL,         DJ,                           XJ,          PZ,                TCBH,             SFYXD, XSZT, FTJE,        YSJG,           SFZS,      SYYXM,      SQRXM, ZSSJ,            DWSL,           sfxs,      by1,       by2,    by3, by4,   by5,      SJC,  BY6,  BY7,  BY8,  BY9,  BY10, BY11,         TCXMBH,                       BY12, BY13, PBJSJM, PBXH, BY14,     BY15,       BY16,        BY17,                 BY18,     BY19, BY20, BY21, BY22, BY23, BY24, BY25) " +
+                "               VALUES ('" + WMDBH + "', '" + XMBH + "', '" + XMMC + "', '" + TM + "', '" + DW + "', " + SL + ", " + DJ + ", " + getDJ() * getSL() + ", '" + getPZ() + "', '" + getTCBH() + "', '" + SFYXD + "', '', null, " + YSJG + ", '" + getSFZS() + "', '" + SYYXM + "', null, null, " + DWSL + ", '" + sfxs + "', null, '" + by2 + "', 0, null, GETDATE(), null, null, null, null, null, null, null, '" + getTCXMBH() + "', '', '" + getBY13() + "', null, null, null, '" + getBY15() + "', null, '" + getBY17() + "', '"+getBY18()+"', null, null, '"+getBY21()+"', null, null, null, null)|";
+
+        if (mSubWMLSBList.size() > 0) {
+            // 有加价促销项
+            if ("加价促销".equals(mSubWMLSBList.get(0).getBY13())) {
+                mainSql += update(getWMDBH());
+            }
+        }
 
         String subTotalSql = "";
         for (int i = 0; i < mSubWMLSBList.size(); i++) {
@@ -378,9 +432,33 @@ public class WMLSB implements Serializable {
             subWmlsb.setWMDBH(getWMDBH());
             subWmlsb.setSYYXM(Users.YHMC);
 
+            if ("加价促销".equals(subWmlsb.getBY13())) {
+                subWmlsb.setBY18(datetime2);
+                subWmlsb.setBY21("2-" + datetime1);
+            }
+
             subTotalSql += subWmlsb.toInsertString();
+
+            if ("加价促销".equals(subWmlsb.getBY13())) {
+                subTotalSql += update(subWmlsb.getWMDBH());
+            }
         }
 
         return mainSql + subTotalSql;
+    }
+
+    /**
+     * 加价促销 使用
+     *
+     * @param wmdbh
+     * @return
+     */
+    private String update(String wmdbh) {
+        return "update wmlsb " +
+                "set by21 = substring(by21, 1, 2) + convert(varchar(10), a.xh), by18 = '' from (select xh, by18 " +
+                "                                                                               from wmlsb " +
+                "                                                                               where wmdbh = '"+wmdbh+"') a " +
+                "where wmdbh = '" + wmdbh + "' and isnull(by21, '') <> '' and isnull(wmlsb.by18, '') <> '' and " +
+                "      replace(replace(by21, '1-', ''), '2-', '') = a.by18|";
     }
 }

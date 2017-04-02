@@ -20,6 +20,6 @@ public class Pbdyxxb {
     public static String toInsertString(String wmdbh, String zh, String jsj, String jcrs) {
         return "insert into pbdyxxb(xh,wmdbh,xmbh,xmmc,dw,sl,dj,xj,pz,ysjg,syyxm,sfxs,tcbh,tcxmbh,tcfz,xtbz,czsj,      zh,jsj,jcrs) " +
                 "            select xh,wmdbh,xmbh,xmmc,dw,sl,dj,xj,pz,ysjg,syyxm,sfxs,tcbh,tcxmbh,BY15,'1', GETDATE(), '" + zh + "','" + jsj + "'," + jcrs + " " +
-                "            from wmlsb where wmdbh='" + wmdbh + "'|";
+                "            from wmlsb where wmdbh='" + wmdbh + "' and sfyxd != '1'|";
     }
 }

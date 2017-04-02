@@ -1,5 +1,6 @@
 package com.duowei.dw_pos;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +12,7 @@ import android.widget.ListView;
 import com.duowei.dw_pos.adapter.OrderListAdapter;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
+import com.duowei.dw_pos.constant.ExtraParm;
 import com.duowei.dw_pos.event.OrderUpdateEvent;
 import com.duowei.dw_pos.tools.OrderList;
 
@@ -31,8 +33,8 @@ public class OrdetDetailActivity extends AppCompatActivity {
     Toolbar mToolbar;
     @BindView(R.id.lv_order)
     ListView mLvOrder;
-    @BindView(R.id.btn_order_confirm)
-    Button mBtnOrderConfirm;
+    @BindView(R.id.btn_continue)
+    Button mBtnContinue;
     private ArrayList<WMLSB> mListWmlsb;
     private OrderListAdapter mAdapter;
     private Wmslbjb_jiezhang mWmlsbjb;
@@ -69,13 +71,16 @@ public class OrdetDetailActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick({R.id.img_back, R.id.btn_order_confirm})
+    @OnClick({R.id.img_back, R.id.btn_continue})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.img_back:
                 finish();
                 break;
-            case R.id.btn_order_confirm:
+            case R.id.btn_continue:
+                Intent intent = new Intent(this, CashierDeskActivity.class);
+                intent.putExtra(ExtraParm.EXTRA_WMDBH, mWmlsbjb.getWMDBH());
+                startActivity(intent);
                 break;
         }
     }
