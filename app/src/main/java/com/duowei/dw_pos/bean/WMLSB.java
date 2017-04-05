@@ -41,7 +41,7 @@ public class WMLSB implements Serializable {
      * BY13 :
      */
 
-    private String ZSSJ2;
+    private String ZSSJ;
     private int BY3;
     private String XH;
     private String WMDBH;
@@ -79,12 +79,12 @@ public class WMLSB implements Serializable {
     /** 买赠 加价 使用字段 */
     private List<WMLSB> mSubWMLSBList = new ArrayList<>();
 
-    public String getZSSJ2() {
-        return ZSSJ2;
+    public String getZSSJ() {
+        return ZSSJ;
     }
 
-    public void setZSSJ2(String ZSSJ2) {
-        this.ZSSJ2 = ZSSJ2;
+    public void setZSSJ(String ZSSJ) {
+        this.ZSSJ = ZSSJ;
     }
 
     public int getBY3() {
@@ -416,8 +416,14 @@ public class WMLSB implements Serializable {
             }
         }
 
-        String mainSql = "INSERT INTO WMLSB (WMDBH,           XMBH,           XMMC,           TM,           DW,          SL,         DJ,                           XJ,          PZ,                TCBH,             SFYXD, XSZT, FTJE,        YSJG,           SFZS,      SYYXM,      SQRXM, ZSSJ,            DWSL,           sfxs,      by1,       by2,    by3, by4,   by5,      SJC,  BY6,  BY7,  BY8,  BY9,  BY10, BY11,         TCXMBH,                       BY12, BY13, PBJSJM, PBXH, BY14,     BY15,       BY16,        BY17,                 BY18,     BY19, BY20, BY21, BY22, BY23, BY24, BY25) " +
-                "               VALUES ('" + WMDBH + "', '" + XMBH + "', '" + XMMC + "', '" + TM + "', '" + DW + "', " + SL + ", " + DJ + ", " + getDJ() * getSL() + ", '" + getPZ() + "', '" + getTCBH() + "', '" + SFYXD + "', '', null, " + YSJG + ", '" + getSFZS() + "', '" + SYYXM + "', null, null, " + DWSL + ", '" + sfxs + "', null, '" + by2 + "', 0, null, GETDATE(), null, null, null, null, null, null, null, '" + getTCXMBH() + "', '', '" + getBY13() + "', null, null, null, '" + getBY15() + "', null, '" + getBY17() + "', '"+getBY18()+"', null, null, '"+getBY21()+"', null, null, null, null)|";
+        if ("赠送".equals(getBY13())) {
+            setZSSJ("GETDATE()");
+        } else {
+            setZSSJ(null);
+        }
+
+        String mainSql = "INSERT INTO WMLSB (WMDBH,           XMBH,           XMMC,           TM,           DW,          SL,         DJ,                           XJ,          PZ,                TCBH,             SFYXD, XSZT, FTJE,        YSJG,           SFZS,              SYYXM,      SQRXM, ZSSJ,            DWSL,           sfxs,      by1,       by2,    by3, by4,   by5,      SJC,  BY6,  BY7,  BY8,  BY9,  BY10, BY11,         TCXMBH,                       BY12, BY13, PBJSJM, PBXH, BY14,     BY15,       BY16,        BY17,                 BY18,     BY19, BY20, BY21, BY22, BY23, BY24, BY25) " +
+                "               VALUES ('" + WMDBH + "', '" + XMBH + "', '" + XMMC + "', '" + TM + "', '" + DW + "', " + SL + ", " + DJ + ", " + getDJ() * getSL() + ", '" + getPZ() + "', '" + getTCBH() + "', '" + SFYXD + "', '', null, " + YSJG + ", '" + getSFZS() + "', '" + SYYXM + "', null, " + getZSSJ() + ", " + DWSL + ", '" + sfxs + "', null, '" + by2 + "', 0, null, GETDATE(), null, null, null, null, null, null, null, '" + getTCXMBH() + "', '', '" + getBY13() + "', null, null, null, '" + getBY15() + "', null, '" + getBY17() + "', '"+getBY18()+"', null, null, '"+getBY21()+"', null, null, null, null)|";
 
         if (mSubWMLSBList.size() > 0) {
             // 有加价促销项

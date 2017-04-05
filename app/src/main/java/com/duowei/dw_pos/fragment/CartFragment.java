@@ -114,7 +114,11 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
         if (id == R.id.btn_commit) {
             Intent intent = new Intent(getContext(), CartDetailActivity.class);
-            intent.putExtras(getArguments());
+
+            if (getArguments() != null) {
+                intent.putExtras(getArguments());
+            }
+
             getContext().startActivity(intent);
         }
     }

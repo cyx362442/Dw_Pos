@@ -22,6 +22,7 @@ import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.event.AddPriceEvent;
+import com.duowei.dw_pos.event.ClearSearchEvent;
 import com.duowei.dw_pos.fragment.AddPriceDialogFragment;
 import com.duowei.dw_pos.fragment.CartFragment;
 import com.duowei.dw_pos.tools.AnimUtils;
@@ -85,7 +86,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         initViews();
         loadAllData();
         initData();
-        clearEditText();
+        clearEditText(null);
         // 清空购物车
         CartList.newInstance(this).clear();
     }
@@ -224,14 +225,14 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
 
         } else if (id == R.id.btn_toggle) {
             mToggleButton.toggle();
-            clearEditText();
+            clearEditText(null);
         }
     }
 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        clearEditText();
+        clearEditText(null);
         Object object = mLeftAdapter.getItem(position);
 
         if (object instanceof DMJYXMSSLB) {
@@ -310,10 +311,15 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         return DataSupport.findAll(TCMC.class);
     }
 
-    private void clearEditText() {
-        mEditText.removeTextChangedListener(mTextWatcher);
-        mEditText.setText(null);
-        mEditText.addTextChangedListener(mTextWatcher);
+    @Subscribe
+    public void clearEditText(ClearSearchEvent event) {
+        if (event == null) {
+            mEditText.removeTextChangedListener(mTextWatcher);
+            mEditText.setText(null);
+            mEditText.addTextChangedListener(mTextWatcher);
+        } else {
+            mEditText.setText(null);
+        }
     }
 
     /**

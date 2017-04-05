@@ -413,7 +413,7 @@ public class CartList {
                     subWmlsb.setDJ(0);
                     subWmlsb.setBY13("赠送");
                     subWmlsb.setSFZS("1");
-                    subWmlsb.setBY17("1");
+                    subWmlsb.setBY17("7");
                     wmlsb.getSubWMLSBList().clear();
                     wmlsb.getSubWMLSBList().add(subWmlsb);
                     EventBus.getDefault().post(new CartUpdateEvent());

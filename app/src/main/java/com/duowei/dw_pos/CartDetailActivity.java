@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.duowei.dw_pos.adapter.CartDetailItemAdapter;
 import com.duowei.dw_pos.constant.ExtraParm;
@@ -17,7 +18,9 @@ import com.duowei.dw_pos.event.CartUpdateEvent;
 import com.duowei.dw_pos.fragment.LoadingDialogFragment;
 import com.duowei.dw_pos.fragment.MessageDialogFragment;
 import com.duowei.dw_pos.tools.CartList;
+import com.duowei.dw_pos.tools.DateTimeUtils;
 import com.duowei.dw_pos.tools.SqlNetHandler;
+import com.duowei.dw_pos.tools.Users;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -35,6 +38,8 @@ public class CartDetailActivity extends AppCompatActivity {
     private CartDetailItemAdapter mAdapter;
 
     private String mWmdbh;
+    /** 加载成功标志位 */
+    private boolean mLoadSuccess = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,7 +76,19 @@ public class CartDetailActivity extends AppCompatActivity {
         mSubmitBtuuon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new SqlNetHandler().handleCommit(CartDetailActivity.this, true);
+                if (mWmdbh == null) {
+                    // 第一次提交
+                    String currentDatetime = DateTimeUtils.getCurrentDatetime();
+                    new SqlNetHandler().handleCommit(CartDetailActivity.this, Users.pad + currentDatetime, true);
+                } else {
+                    // 第二次提交
+                    if (mLoadSuccess) {
+                        new SqlNetHandler().handleCommit(CartDetailActivity.this, mWmdbh, false);
+                    } else {
+                        Toast.makeText(CartDetailActivity.this, "从服务器下载数据失败，不能进行提交操作!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
             }
         });
     }
@@ -90,6 +107,7 @@ public class CartDetailActivity extends AppCompatActivity {
             fragment.setListener(new LoadingDialogFragment.OnLoadSuccessListener() {
                 @Override
                 public void onLoadSuccess() {
+                    mLoadSuccess = true;
                     updateData();
                 }
             });
