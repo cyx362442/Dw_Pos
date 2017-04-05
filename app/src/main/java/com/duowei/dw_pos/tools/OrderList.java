@@ -1,7 +1,6 @@
 package com.duowei.dw_pos.tools;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.duowei.dw_pos.bean.AddTcsdItem;
 import com.duowei.dw_pos.bean.CartInfo;
@@ -217,7 +216,7 @@ public class OrderList {
                         sql =sql+ "update  WMLSB set SL='" +(w.getSL()) + "',XJ='" + xj2 + "' where tcbh='" + w.getTCBH() + "' and xh='" + w.getXH() + "'|";
                     }
                 }
-                sql=sql+"update  wmlsbjb set YS='" + getTotoalMoney() + "',BY12='2' where wmdbh='" + wmlsb.getWMDBH() + "'|";
+                sql=sql+"update wmlsbjb set YS='" + getTotoalMoney() + "',BY12='2' where wmdbh='" + wmlsb.getWMDBH() + "'|";
             }
 
         } else {

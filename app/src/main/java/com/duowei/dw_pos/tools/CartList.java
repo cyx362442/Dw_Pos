@@ -418,10 +418,6 @@ public class CartList {
                     wmlsb.getSubWMLSBList().add(subWmlsb);
                     EventBus.getDefault().post(new CartUpdateEvent());
                 }
-//                else if ("2".equals(jbby1)) {
-//                    // 加价
-//                    jyxmszList.add(subJyxmsz);
-//                }
             }
 
             if ("2".equals(jbby1) && mzszmxxxList.size() > 0) {

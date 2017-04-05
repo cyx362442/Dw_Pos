@@ -60,7 +60,6 @@ public class WMLSB implements Serializable {
     private String SYYXM;
     private String sfxs;
     private String by2;
-    private String by3;
     private String by5;
     private String BY12;
     private String BY13;
@@ -235,14 +234,6 @@ public class WMLSB implements Serializable {
         this.by2 = by2;
     }
 
-    public String getBy3() {
-        return by3;
-    }
-
-    public void setBy3(String by3) {
-        this.by3 = by3;
-    }
-
     public String getBy5() {
         return by5;
     }
@@ -361,10 +352,9 @@ public class WMLSB implements Serializable {
         this.DJ = jyxmsz.XSJG;
         this.YSJG = jyxmsz.XSJG;
         this.sfxs = "1";
-        this.by5 = DateTimeUtils.getCurrentDatetime();
         this.TM = jyxmsz.TM;
         this.by2 = jyxmsz.LBBM;
-        this.by3 = jyxmsz.YHJ;
+        this.BY3 = Math.round(jyxmsz.YHJ);
         this.SL = 1;
         this.DWSL = this.SL;
 
@@ -422,8 +412,8 @@ public class WMLSB implements Serializable {
             setZSSJ(null);
         }
 
-        String mainSql = "INSERT INTO WMLSB (WMDBH,           XMBH,           XMMC,           TM,           DW,          SL,         DJ,                           XJ,          PZ,                TCBH,             SFYXD, XSZT, FTJE,        YSJG,           SFZS,              SYYXM,      SQRXM, ZSSJ,            DWSL,           sfxs,      by1,       by2,    by3, by4,   by5,      SJC,  BY6,  BY7,  BY8,  BY9,  BY10, BY11,         TCXMBH,                       BY12, BY13, PBJSJM, PBXH, BY14,     BY15,       BY16,        BY17,                 BY18,     BY19, BY20, BY21, BY22, BY23, BY24, BY25) " +
-                "               VALUES ('" + WMDBH + "', '" + XMBH + "', '" + XMMC + "', '" + TM + "', '" + DW + "', " + SL + ", " + DJ + ", " + getDJ() * getSL() + ", '" + getPZ() + "', '" + getTCBH() + "', '" + SFYXD + "', '', null, " + YSJG + ", '" + getSFZS() + "', '" + SYYXM + "', null, " + getZSSJ() + ", " + DWSL + ", '" + sfxs + "', null, '" + by2 + "', 0, null, GETDATE(), null, null, null, null, null, null, null, '" + getTCXMBH() + "', '', '" + getBY13() + "', null, null, null, '" + getBY15() + "', null, '" + getBY17() + "', '"+getBY18()+"', null, null, '"+getBY21()+"', null, null, null, null)|";
+        String mainSql = "INSERT INTO WMLSB (WMDBH,           XMBH,           XMMC,           TM,           DW,          SL,         DJ,                           XJ,          PZ,                TCBH,             SFYXD, XSZT, FTJE,        YSJG,           SFZS,              SYYXM,      SQRXM, ZSSJ,            DWSL,           sfxs,      by1,            by2,            by3,        by4,   by5,      SJC,  BY6,  BY7,  BY8,  BY9,  BY10, BY11,         TCXMBH,                       BY12, BY13, PBJSJM, PBXH, BY14,     BY15,       BY16,        BY17,                 BY18,     BY19, BY20, BY21, BY22, BY23, BY24, BY25) " +
+                "               VALUES ('" + WMDBH + "', '" + XMBH + "', '" + XMMC + "', '" + TM + "', '" + DW + "', " + SL + ", " + DJ + ", " + getDJ() * getSL() + ", '" + getPZ() + "', '" + getTCBH() + "', '" + SFYXD + "', '', null, " + YSJG + ", '" + getSFZS() + "', '" + SYYXM + "', null, " + getZSSJ() + ", " + DWSL + ", '" + sfxs + "', null, '" + by2 + "', " + getBY3() + ", null, GETDATE(), null, null, null, null, null, null, null, '" + getTCXMBH() + "', '', '" + getBY13() + "', null, null, null, '" + getBY15() + "', null, '" + getBY17() + "', '" + getBY18() + "', null, null, '" + getBY21() + "', null, null, null, null)|";
 
         if (mSubWMLSBList.size() > 0) {
             // 有加价促销项
@@ -463,7 +453,7 @@ public class WMLSB implements Serializable {
         return "update wmlsb " +
                 "set by21 = substring(by21, 1, 2) + convert(varchar(10), a.xh), by18 = '' from (select xh, by18 " +
                 "                                                                               from wmlsb " +
-                "                                                                               where wmdbh = '"+wmdbh+"') a " +
+                "                                                                               where wmdbh = '" + wmdbh + "') a " +
                 "where wmdbh = '" + wmdbh + "' and isnull(by21, '') <> '' and isnull(wmlsb.by18, '') <> '' and " +
                 "      replace(replace(by21, '1-', ''), '2-', '') = a.by18|";
     }

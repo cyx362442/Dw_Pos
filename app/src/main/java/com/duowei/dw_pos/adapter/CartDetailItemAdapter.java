@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.duowei.dw_pos.CartDetailActivity;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.WMLSB;
+import com.duowei.dw_pos.fragment.ModifyDialogFragment;
 import com.duowei.dw_pos.fragment.TasteChoiceDialogFragment;
 import com.duowei.dw_pos.tools.CartList;
 
@@ -108,6 +109,13 @@ public class CartDetailItemAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
+        // 初始化
+        holder.tv_name.setTextColor(Color.DKGRAY);
+        holder.iv_remove.setEnabled(true);
+        holder.iv_remove.setVisibility(View.VISIBLE);
+        holder.iv_add.setEnabled(true);
+        holder.iv_add.setVisibility(View.VISIBLE);
+
         final WMLSB item = getItem(position);
 
         holder.tv_no.setText(String.valueOf(position + 1));
@@ -172,8 +180,14 @@ public class CartDetailItemAdapter extends BaseAdapter {
         if (item.getRemote() == 1) {
             holder.tv_name.setTextColor(Color.RED);
             holder.taste_layout.setVisibility(View.GONE);
-            holder.iv_add.setVisibility(View.INVISIBLE);
-            holder.iv_remove.setVisibility(View.INVISIBLE);
+            holder.iv_add.setEnabled(false);
+            holder.iv_remove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ModifyDialogFragment fragment = new ModifyDialogFragment();
+                    fragment.show(mActivity.getSupportFragmentManager(), null);
+                }
+            });
         }
 
         return convertView;
