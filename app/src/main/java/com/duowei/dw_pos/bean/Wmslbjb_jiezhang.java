@@ -31,6 +31,15 @@ public class Wmslbjb_jiezhang implements Serializable{
     private String jcfs;
     private String YHBH;
     private String JSJ;
+    private String ZKFS;
+
+    public String getZKFS() {
+        return ZKFS;
+    }
+
+    public void setZKFS(String ZKFS) {
+        this.ZKFS = ZKFS;
+    }
 
     public String getSj() {
         return sj;

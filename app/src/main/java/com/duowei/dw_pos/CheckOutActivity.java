@@ -22,15 +22,17 @@ import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.dialog.CheckOutDialog;
-import com.duowei.dw_pos.dialog.YunDialog;
+import com.duowei.dw_pos.event.YunSqlFinish;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.tools.CloseActivity;
 import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.sunmiprint.Prints;
+import com.duowei.dw_pos.tools.SqlYun;
 import com.duowei.dw_pos.tools.Users;
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,6 +92,8 @@ public class CheckOutActivity extends AppCompatActivity {
     private float mZhaoling = 0.00f;
     private float mDaishou = 0.00f;
 
+    private final int YUPAYREQUEST=100;
+
     private IWoyouService woyouService;
     private ServiceConnection connService = new ServiceConnection() {
         @Override
@@ -115,6 +119,7 @@ public class CheckOutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_out);
         ButterKnife.bind(this);
+        org.greenrobot.eventbus.EventBus.getDefault().register(this);
         CloseActivity.addAcitity(this);
         SharedPreferences user = getSharedPreferences("user", Context.MODE_PRIVATE);
         mPad = user.getString("pad", "");
@@ -230,7 +235,7 @@ public class CheckOutActivity extends AppCompatActivity {
                 mIntent=new Intent(this,YunLandActivity.class);
                 mIntent.putExtra("WMLSBJB", mWmlsbjb);
                 mIntent.putExtra("listWmlsb", list_wmlsb);
-                startActivity(mIntent);
+                startActivityForResult(mIntent,YUPAYREQUEST);
                 break;
             case R.id.ll_cashier:
                 inputMoney();
@@ -308,10 +313,36 @@ public class CheckOutActivity extends AppCompatActivity {
             }
         });
     }
+    /**云会员支付全额支付*/
+    @Subscribe
+    public void getYunPayLocal(YunSqlFinish event){
+        String insertXSJBXX="insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS," +
+                "DDSJ,JYSJ,BZ,JZFSBM,WMBS,ZH,KHBH,QKJE,JCRS," +
+                "CZKYE,BY7,CXYH,JZFSMC,HYJF,ZL,HYBH,HYKDJ)" +
+                "VALUES('"+mWmdbh+"','"+mWmlsbjb.getYHBH()+"','"+Users.YHMC+"','无折扣',"+mTotalMoney+","+Moneys.xfzr+",0,"+mYingshou+",0,'"+mWmlsbjb.getZKFS()+"'," +
+                "'"+mWmlsbjb.getJYSJ()+"',GETDATE(),'"+mPad+"','"+mWmlsbjb.getJcfs()+"','"+ SqlYun.WMBS+"','"+mWmlsbjb.getZH()+"',0,0,"+Integer.parseInt(mWmlsbjb.getJCRS())+"," +
+                ""+SqlYun.CZKYE+",'','','云会员消费',"+SqlYun.jfbfb+",0,'"+SqlYun.HYBH+"','"+SqlYun.HYKDJ+"')|";
+        String insertXSMXXX="insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
+                "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='"+mWmdbh+"'|";
+        String updateWMLSBJB="update WMLSBJB set JSJ='"+mPad+"',SFYJZ='1',DJLSH='"+SqlYun.WMBS+"',YSJE="+Moneys.xfzr+",JSKSSJ=getdate(),BY8='"+SqlYun.from_user+"',JZBZ='"+SqlYun.JZBZ+"' where WMDBH='"+mWmdbh+"'|";
+        String sql = event.sql + insertXSJBXX + insertXSMXXX + updateWMLSBJB;
+        DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+            @Override
+            public void onResponse(String response) {
+               if(response.contains("richado")){
+                   finish();
+               }
+            }
+        });
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindService(connService);
+        org.greenrobot.eventbus.EventBus.getDefault().unregister(this);
     }
 }

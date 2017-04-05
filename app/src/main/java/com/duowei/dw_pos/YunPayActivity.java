@@ -48,10 +48,6 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
     FrameLayout mFrame02;
     @BindView(R.id.frame03)
     FrameLayout mFrame03;
-//    @BindView(R.id.btn_confirm)
-//    Button mBtnConfirm;
-//    @BindView(R.id.btn_cancel)
-//    Button mBtnCancel;
     @BindView(R.id.progressBar)
     ProgressBar mProgressBar;
     private Wmslbjb_jiezhang mWmlsbjb;
@@ -166,18 +162,6 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         }
     }
 
-//    @OnClick({R.id.btn_confirm, R.id.btn_cancel})
-//    public void onViewClicked(View view) {
-//        switch (view.getId()) {
-//            case R.id.btn_confirm:
-//                break;
-//            case R.id.btn_cancel:
-//                Moneys.yfjr=0;
-//                Moneys.wfjr=Moneys.ysjr;
-//                finish();
-//                break;
-//        }
-//    }
     /***接口回调，获取YunCardFragment中gridview点击事件传值*/
     @Override
     public void yunPayFragment(List<YunFu> listPay) {

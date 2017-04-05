@@ -7,6 +7,9 @@ import java.io.Serializable;
  */
 
 public class YunFu implements Serializable{
+    public int id;
+    public String fromUser;
+    public String cardsn;
     public String cardgrade;
     public String title;
     public float credit1;
@@ -15,7 +18,10 @@ public class YunFu implements Serializable{
     public float sl;
     public int ticket;
 
-    public YunFu(String cardgrade, String title, float credit1, float credit2, float money, float sl, int ticket) {
+    public YunFu(int id,String fromUser,String cardsn,String cardgrade, String title, float credit1, float credit2, float money, float sl, int ticket) {
+        this.id=id;
+        this.fromUser=fromUser;
+        this.cardsn=cardsn;
         this.cardgrade = cardgrade;
         this.title = title;
         this.credit1 = credit1;

@@ -290,7 +290,6 @@ public class WebViewPayActivity extends AppCompatActivity {
             }
             @Override
             public void onResponse(String s) {
-                Log.e("jiezhang===", s);
                 if (s.contains("richado")) {
                     mWebview.setVisibility(View.GONE);
                     runOnUiThread(new Runnable() {
