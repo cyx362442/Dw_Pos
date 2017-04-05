@@ -12,6 +12,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.duowei.dw_pos.bean.ImsCardMember;
+import com.duowei.dw_pos.bean.Moneys;
+import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WXFWQDZ;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.bean.YunFu;
@@ -46,16 +48,17 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
     FrameLayout mFrame02;
     @BindView(R.id.frame03)
     FrameLayout mFrame03;
-    @BindView(R.id.btn_confirm)
-    Button mBtnConfirm;
-    @BindView(R.id.btn_cancel)
-    Button mBtnCancel;
+//    @BindView(R.id.btn_confirm)
+//    Button mBtnConfirm;
+//    @BindView(R.id.btn_cancel)
+//    Button mBtnCancel;
     @BindView(R.id.progressBar)
     ProgressBar mProgressBar;
     private Wmslbjb_jiezhang mWmlsbjb;
     private ImsCardMember mImsCards;
     private List<YunFu>listYunFu=new ArrayList<>();
     private ArrayList<ImsCardMember> mYunList = new ArrayList<>();
+    private ArrayList<WMLSB> mWmlsb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,7 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         setContentView(R.layout.activity_yun_pay);
         ButterKnife.bind(this);
         mWmlsbjb = (Wmslbjb_jiezhang) getIntent().getSerializableExtra("WMLSBJB");
+        mWmlsb = (ArrayList<WMLSB>) getIntent().getSerializableExtra("WMLSB");
         mImsCards = (ImsCardMember) getIntent().getSerializableExtra("cards");
         /**获取会员卡储值余额、积分余额*/
         addImsCardData();
@@ -103,7 +107,8 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
             Gson gson = new Gson();
             ImsCardMember[] yunhuiyuen = gson.fromJson(respone, ImsCardMember[].class);
             for (int i = 0; i < yunhuiyuen.length; i++) {
-                yunhuiyuen[i].setTicket(2);
+                yunhuiyuen[i].setTicket(i+2);
+                yunhuiyuen[i].setSelect(false);
                 mYunList.add(yunhuiyuen[i]);
             }
             toYunCardFragment();
@@ -115,6 +120,8 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         YunAccountFragment fragment = new YunAccountFragment();
+        Bundle bundle = new Bundle();
+        fragment.setArguments(bundle);
         ft.replace(R.id.frame01, fragment);
         ft.commit();
     }
@@ -136,6 +143,8 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         YunCardFragment fragment = new YunCardFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("cards", mYunList);
+        bundle.putSerializable("WMLSB",mWmlsb);
+        bundle.putSerializable("mWmlsbjb",mWmlsbjb);
         fragment.setArguments(bundle);
         ft.replace(R.id.frame03, fragment);
         ft.commit();
@@ -148,25 +157,27 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         if (mImsCards.getCredit2() >= 0) {//储值消费
             mYunList.add(new ImsCardMember(mImsCards.getId(), mImsCards.getFrom_user(), mImsCards.getCardsn(), mImsCards.getCredit1(), mImsCards.getCredit2(),
                     mImsCards.getRealname(), mImsCards.getMobile(), mImsCards.getStatus(), mImsCards.getCardgrade(), mImsCards.getOccupation(),
-                    mImsCards.getCreatetime(), mImsCards.getTitle(), mImsCards.getCouponmoney(), mImsCards.getSL(), 0));
+                    mImsCards.getCreatetime(), mImsCards.getTitle(), mImsCards.getCouponmoney(), mImsCards.getSL(), 0,false));
         }
         if (mImsCards.getCredit1() >= 0) {//积分消费
             mYunList.add(new ImsCardMember(mImsCards.getId(), mImsCards.getFrom_user(), mImsCards.getCardsn(), mImsCards.getCredit1(), -1f,
                     mImsCards.getRealname(), mImsCards.getMobile(), mImsCards.getStatus(), mImsCards.getCardgrade(), mImsCards.getOccupation(),
-                    mImsCards.getCreatetime(), mImsCards.getTitle(), mImsCards.getCouponmoney(), mImsCards.getSL(), 1));
+                    mImsCards.getCreatetime(), mImsCards.getTitle(), mImsCards.getCouponmoney(), mImsCards.getSL(), 1,false));
         }
     }
 
-    @OnClick({R.id.btn_confirm, R.id.btn_cancel})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.btn_confirm:
-                break;
-            case R.id.btn_cancel:
-                finish();
-                break;
-        }
-    }
+//    @OnClick({R.id.btn_confirm, R.id.btn_cancel})
+//    public void onViewClicked(View view) {
+//        switch (view.getId()) {
+//            case R.id.btn_confirm:
+//                break;
+//            case R.id.btn_cancel:
+//                Moneys.yfjr=0;
+//                Moneys.wfjr=Moneys.ysjr;
+//                finish();
+//                break;
+//        }
+//    }
     /***接口回调，获取YunCardFragment中gridview点击事件传值*/
     @Override
     public void yunPayFragment(List<YunFu> listPay) {
@@ -174,5 +185,13 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         toYunPayFragment(listPay);
         //刷新yunaccountfragment
         toYunAccountFragment();
+    }
+    /**重写返回健*/
+    @Override
+    public void onBackPressed() {
+        //TODO something
+        Moneys.yfjr=0;
+        Moneys.wfjr=Moneys.ysjr;
+        super.onBackPressed();
     }
 }

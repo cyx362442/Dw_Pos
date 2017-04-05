@@ -20,7 +20,6 @@ import java.util.ArrayList;
 public class YunGvAdapter extends BaseAdapter {
     Context context;
     ArrayList<ImsCardMember>mList;
-    public boolean isCreate2=false;//储值卡是否选中
     public YunGvAdapter(Context context, ArrayList<ImsCardMember> list) {
         this.context = context;
         this.mList = list;
@@ -54,23 +53,37 @@ public class YunGvAdapter extends BaseAdapter {
         }else{
             hold= (ViewHold) contentView.getTag();
         }
-        if(mList.get(positon).getTicket()==0&&isCreate2==true){
+        /**储值卡消费*/
+        ImsCardMember cards = mList.get(positon);
+        if(cards.getTicket()==0&& cards.isSelect()==true){
             hold.ll.setBackgroundResource(R.drawable.item_click);
-        }else if(mList.get(positon).getTicket()==0&&isCreate2==false){
+        }else if(cards.getTicket()==0&& cards.isSelect()==false){
+            hold.ll.setBackgroundResource(R.drawable.item_normal);
+        }
+        /**积分消费*/
+        if(cards.getTicket()==1&& cards.isSelect()==true){
+            hold.ll.setBackgroundResource(R.drawable.item_click);
+        }else if(cards.getTicket()==1&& cards.isSelect()==false){
+            hold.ll.setBackgroundResource(R.drawable.item_normal);
+        }
+        /**电子券1消费*/
+        if(cards.getTicket()==2&& cards.isSelect()==true){
+            hold.ll.setBackgroundResource(R.drawable.item_click);
+        }else if(cards.getTicket()==2&& cards.isSelect()==false){
             hold.ll.setBackgroundResource(R.drawable.item_normal);
         }
 
-        if(mList.get(positon).getTicket()==0){
+        if(cards.getTicket()==0){
             hold.content.setText("储值消费");
-            hold.money.setText("￥"+mList.get(positon).getCredit2());
+            hold.money.setText("￥"+ cards.getCredit2());
         }
-        else if(mList.get(positon).getTicket()==1){
+        else if(cards.getTicket()==1){
             hold.content.setText("积分消费");
-            hold.money.setText(mList.get(positon).getCredit1()+"");
+            hold.money.setText(cards.getCredit1()+"");
         }
-        else if(mList.get(positon).getTicket()==2){
-            hold.content.setText(mList.get(positon).getTitle());
-            hold.money.setText(mList.get(positon).getSL()+"张");
+        else if(cards.getTicket()==2){
+            hold.content.setText(cards.getTitle());
+            hold.money.setText(cards.getSL()+"张");
         }
         return contentView;
     }
@@ -78,8 +91,5 @@ public class YunGvAdapter extends BaseAdapter {
         public TextView content;
         public TextView money;
         public LinearLayout ll;
-    }
-    public void setisCreate2(boolean isCreate2){
-        this.isCreate2=isCreate2;
     }
 }

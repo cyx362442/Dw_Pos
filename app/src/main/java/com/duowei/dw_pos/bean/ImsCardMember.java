@@ -35,10 +35,12 @@ public class ImsCardMember implements Serializable{
     private String createtime;
     private String title;
     private float couponmoney;
-    private float SL;
+    private int SL;
     private int ticket;
+    private boolean isSelect;
 
-    public ImsCardMember(int id, String from_user, String cardsn, float credit1, float credit2, String realname, String mobile, String status, String cardgrade, String occupation, String createtime, String title, float couponmoney, float SL, int ticket) {
+
+    public ImsCardMember(int id, String from_user, String cardsn, float credit1, float credit2, String realname, String mobile, String status, String cardgrade, String occupation, String createtime, String title, float couponmoney, int SL, int ticket, boolean isSelect) {
         this.id = id;
         this.from_user = from_user;
         this.cardsn = cardsn;
@@ -54,6 +56,7 @@ public class ImsCardMember implements Serializable{
         this.couponmoney = couponmoney;
         this.SL = SL;
         this.ticket = ticket;
+        this.isSelect=isSelect;
     }
 
     public int getId() {
@@ -160,11 +163,11 @@ public class ImsCardMember implements Serializable{
         this.couponmoney = couponmoney;
     }
 
-    public float getSL() {
+    public int getSL() {
         return SL;
     }
 
-    public void setSL(float SL) {
+    public void setSL(int SL) {
         this.SL = SL;
     }
 
@@ -174,5 +177,12 @@ public class ImsCardMember implements Serializable{
 
     public void setTicket(int ticket) {
         this.ticket = ticket;
+    }
+    public boolean isSelect() {
+        return isSelect;
+    }
+
+    public void setSelect(boolean select) {
+        isSelect = select;
     }
 }
