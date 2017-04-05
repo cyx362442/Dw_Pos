@@ -48,8 +48,7 @@
                 android:id="@+id/iv_remove"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_remove_circle"
-                android:tint="#1eb5ad"/>
+                android:src="@drawable/ic_remove"/>
 
             <TextView
                 android:id="@+id/tv_num"
@@ -64,8 +63,7 @@
                 android:id="@+id/iv_add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_add_circle_black"
-                android:tint="#1eb5ad"/>
+                android:src="@drawable/ic_add"/>
         </LinearLayout>
 
     </LinearLayout>

@@ -44,7 +44,6 @@
         android:layout_alignParentRight="true"
         android:minHeight="48dp"
         android:minWidth="48dp"
-        android:src="@drawable/ic_add_circle_black"
-        android:tint="#1fb5ac"/>
+        android:src="@drawable/ic_add"/>
 
 </LinearLayout>

@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.duowei.dw_pos.CartDetailActivity;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.WMLSB;
+import com.duowei.dw_pos.fragment.ModifyDialogFragment;
 import com.duowei.dw_pos.fragment.TasteChoiceDialogFragment;
 import com.duowei.dw_pos.tools.CartList;
 
@@ -37,21 +38,37 @@ public class CartDetailItemAdapter extends BaseAdapter {
     private CartDetailActivity mActivity;
     private List<WMLSB> mAllList = new ArrayList<>();
 
-    public CartDetailItemAdapter(CartDetailActivity activity, List<WMLSB> list) {
+    public CartDetailItemAdapter(CartDetailActivity activity) {
         mActivity = activity;
-        setList(list);
     }
 
-    public void setList(List<WMLSB> list) {
-        mAllList.clear();
-
+    /**
+     * 设置本地未提交的数据
+     *
+     * @param list
+     */
+    public void addLocalList(List<WMLSB> list) {
         for (int i = 0; i < list.size(); i++) {
             mAllList.add(list.get(i));
             for (int j = 0; j < list.get(i).getSubWMLSBList().size(); j++) {
                 mAllList.add(list.get(i).getSubWMLSBList().get(j));
             }
         }
+        notifyDataSetChanged();
+    }
 
+    /**
+     * 服务器已下单数据
+     *
+     * @param list
+     */
+    public void addRemoteList(List<WMLSB> list) {
+        mAllList.addAll(list);
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        mAllList.clear();
         notifyDataSetChanged();
     }
 
@@ -92,6 +109,13 @@ public class CartDetailItemAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
+        // 初始化
+        holder.tv_name.setTextColor(Color.DKGRAY);
+        holder.iv_remove.setEnabled(true);
+        holder.iv_remove.setVisibility(View.VISIBLE);
+        holder.iv_add.setEnabled(true);
+        holder.iv_add.setVisibility(View.VISIBLE);
+
         final WMLSB item = getItem(position);
 
         holder.tv_no.setText(String.valueOf(position + 1));
@@ -124,7 +148,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
             holder.tv_name.setText(item.getXMMC());
 
             // 附加信息显示
-            String localMsg = item.getSubTitle();
+            String localMsg = item.getBY13();
             if (!TextUtils.isEmpty(localMsg)) {
                 Spannable spannable = new SpannableString(localMsg);
                 spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, localMsg.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -153,7 +177,50 @@ public class CartDetailItemAdapter extends BaseAdapter {
             }
         });
 
+        if (item.getRemote() == 1) {
+            holder.tv_name.setTextColor(Color.RED);
+            holder.taste_layout.setVisibility(View.GONE);
+            holder.iv_add.setEnabled(false);
+            holder.iv_remove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ModifyDialogFragment fragment = new ModifyDialogFragment();
+                    fragment.show(mActivity.getSupportFragmentManager(), null);
+                }
+            });
+        }
+
         return convertView;
+    }
+
+    /**
+     * @return 本地未下单数量
+     */
+    public float getLocalNum() {
+        float num = 0;
+
+        for (int i = 0; i < mAllList.size(); i++) {
+            WMLSB w = mAllList.get(i);
+            if (w.getRemote() == 0) {
+                num += w.getSL();
+            }
+        }
+
+        return num;
+    }
+
+    /**
+     * @return 总的金额
+     */
+    public float getTotalPrice() {
+        float total = 0;
+
+        for (int i = 0; i < mAllList.size(); i++) {
+            WMLSB w = mAllList.get(i);
+            total += w.getSL() * w.getDJ();
+        }
+
+        return total;
     }
 
     private void setTasteShow(RecyclerView recyclerView, String pz) {

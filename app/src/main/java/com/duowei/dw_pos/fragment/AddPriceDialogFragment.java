@@ -84,8 +84,7 @@ public class AddPriceDialogFragment extends AppCompatDialogFragment implements A
             WMLSB wmlsb = new WMLSB(subJyxmsz);
             wmlsb.setSL(Float.valueOf(item.getSL()));
             wmlsb.setDJ(Float.valueOf(item.getXSJG()));
-            wmlsb.setType(2);
-            wmlsb.setSubTitle("加价促销");
+            wmlsb.setBY13("加价促销");
             sWMLSB.getSubWMLSBList().add(wmlsb);
             EventBus.getDefault().post(new CartUpdateEvent());
         }

@@ -2,9 +2,7 @@ package com.duowei.dw_pos.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.net.http.LoggingEventHandler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,24 +11,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
 import com.duowei.dw_pos.R;
-import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.dialog.SalesReturnDialog;
-import com.duowei.dw_pos.event.CartUpdateEvent;
-import com.duowei.dw_pos.event.OrderUpdateEvent;
-import com.duowei.dw_pos.httputils.DownHTTP;
-import com.duowei.dw_pos.httputils.Post7;
-import com.duowei.dw_pos.httputils.VolleyResultListener;
-import com.duowei.dw_pos.tools.CartList;
-import com.duowei.dw_pos.tools.Net;
-import com.duowei.dw_pos.tools.Users;
-import com.google.common.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Created by Administrator on 2017-03-27.
@@ -38,18 +24,20 @@ import java.util.Iterator;
 
 public class OrderListAdapter extends BaseAdapter {
     Context context;
-    ArrayList<WMLSB>list;
+    ArrayList<WMLSB> list;
     Wmslbjb_jiezhang wmlsbjb;
+
     public OrderListAdapter(Context context, ArrayList<WMLSB> list, Wmslbjb_jiezhang wmlsbjb) {
         this.context = context;
         this.list = list;
-        this.wmlsbjb=wmlsbjb;
+        this.wmlsbjb = wmlsbjb;
     }
 
     public void setList(ArrayList<WMLSB> list) {
         this.list = list;
         notifyDataSetChanged();
     }
+
     @Override
     public int getCount() {
         return list.size();
@@ -78,7 +66,7 @@ public class OrderListAdapter extends BaseAdapter {
             holder.iv_remove = (ImageView) convertView.findViewById(R.id.iv_remove);
             holder.tv_num = (TextView) convertView.findViewById(R.id.tv_num);
             holder.iv_add = (ImageView) convertView.findViewById(R.id.iv_add);
-            holder.ll_taste= (LinearLayout) convertView.findViewById(R.id.taste_layout);
+            holder.ll_taste = (LinearLayout) convertView.findViewById(R.id.taste_layout);
 
             convertView.setTag(holder);
         } else {
@@ -112,13 +100,13 @@ public class OrderListAdapter extends BaseAdapter {
             holder.tv_name.setText(item.getXMMC());
             holder.ll_right.setVisibility(View.VISIBLE);
         }
-        if(item.getSFYXD().equals("1")){//己下单打印
+        if (item.getSFYXD().equals("1")) {//己下单打印
             holder.tv_no.setTextColor(context.getResources().getColor(R.color.colorAccent));
             holder.tv_name.setTextColor(context.getResources().getColor(R.color.colorAccent));
             holder.tv_price.setTextColor(context.getResources().getColor(R.color.colorAccent));
             holder.iv_add.setVisibility(View.INVISIBLE);
             holder.ll_taste.setVisibility(View.GONE);
-        }else{
+        } else {
             holder.tv_no.setTextColor(Color.parseColor("#4c4c4c"));
             holder.tv_name.setTextColor(Color.parseColor("#4c4c4c"));
             holder.tv_price.setTextColor(Color.parseColor("#4c4c4c"));
@@ -131,7 +119,7 @@ public class OrderListAdapter extends BaseAdapter {
             public void onClick(View v) {
 //                CartList.newInstance().remove(item);
 
-                new SalesReturnDialog(context,item,wmlsbjb);
+                new SalesReturnDialog(context, item, wmlsbjb);
             }
         });
 
@@ -144,6 +132,7 @@ public class OrderListAdapter extends BaseAdapter {
 
         return convertView;
     }
+
     private static class ViewHolder {
         TextView tv_no;
         TextView tv_name;

@@ -215,11 +215,11 @@ public class CartList {
             }
         } else {
             // 单品
-            if (wmlsb.getType() == 1) {
+            if ("赠送".equals(wmlsb.getBY13())) {
                 // 买赠项
                 EventBus.getDefault().post(new CartMsgDialogEvent("信息提示", "该单品是赠送品,因此您无法修改数量"));
 
-            } else if (wmlsb.getType() == 2){
+            } else if ("加价促销".equals(wmlsb.getBY13())){
                 // 加价项
                 EventBus.getDefault().post(new CartMsgDialogEvent("信息提示", "该单品是加价促销品,因此您无法修改数量"));
 
@@ -265,7 +265,7 @@ public class CartList {
 
         } else {
             // 单品
-            if (wmlsb.getType() == 2) {
+            if ("加价促销".equals(wmlsb.getBY13())) {
                 // 加价不允许修改
                 EventBus.getDefault().post(new CartMsgDialogEvent("信息提示", "该单品是加价促销品,因此您无法修改数量"));
                 return;
@@ -411,16 +411,13 @@ public class CartList {
                     WMLSB subWmlsb = new WMLSB(subJyxmsz);
                     subWmlsb.setSL(Float.valueOf(mzszmxxx.getSL()));
                     subWmlsb.setDJ(0);
-                    subWmlsb.setSubTitle("买赠");
-                    subWmlsb.setType(1);
+                    subWmlsb.setBY13("赠送");
+                    subWmlsb.setSFZS("1");
+                    subWmlsb.setBY17("7");
                     wmlsb.getSubWMLSBList().clear();
                     wmlsb.getSubWMLSBList().add(subWmlsb);
                     EventBus.getDefault().post(new CartUpdateEvent());
                 }
-//                else if ("2".equals(jbby1)) {
-//                    // 加价
-//                    jyxmszList.add(subJyxmsz);
-//                }
             }
 
             if ("2".equals(jbby1) && mzszmxxxList.size() > 0) {

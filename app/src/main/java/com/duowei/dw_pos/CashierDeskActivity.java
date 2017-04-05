@@ -22,6 +22,7 @@ import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.event.AddPriceEvent;
+import com.duowei.dw_pos.event.ClearSearchEvent;
 import com.duowei.dw_pos.fragment.AddPriceDialogFragment;
 import com.duowei.dw_pos.fragment.CartFragment;
 import com.duowei.dw_pos.tools.AnimUtils;
@@ -85,7 +86,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         initViews();
         loadAllData();
         initData();
-        clearEditText();
+        clearEditText(null);
         // 清空购物车
         CartList.newInstance(this).clear();
     }
@@ -150,6 +151,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         });
 
         mCartFragment = new CartFragment();
+        mCartFragment.setArguments(getIntent().getExtras());
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, mCartFragment)
                 .commit();
@@ -157,6 +159,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
 
     private void initData() {
         Log.d(TAG, "initData: start");
+
         mLeftAdapter = new LeftAdapter(this);
         mLeftListView.setAdapter(mLeftAdapter);
 
@@ -222,14 +225,14 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
 
         } else if (id == R.id.btn_toggle) {
             mToggleButton.toggle();
-            clearEditText();
+            clearEditText(null);
         }
     }
 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        clearEditText();
+        clearEditText(null);
         Object object = mLeftAdapter.getItem(position);
 
         if (object instanceof DMJYXMSSLB) {
@@ -249,7 +252,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
      */
     private List<DMJYXMSSLB> getDmjyxmsslbList() {
         Log.d(TAG, "getDmjyxmsslbList: start");
-        List<DMJYXMSSLB> list = DataSupport.where("sfty != ? and lbbm != ?", "1", "RICH").find(DMJYXMSSLB.class);
+        List<DMJYXMSSLB> list = DataSupport.where("sfty != ? and lbbm != ?", "1", "RICH").order("xl").find(DMJYXMSSLB.class);
         Log.d(TAG, "getDmjyxmsslbList: end");
         return list;
     }
@@ -259,7 +262,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
      * @return 单品信息 列表
      */
     private List<JYXMSZ> getJyxmszList(String lbbm) {
-        return DataSupport.where("lbbm = ?", lbbm).find(JYXMSZ.class);
+        return DataSupport.where("lbbm = ?", lbbm).order("xl").find(JYXMSZ.class);
 //        ArrayList<JYXMSZ> list = new ArrayList<>();
 //        for (int i = 0; i < mRightJyxmszAllList.size(); i++) {
 //            JYXMSZ jyxmsz = mRightJyxmszAllList.get(i);
@@ -308,10 +311,15 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         return DataSupport.findAll(TCMC.class);
     }
 
-    private void clearEditText() {
-        mEditText.removeTextChangedListener(mTextWatcher);
-        mEditText.setText(null);
-        mEditText.addTextChangedListener(mTextWatcher);
+    @Subscribe
+    public void clearEditText(ClearSearchEvent event) {
+        if (event == null) {
+            mEditText.removeTextChangedListener(mTextWatcher);
+            mEditText.setText(null);
+            mEditText.addTextChangedListener(mTextWatcher);
+        } else {
+            mEditText.setText(null);
+        }
     }
 
     /**

@@ -78,6 +78,10 @@ public class OpenTableActivity extends AppCompatActivity {
                 break;
             case R.id.btn_confirm:
                 String stytle = mSpinnerOpen.getSelectedItem().toString();//顾客类型
+                if (stytle.equals("未选择……")) {
+                    stytle = "";
+                }
+
                 CartList.newInstance(this).setOpenInfo(new OpenInfo(
                         csmc,
                         stytle,

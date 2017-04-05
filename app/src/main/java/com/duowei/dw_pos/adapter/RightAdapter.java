@@ -21,8 +21,10 @@ import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.bean.TCSD;
+import com.duowei.dw_pos.event.ClearSearchEvent;
 import com.duowei.dw_pos.tools.CartList;
 
+import org.greenrobot.eventbus.EventBus;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
@@ -107,6 +109,8 @@ public class RightAdapter extends BaseAdapter implements Filterable {
             holder.btn_add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    EventBus.getDefault().post(new ClearSearchEvent());
+
                     mCartList.add(item);
 
                     if (mHolderClickListener != null) {
@@ -132,7 +136,10 @@ public class RightAdapter extends BaseAdapter implements Filterable {
             holder.btn_add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    EventBus.getDefault().post(new ClearSearchEvent());
+
 //                    Toast.makeText(mContext, "进入套餐子项", Toast.LENGTH_SHORT).show();
+
                     Intent intent = new Intent(mContext, ComboActivity.class);
                     intent.putExtra("xmbh", item.getXMBH());
                     mContext.startActivity(intent);
@@ -160,8 +167,11 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         if (mAllOriginalValues == null) {
             mAllOriginalValues = new ArrayList();
         }
-        mAllOriginalValues.clear();
-        mAllOriginalValues.addAll(allList);
+
+        if (allList != null) {
+            mAllOriginalValues.clear();
+            mAllOriginalValues.addAll(allList);
+        }
     }
 
     @Override
