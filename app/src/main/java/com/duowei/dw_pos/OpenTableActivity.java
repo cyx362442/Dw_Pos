@@ -49,6 +49,7 @@ public class OpenTableActivity extends AppCompatActivity {
         setContentView(R.layout.activity_open_table);
         ButterKnife.bind(this);
         initSpinner();
+        CartList.newInstance(this).clear();
     }
 
     @Override

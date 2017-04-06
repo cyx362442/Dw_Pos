@@ -77,6 +77,11 @@ public class LoadingDialogFragment extends AppCompatDialogFragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        if (response.equals("]")) {
+                            dismiss();
+                            return;
+                        }
+
                         Type type = new TypeToken<ArrayList<WMLSBJB>>(){}.getType();
                         List<WMLSBJB> wmlsbjbList = mGson.fromJson(response, type);
                         CartList.sWMLSBJB = wmlsbjbList.get(0);
@@ -98,6 +103,11 @@ public class LoadingDialogFragment extends AppCompatDialogFragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        if (response.equals("]")) {
+                            dismiss();
+                            return;
+                        }
+
                         Type type = new TypeToken<ArrayList<WMLSB>>(){}.getType();
                         CartList.sWMLSBList = mGson.fromJson(response, type);
                         for (WMLSB w : CartList.sWMLSBList) {

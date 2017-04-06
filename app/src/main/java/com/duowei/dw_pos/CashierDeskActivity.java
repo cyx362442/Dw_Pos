@@ -26,7 +26,6 @@ import com.duowei.dw_pos.event.ClearSearchEvent;
 import com.duowei.dw_pos.fragment.AddPriceDialogFragment;
 import com.duowei.dw_pos.fragment.CartFragment;
 import com.duowei.dw_pos.tools.AnimUtils;
-import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.view.ToggleButton;
 
 import org.greenrobot.eventbus.EventBus;
@@ -87,8 +86,6 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         loadAllData();
         initData();
         clearEditText(null);
-        // 清空购物车
-        CartList.newInstance(this).clear();
     }
 
     @Override

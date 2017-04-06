@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,13 +20,15 @@ import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
+import com.duowei.dw_pos.constant.ExtraParm;
 import com.duowei.dw_pos.dialog.CheckOutDialog;
 import com.duowei.dw_pos.event.YunSqlFinish;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
+import com.duowei.dw_pos.sunmiprint.Prints;
+import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.CloseActivity;
 import com.duowei.dw_pos.tools.Net;
-import com.duowei.dw_pos.sunmiprint.Prints;
 import com.duowei.dw_pos.tools.SqlYun;
 import com.duowei.dw_pos.tools.Users;
 import com.google.gson.Gson;
@@ -212,9 +213,13 @@ public class CheckOutActivity extends AppCompatActivity {
                 mPrinter.print_yudayin();
                 break;
             case R.id.btn_dingdan:
-                mIntent = new Intent(this, OrdetDetailActivity.class);
-                mIntent.putExtra("listWmlsb", list_wmlsb);
-                mIntent.putExtra("wmlsbjb", mWmlsbjb);
+//                mIntent = new Intent(this, OrdetDetailActivity.class);
+//                mIntent.putExtra("listWmlsb", list_wmlsb);
+//                mIntent.putExtra("wmlsbjb", mWmlsbjb);
+
+                CartList.newInstance(this).clear();
+                mIntent = new Intent(this, CartDetailActivity.class);
+                mIntent.putExtra(ExtraParm.EXTRA_WMDBH, mWmlsbjb.getWMDBH());
                 startActivity(mIntent);
                 break;
             case R.id.rl_zhifubao:

@@ -1,5 +1,6 @@
 package com.duowei.dw_pos;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -30,11 +31,12 @@ import org.greenrobot.eventbus.Subscribe;
  * 订单详情
  */
 
-public class CartDetailActivity extends AppCompatActivity {
+public class CartDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView mTitleView;
     private ListView mListView;
-    private Button mSubmitBtuuon;
+    private Button mAddButton;
+    private Button mSubmitButton;
 
     private CartDetailItemAdapter mAdapter;
 
@@ -47,13 +49,13 @@ public class CartDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_detail);
         initViews();
-        loadData();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        loadData();
     }
 
     @Override
@@ -72,9 +74,10 @@ public class CartDetailActivity extends AppCompatActivity {
 
         mTitleView = (TextView) findViewById(R.id.tv_title);
         mListView = (ListView) findViewById(R.id.list);
-        mSubmitBtuuon = (Button) findViewById(R.id.btn_submit);
+        mAddButton = (Button) findViewById(R.id.btn_add);
+        mSubmitButton = (Button) findViewById(R.id.btn_submit);
 
-        mSubmitBtuuon.setOnClickListener(new View.OnClickListener() {
+        mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mWmdbh == null) {
@@ -92,6 +95,8 @@ public class CartDetailActivity extends AppCompatActivity {
 
             }
         });
+
+        mAddButton.setOnClickListener(this);
     }
 
     private void loadData() {
@@ -102,6 +107,8 @@ public class CartDetailActivity extends AppCompatActivity {
 
         if (!TextUtils.isEmpty(mWmdbh)) {
             // 从结账界面进来
+            mAddButton.setVisibility(View.VISIBLE);
+
             LoadingDialogFragment fragment = new LoadingDialogFragment();
             fragment.setArguments(getIntent().getExtras());
             fragment.show(getSupportFragmentManager(), null);
@@ -140,9 +147,9 @@ public class CartDetailActivity extends AppCompatActivity {
         mTitleView.setText(title);
 
         if (mAdapter.getLocalNum() > 0) {
-            mSubmitBtuuon.setEnabled(true);
+            mSubmitButton.setEnabled(true);
         } else {
-            mSubmitBtuuon.setEnabled(false);
+            mSubmitButton.setEnabled(false);
         }
     }
 
@@ -150,5 +157,16 @@ public class CartDetailActivity extends AppCompatActivity {
     public void showDialog(CartMsgDialogEvent event) {
         AppCompatDialogFragment fragment = MessageDialogFragment.newInstance(event.title, event.message);
         fragment.show(getSupportFragmentManager(), null);
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+
+        if (id == R.id.btn_add) {
+            Intent intent = new Intent(this, CashierDeskActivity.class);
+            intent.putExtras(getIntent().getExtras());
+            startActivity(intent);
+        }
     }
 }

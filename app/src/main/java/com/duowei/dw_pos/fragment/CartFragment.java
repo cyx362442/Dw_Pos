@@ -79,6 +79,12 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        updateUiDate(null);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
@@ -113,13 +119,12 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         int id = v.getId();
 
         if (id == R.id.btn_commit) {
-            Intent intent = new Intent(getContext(), CartDetailActivity.class);
-
-            if (getArguments() != null) {
-                intent.putExtras(getArguments());
+            if (getArguments() == null) {
+                Intent intent = new Intent(getContext(), CartDetailActivity.class);
+                getContext().startActivity(intent);
+            } else {
+                getActivity().finish();
             }
-
-            getContext().startActivity(intent);
         }
     }
 }
