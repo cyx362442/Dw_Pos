@@ -12,6 +12,7 @@ import com.duowei.dw_pos.bean.MZSZJBXX;
 import com.duowei.dw_pos.bean.MZSZMXXX;
 import com.duowei.dw_pos.bean.OpenInfo;
 import com.duowei.dw_pos.bean.WMLSB;
+import com.duowei.dw_pos.bean.WMLSBJB;
 import com.duowei.dw_pos.event.AddPriceEvent;
 import com.duowei.dw_pos.event.CartMsgDialogEvent;
 import com.duowei.dw_pos.event.CartUpdateEvent;
@@ -34,6 +35,10 @@ import java.util.Locale;
 
 public class CartList {
     private static final String TAG = "CartList";
+
+    public static WMLSBJB sWMLSBJB;
+    public static List<WMLSB> sWMLSBList = new ArrayList<>();
+    private static List<WMLSB> mRemoveRemoteList = new ArrayList<>();
 
     public String sql = "";
 
@@ -72,6 +77,8 @@ public class CartList {
 
     public void clear() {
         mList.clear();
+        sWMLSBJB = null;
+        sWMLSBList.clear();
     }
 
     public int getSize() {
@@ -427,5 +434,77 @@ public class CartList {
                 EventBus.getDefault().post(new AddPriceEvent());
             }
         }
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    public void removeRemote(WMLSB wmlsb) {
+        mRemoveRemoteSql = "";
+        mRemoveRemoteList.clear();
+
+        if (TextUtils.isEmpty(wmlsb.getBY15())) {
+            // 单品
+
+            for (int i = 0; i < sWMLSBList.size(); i++) {
+                if ("赠送".equals(wmlsb.getBY13()) || "加价促销".equals(wmlsb.getBY13())) {
+                    mRemoveRemoteSql += "update wmlsb " +
+                            "set sl = sl - 1 " +
+                            "where xh = " + wmlsb.getXH() + "|";
+
+                    mRemoveRemoteList.add(wmlsb);
+                    break;
+                }
+
+                WMLSB remote = sWMLSBList.get(i);
+                if (wmlsb.getBy5().equals(remote.getBy5())) {
+                    mRemoveRemoteSql += "update wmlsb " +
+                            "set sl = sl - 1 " +
+                            "where wmdbh = '" + remote.getWMDBH() + "' and xh = " + remote.getXH() + "|";
+
+                    mRemoveRemoteList.add(remote);
+                }
+            }
+
+            if (!TextUtils.isEmpty(wmlsb.getBY21())) {
+                String by21 = wmlsb.getBY21().substring(2);
+                mRemoveRemoteSql += "update wmlsb " +
+                        "set sl = sl - 1 " +
+                        "where xh = " + by21 + "|";
+
+                mRemoveRemoteList.add(wmlsb);
+            }
+
+        } else {
+            // 套餐
+            for (int i = 0; i < sWMLSBList.size(); i++) {
+                WMLSB remote = sWMLSBList.get(i);
+                if (wmlsb.getTCBH().equals(remote.getTCBH())) {
+                    mRemoveRemoteSql += "update wmlsb " +
+                            "set sl = sl - dwsl " +
+                            "where wmdbh = '" + remote.getWMDBH() + "' and tcbh = '" + remote.getTCBH() + "'|";
+
+                    mRemoveRemoteList.add(remote);
+                }
+            }
+        }
+
+        mRemoveRemoteSql += "delete wmlsb where sl < 1 and wmdbh = '" + wmlsb.getWMDBH() + "'|";
+        mRemoveRemoteSql += "update WMLSBJB " +
+                "set YS = (select sum(XJ) from WMLSB where WMDBH = '" + wmlsb.getWMDBH() + "')|";
+    }
+
+    private String mRemoveRemoteSql = "";
+
+    public String getRemoveRemoteSql(String text) {
+        String pbdyxxbSql = "";
+        for (int i = 0; i < mRemoveRemoteList.size(); i++) {
+            WMLSB remote = mRemoveRemoteList.get(i);
+
+            pbdyxxbSql += "insert into pbdyxxb(xh,wmdbh,xmbh,xmmc,dw,sl,dj,xj,pz,ysjg,syyxm,sfxs,tcbh,tcxmbh,tcfz,xtbz,czsj,zh,jsj,thyy) " +
+                    "select xh,wmdbh,xmbh,xmmc,dw,'1',dj,'" + remote.getDJ() + "',pz,ysjg,syyxm,sfxs,tcbh,tcxmbh,BY15,'2',getdate(),'" + sWMLSBJB.getZH()+ "','" + Users.pad + "','" + text + "'  " +
+                    "from wmlsb where wmdbh='" + remote.getWMDBH() + "' and  XH='" + remote.getXH() + "'|";
+        }
+
+        return pbdyxxbSql + mRemoveRemoteSql;
     }
 }

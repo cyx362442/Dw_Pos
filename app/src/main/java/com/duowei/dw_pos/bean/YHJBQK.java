@@ -21,6 +21,7 @@ public class YHJBQK extends DataSupport{
     public String XTJSQX;
     public String ZPQX;
     public String MDBBQX;
+    public String TDQX;
 
     public String getYHBH() {
         return YHBH;
@@ -68,5 +69,13 @@ public class YHJBQK extends DataSupport{
 
     public void setMDBBQX(String MDBBQX) {
         this.MDBBQX = MDBBQX;
+    }
+
+    public String getTDQX() {
+        return TDQX;
+    }
+
+    public void setTDQX(String TDQX) {
+        this.TDQX = TDQX;
     }
 }

@@ -51,7 +51,7 @@ public class DataLoad {
     }
     private void Http_YHJBQK() {
         mProgressDialog.setMessage("用户信息……");
-        String sql="SELECT YHBH,YHMC,isnull(YHMM,'')YHMM,isnull(XTJSQX,'')XTJSQX,isnull(ZPQX,'0')ZPQX,isnull(MDBBQX,'0')MDBBQX FROM YHJBQK where XTJSQX<>'1'|";
+        String sql="SELECT YHBH,YHMC,isnull(YHMM,'')YHMM,isnull(XTJSQX,'')XTJSQX,isnull(ZPQX,'0')ZPQX,isnull(MDBBQX,'0')MDBBQX, TDQX FROM YHJBQK where XTJSQX<>'1'|";
         DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {

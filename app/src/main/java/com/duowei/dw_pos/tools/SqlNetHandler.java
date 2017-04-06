@@ -9,7 +9,6 @@ import com.duowei.dw_pos.DinningActivity;
 import com.duowei.dw_pos.bean.Pbdyxxb;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
-import com.duowei.dw_pos.fragment.LoadingDialogFragment;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 
@@ -60,6 +59,9 @@ public class SqlNetHandler {
         }
         localSql += insertWmlsbSqlSet;
 
+        localSql += "update WMLSBJB " +
+                "set YS = (select sum(XJ) from WMLSB where WMDBH = '" + wmdbh + "')|";
+
         if (first) {
             // 平板打印信息表
             String insertPbdyxxb = Pbdyxxb.toInsertString(
@@ -73,9 +75,9 @@ public class SqlNetHandler {
             // 平板打印信息表
             String insertPbdyxxb = Pbdyxxb.toInsertString(
                     wmdbh,
-                    LoadingDialogFragment.sWMLSBJB.getZH(),
+                    CartList.sWMLSBJB.getZH(),
                     Users.pad,
-                    LoadingDialogFragment.sWMLSBJB.getJCRS()
+                    CartList.sWMLSBJB.getJCRS()
             );
             localSql += insertPbdyxxb;
         }

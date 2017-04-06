@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.duowei.dw_pos.adapter.CartDetailItemAdapter;
 import com.duowei.dw_pos.constant.ExtraParm;
 import com.duowei.dw_pos.event.CartMsgDialogEvent;
+import com.duowei.dw_pos.event.CartRemoteUpdateEvent;
 import com.duowei.dw_pos.event.CartUpdateEvent;
 import com.duowei.dw_pos.fragment.LoadingDialogFragment;
 import com.duowei.dw_pos.fragment.MessageDialogFragment;
@@ -38,7 +39,7 @@ public class CartDetailActivity extends AppCompatActivity {
     private CartDetailItemAdapter mAdapter;
 
     private String mWmdbh;
-    /** 加载成功标志位 */
+    /** 加载成功 */
     private boolean mLoadSuccess = false;
 
     @Override
@@ -122,9 +123,14 @@ public class CartDetailActivity extends AppCompatActivity {
         updateData();
     }
 
+    @Subscribe
+    public void updateRemoteUiDate(CartRemoteUpdateEvent event) {
+        loadData();
+    }
+
     private void updateData() {
         mAdapter.clear();
-        mAdapter.addRemoteList(LoadingDialogFragment.sWMLSBList);
+        mAdapter.addRemoteList(CartList.sWMLSBList);
         mAdapter.addLocalList(CartList.newInstance(this).getList());
 
         String title = "订餐详情";

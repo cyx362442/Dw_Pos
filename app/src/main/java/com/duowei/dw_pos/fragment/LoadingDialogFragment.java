@@ -17,6 +17,7 @@ import com.duowei.dw_pos.bean.WMLSBJB;
 import com.duowei.dw_pos.constant.ExtraParm;
 import com.duowei.dw_pos.httputils.VolleyUtils;
 import com.duowei.dw_pos.tools.Base64;
+import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.Net;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -26,13 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017-04-02.
+ * 加载远程数据窗口
  */
 
 public class LoadingDialogFragment extends AppCompatDialogFragment {
-
-    public static WMLSBJB sWMLSBJB;
-    public static List<WMLSB> sWMLSBList = new ArrayList<>();
 
     private Context mContext;
     private String mWmdbh;
@@ -59,8 +57,8 @@ public class LoadingDialogFragment extends AppCompatDialogFragment {
         mWmdbh = getArguments().getString(ExtraParm.EXTRA_WMDBH);
         mVolleyUtils = VolleyUtils.getInstance(mContext);
 
-        sWMLSBJB = null;
-        sWMLSBList.clear();
+        CartList.sWMLSBJB = null;
+        CartList.sWMLSBList.clear();
         loadData1();
     }
 
@@ -81,7 +79,7 @@ public class LoadingDialogFragment extends AppCompatDialogFragment {
                     public void onResponse(String response) {
                         Type type = new TypeToken<ArrayList<WMLSBJB>>(){}.getType();
                         List<WMLSBJB> wmlsbjbList = mGson.fromJson(response, type);
-                        sWMLSBJB = wmlsbjbList.get(0);
+                        CartList.sWMLSBJB = wmlsbjbList.get(0);
                         loadData2();
                     }
                 }, new Response.ErrorListener() {
@@ -101,8 +99,8 @@ public class LoadingDialogFragment extends AppCompatDialogFragment {
                     @Override
                     public void onResponse(String response) {
                         Type type = new TypeToken<ArrayList<WMLSB>>(){}.getType();
-                        sWMLSBList = mGson.fromJson(response, type);
-                        for (WMLSB w : sWMLSBList) {
+                        CartList.sWMLSBList = mGson.fromJson(response, type);
+                        for (WMLSB w : CartList.sWMLSBList) {
                             w.setRemote(1);
                         }
 
@@ -115,7 +113,7 @@ public class LoadingDialogFragment extends AppCompatDialogFragment {
                             public void run() {
                                 dismiss();
                             }
-                        }, 1000);
+                        }, 500);
                     }
                 }, new Response.ErrorListener() {
                     @Override

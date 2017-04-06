@@ -18,9 +18,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.SZLB;
+import com.duowei.dw_pos.event.CartRemoteUpdateEvent;
+import com.duowei.dw_pos.httputils.VolleyUtils;
+import com.duowei.dw_pos.tools.Base64;
+import com.duowei.dw_pos.tools.CartList;
+import com.duowei.dw_pos.tools.Net;
 
+import org.greenrobot.eventbus.EventBus;
 import org.litepal.crud.DataSupport;
 
 import java.util.List;
@@ -103,16 +111,42 @@ public class ModifyDialogFragment extends AppCompatDialogFragment implements Vie
             dismiss();
         } else if (id == R.id.btn_ok) {
             String selectedText = ((SZLB) mSpinner.getSelectedItem()).getSZBM();
-            Toast.makeText(mContext, "" + selectedText, Toast.LENGTH_SHORT).show();
-            update();
-
-            dismiss();
+            if ("手写原因".equals(selectedText)) {
+                String text = mEditText.getText().toString();
+                update(text);
+            } else {
+                update(selectedText);
+            }
         }
     }
 
-    private void update() {
+    private void update(String text) {
+        VolleyUtils.getInstance(mContext).postQuerySql7(Net.url,
+                Base64.getBase64(CartList.newInstance(mContext).getRemoveRemoteSql(text)).replaceAll("\n", ""),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if (response.contains("richado")) {
+                            Toast.makeText(mContext, "修改成功", Toast.LENGTH_SHORT).show();
 
+                            EventBus.getDefault().post(new CartRemoteUpdateEvent());
+                        } else {
+                            Toast.makeText(mContext, "" + response, Toast.LENGTH_SHORT).show();
+                        }
+
+                        dismiss();
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(mContext, "修改失败", Toast.LENGTH_SHORT).show();
+                        dismiss();
+                    }
+                });
     }
+
+
+
 
     private class CustomAdapter extends ArrayAdapter<SZLB> {
 

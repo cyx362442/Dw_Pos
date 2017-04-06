@@ -96,8 +96,9 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                 }else if(yhjbqk.get(0).getYHMM().equals(password)){
                     saveData(ip, port);
                     Users.YHBH=account;
-                    List<YHJBQK> yhmc = DataSupport.select("YHMC").where("YHBH=?", account).find(YHJBQK.class);
+                    List<YHJBQK> yhmc = DataSupport.where("YHBH=?", account).find(YHJBQK.class);
                     Users.YHMC=yhmc.get(0).YHMC;
+                    Users.TDQX=yhmc.get(0).TDQX;
                     Intent intent = new Intent(this, DinningActivity.class);
                     startActivity(intent);
                 }else{

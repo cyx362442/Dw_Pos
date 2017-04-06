@@ -23,14 +23,17 @@ import com.duowei.dw_pos.CartDetailActivity;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.fragment.ModifyDialogFragment;
+import com.duowei.dw_pos.fragment.ModifyLoginDialogFragment;
 import com.duowei.dw_pos.fragment.TasteChoiceDialogFragment;
+import com.duowei.dw_pos.impl.OnSuccessListener;
 import com.duowei.dw_pos.tools.CartList;
+import com.duowei.dw_pos.tools.Users;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017-03-25.
+ * 订单详情
  */
 
 public class CartDetailItemAdapter extends BaseAdapter {
@@ -177,15 +180,39 @@ public class CartDetailItemAdapter extends BaseAdapter {
             }
         });
 
+        // 远程处理
         if (item.getRemote() == 1) {
             holder.tv_name.setTextColor(Color.RED);
             holder.taste_layout.setVisibility(View.GONE);
             holder.iv_add.setEnabled(false);
+
+            if ("加价促销".equals(item.getBY13())) {
+                holder.iv_remove.setEnabled(false);
+            }
+
             holder.iv_remove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ModifyDialogFragment fragment = new ModifyDialogFragment();
-                    fragment.show(mActivity.getSupportFragmentManager(), null);
+                    if ("1".equals(Users.TDQX)) {
+                        CartList.newInstance(v.getContext()).removeRemote(item);
+
+                        ModifyDialogFragment fragment = new ModifyDialogFragment();
+                        fragment.show(mActivity.getSupportFragmentManager(), null);
+
+                    } else {
+                        ModifyLoginDialogFragment fragment = new ModifyLoginDialogFragment();
+                        fragment.show(mActivity.getSupportFragmentManager(), null);
+                        fragment.setOnSuccessListener(new OnSuccessListener() {
+
+                            @Override
+                            public void onSuccess() {
+                                CartList.newInstance(mActivity).removeRemote(item);
+
+                                ModifyDialogFragment fragment = new ModifyDialogFragment();
+                                fragment.show(mActivity.getSupportFragmentManager(), null);
+                            }
+                        });
+                    }
                 }
             });
         }
