@@ -79,6 +79,7 @@ public class LoadingDialogFragment extends AppCompatDialogFragment {
                     public void onResponse(String response) {
                         if (response.equals("]")) {
                             dismiss();
+                            invokeListener();
                             return;
                         }
 
@@ -104,9 +105,12 @@ public class LoadingDialogFragment extends AppCompatDialogFragment {
                     @Override
                     public void onResponse(String response) {
                         if (response.equals("]")) {
+                            invokeListener();
                             dismiss();
                             return;
                         }
+
+                        response = response.replaceAll("&lt;", "<").replaceAll("&gt;", ">");
 
                         Type type = new TypeToken<ArrayList<WMLSB>>(){}.getType();
                         CartList.sWMLSBList = mGson.fromJson(response, type);
@@ -114,9 +118,7 @@ public class LoadingDialogFragment extends AppCompatDialogFragment {
                             w.setRemote(1);
                         }
 
-                        if (mListener != null) {
-                            mListener.onLoadSuccess();
-                        }
+                        invokeListener();
 
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -132,6 +134,12 @@ public class LoadingDialogFragment extends AppCompatDialogFragment {
                         dismiss();
                     }
                 });
+    }
+
+    private void invokeListener() {
+        if (mListener != null) {
+            mListener.onLoadSuccess();
+        }
     }
 
     private OnLoadSuccessListener mListener;

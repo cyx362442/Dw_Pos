@@ -114,10 +114,12 @@ public class CartDetailItemAdapter extends BaseAdapter {
 
         // 初始化
         holder.tv_name.setTextColor(Color.DKGRAY);
-        holder.iv_remove.setEnabled(true);
         holder.iv_remove.setVisibility(View.VISIBLE);
-        holder.iv_add.setEnabled(true);
+        holder.iv_remove.setEnabled(true);
         holder.iv_add.setVisibility(View.VISIBLE);
+        holder.iv_add.setEnabled(true);
+        holder.btn_taste.setVisibility(View.VISIBLE);
+
 
         final WMLSB item = getItem(position);
 
@@ -183,7 +185,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
         // 远程处理
         if (item.getRemote() == 1) {
             holder.tv_name.setTextColor(Color.RED);
-            holder.taste_layout.setVisibility(View.GONE);
+            holder.btn_taste.setVisibility(View.GONE);
             holder.iv_add.setEnabled(false);
 
             if ("加价促销".equals(item.getBY13())) {

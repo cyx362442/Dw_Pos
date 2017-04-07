@@ -488,7 +488,13 @@ public class CartList {
             }
         }
 
-        mRemoveRemoteSql += "delete wmlsb where sl < 1 and wmdbh = '" + wmlsb.getWMDBH() + "'|";
+        mRemoveRemoteSql += "delete wmlsb " +
+                "where sl < 1 and wmdbh = '" + wmlsb.getWMDBH() + "'|";
+
+        mRemoveRemoteSql += "update WMLSB " +
+                "set xj = DJ * SL " +
+                "where WMDBH = '" + wmlsb.getWMDBH() + "'|";
+
         mRemoveRemoteSql += "update WMLSBJB " +
                 "set YS = (select sum(XJ) from WMLSB where WMDBH = '" + wmlsb.getWMDBH() + "')|";
     }

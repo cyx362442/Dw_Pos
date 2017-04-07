@@ -94,7 +94,6 @@ public class ModifyLoginDialogFragment extends AppCompatDialogFragment implement
 
             List<YHJBQK> list = DataSupport.where("yhbh = ? and TDQX = 1", username).find(YHJBQK.class);
             if (list.size() > 0 && list.get(0).getYHMM().equals(password)) {
-                Toast.makeText(mContext, "Ok", Toast.LENGTH_SHORT).show();
 
                 if (mOnSuccessListener != null) {
                     mOnSuccessListener.onSuccess();
