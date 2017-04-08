@@ -149,7 +149,13 @@ public class Prints {
         });
     }
 
+    float zj=0f;//消费总计
     public void print_commit(final WMLSBJB wmlsbjb, final List<WMLSB>wmlsbList){
+        for(WMLSB w:wmlsbList){
+            float xj = w.getSL() * w.getDJ();
+            zj=zj+xj;
+        }
+
         ThreadPoolManager.getInstance().executeTask(new Runnable() {
             @Override
             public void run() {
@@ -174,7 +180,7 @@ public class Prints {
                     }
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //______________________________________________________________________________
-                    woyouService.printTextWithFont("消费合计：" + wmlsbjb.getYS() + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("消费合计：" + zj + "\n", "", 30, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     woyouService.setAlignment(1, callback);
                     woyouService.printTextWithFont("压桌单", "", 30, callback);

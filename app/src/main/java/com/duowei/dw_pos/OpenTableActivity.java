@@ -3,6 +3,7 @@ package com.duowei.dw_pos;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.duowei.dw_pos.bean.OpenInfo;
 import com.duowei.dw_pos.dialog.CustomerDialog;
@@ -85,10 +87,15 @@ public class OpenTableActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.btn_confirm:
+                String persons = mEditText2.getText().toString();
+                if(TextUtils.isEmpty(persons)){
+                    Toast.makeText(this,"请输入就餐人数",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 CartList.newInstance(this).setOpenInfo(new OpenInfo(
                         csmc,
                         customerStytle,
-                        mEditText2.getText().toString(),
+                        persons,
                         mEditText3.getText().toString()
                 ));
 

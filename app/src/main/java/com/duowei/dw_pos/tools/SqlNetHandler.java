@@ -38,7 +38,7 @@ public class SqlNetHandler {
         CartList cartList = CartList.newInstance(context);
         String localSql = "";
 
-        if (first) {
+        if (first) {//第一次开单
             // 点单临时表基本信息WMLSBJB
             // 是否已结账
             mWmlsbjb = new WMLSBJB(
@@ -54,6 +54,8 @@ public class SqlNetHandler {
                     cartList.getOpenInfo().getRemark()
             );
             localSql += mWmlsbjb.toInsertString();
+        }else{//从服务器上load
+            mWmlsbjb=CartList.sWMLSBJB;
         }
 
         // 点单临时表明细信息WMLSB
