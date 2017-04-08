@@ -3,19 +3,21 @@ package com.duowei.dw_pos;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.duowei.dw_pos.bean.GKLX;
 import com.duowei.dw_pos.bean.OpenInfo;
+import com.duowei.dw_pos.dialog.CustomerDialog;
+import com.duowei.dw_pos.event.CustomerStytle;
 import com.duowei.dw_pos.tools.CartList;
 
-import org.litepal.crud.DataSupport;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,18 +40,26 @@ public class OpenTableActivity extends AppCompatActivity {
     Button mBtnCancel;
     @BindView(R.id.btn_confirm)
     Button mBtnConfirm;
-    @BindView(R.id.spinner_open)
-    Spinner mSpinnerOpen;
     String csmc;
-    private List<String>gkName=new ArrayList<>();
+    @BindView(R.id.imgCustomer)
+    ImageView mImgCustomer;
+    @BindView(R.id.tv_stytle)
+    TextView mTvStytle;
+    private String customerStytle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_table);
         ButterKnife.bind(this);
-        initSpinner();
+        EventBus.getDefault().register(this);
         CartList.newInstance(this).clear();
+    }
+
+    @Subscribe
+    public void customerStytle(CustomerStytle event) {
+        customerStytle = event.stytle;
+        mTvStytle.setText(customerStytle);
     }
 
     @Override
@@ -59,33 +69,25 @@ public class OpenTableActivity extends AppCompatActivity {
         mTvTitle.setText("开台—" + csmc);
     }
 
-    private void initSpinner() {
-        gkName.clear();
-        gkName.add("未选择……");
-        List<GKLX> gklx = DataSupport.findAll(GKLX.class);
-        for(GKLX G:gklx){
-            gkName.add(G.getGKLX());
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, gkName);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinnerOpen.setAdapter(adapter);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
-    @OnClick({R.id.btn_cancel, R.id.btn_confirm})
+    @OnClick({R.id.imgCustomer, R.id.btn_cancel, R.id.btn_confirm})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.imgCustomer:
+                CustomerDialog dialog = new CustomerDialog(this);
+                break;
             case R.id.btn_cancel:
                 finish();
                 break;
             case R.id.btn_confirm:
-                String stytle = mSpinnerOpen.getSelectedItem().toString();//顾客类型
-                if (stytle.equals("未选择……")) {
-                    stytle = "";
-                }
-
                 CartList.newInstance(this).setOpenInfo(new OpenInfo(
                         csmc,
-                        stytle,
+                        customerStytle,
                         mEditText2.getText().toString(),
                         mEditText3.getText().toString()
                 ));

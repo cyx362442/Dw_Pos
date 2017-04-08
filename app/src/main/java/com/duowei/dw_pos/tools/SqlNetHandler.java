@@ -9,8 +9,12 @@ import com.duowei.dw_pos.DinningActivity;
 import com.duowei.dw_pos.bean.Pbdyxxb;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
+import com.duowei.dw_pos.event.Commit;
+import com.duowei.dw_pos.event.CustomerStytle;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -19,6 +23,9 @@ import java.util.List;
  */
 
 public class SqlNetHandler {
+
+    private WMLSBJB mWmlsbjb;
+    private List<WMLSB> mWmlsbList;
 
     /**
      * 提交订单
@@ -33,7 +40,8 @@ public class SqlNetHandler {
 
         if (first) {
             // 点单临时表基本信息WMLSBJB
-            WMLSBJB wmlsbjb = new WMLSBJB(
+            // 是否已结账
+            mWmlsbjb = new WMLSBJB(
                     wmdbh,
                     Users.YHMC,
                     cartList.getOpenInfo().getDeskNo(),
@@ -45,14 +53,14 @@ public class SqlNetHandler {
                     cartList.getOpenInfo().getPeopleType(),
                     cartList.getOpenInfo().getRemark()
             );
-            localSql += wmlsbjb.toInsertString();
+            localSql += mWmlsbjb.toInsertString();
         }
 
         // 点单临时表明细信息WMLSB
         String insertWmlsbSqlSet = "";
-        List<WMLSB> wmlsbList = cartList.getList();
-        for (int i = 0; i < wmlsbList.size(); i++) {
-            WMLSB wmlsb = wmlsbList.get(i);
+        mWmlsbList = cartList.getList();
+        for (int i = 0; i < mWmlsbList.size(); i++) {
+            WMLSB wmlsb = mWmlsbList.get(i);
             wmlsb.setWMDBH(wmdbh);
             wmlsb.setSYYXM(Users.YHMC);
             insertWmlsbSqlSet += wmlsb.toInsertString();
@@ -96,6 +104,8 @@ public class SqlNetHandler {
                     Intent intent = new Intent(context, DinningActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     context.startActivity(intent);
+
+                    EventBus.getDefault().post(new Commit(mWmlsbjb,mWmlsbList));
                 } else {
                     Toast.makeText(context, "提交失败！", Toast.LENGTH_LONG).show();
                 }
