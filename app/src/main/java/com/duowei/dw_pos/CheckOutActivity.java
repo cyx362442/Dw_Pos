@@ -167,9 +167,7 @@ public class CheckOutActivity extends AppCompatActivity {
                 DownHTTP.postVolley6(Net.url, sqlWmlsb, new VolleyResultListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
                     }
-
                     @Override
                     public void onResponse(String response) {
                         if (response.equals("]")) {

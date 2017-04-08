@@ -53,7 +53,7 @@ public class CustomerAdapter extends BaseAdapter {
         hold.button.setText(gkName.get(position));
         return convertView;
     }
-}
     class ViewHold{
         Button button;
     }
+}

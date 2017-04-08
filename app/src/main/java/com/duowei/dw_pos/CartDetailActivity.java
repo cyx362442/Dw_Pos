@@ -1,7 +1,10 @@
 package com.duowei.dw_pos;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialogFragment;
@@ -17,8 +20,10 @@ import com.duowei.dw_pos.constant.ExtraParm;
 import com.duowei.dw_pos.event.CartMsgDialogEvent;
 import com.duowei.dw_pos.event.CartRemoteUpdateEvent;
 import com.duowei.dw_pos.event.CartUpdateEvent;
+import com.duowei.dw_pos.event.Commit;
 import com.duowei.dw_pos.fragment.LoadingDialogFragment;
 import com.duowei.dw_pos.fragment.MessageDialogFragment;
+import com.duowei.dw_pos.sunmiprint.Prints;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.DateTimeUtils;
 import com.duowei.dw_pos.tools.SqlNetHandler;
@@ -26,6 +31,8 @@ import com.duowei.dw_pos.tools.Users;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import woyou.aidlservice.jiuiv5.IWoyouService;
 
 /**
  * 订单详情
@@ -44,11 +51,25 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     /** 加载成功 */
     private boolean mLoadSuccess = false;
 
+    private Prints mPrinter;
+    private IWoyouService woyouService;
+    private ServiceConnection connService = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            woyouService = null;
+        }
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            woyouService = IWoyouService.Stub.asInterface(service);
+        }
+    };
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_detail);
         initViews();
+        mPrinter = Prints.getPrinter();
+        mPrinter.bindPrintService(this, connService);
     }
 
     @Override
@@ -62,6 +83,12 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(connService);
     }
 
     private void initViews() {
@@ -133,6 +160,12 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     @Subscribe
     public void updateRemoteUiDate(CartRemoteUpdateEvent event) {
         loadData();
+    }
+
+    @Subscribe
+    public void commitSuccessed(Commit event){
+        mPrinter.setWoyouService(woyouService);
+        mPrinter.print_commit(event.wmlsbjb,event.wmlsbList);
     }
 
     private void updateData() {
