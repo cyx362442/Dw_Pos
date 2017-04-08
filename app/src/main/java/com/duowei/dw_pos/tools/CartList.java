@@ -496,7 +496,8 @@ public class CartList {
                 "where WMDBH = '" + wmlsb.getWMDBH() + "'|";
 
         mRemoveRemoteSql += "update WMLSBJB " +
-                "set YS = (select sum(XJ) from WMLSB where WMDBH = '" + wmlsb.getWMDBH() + "')|";
+                "set YS = (select sum(XJ) from WMLSB where WMDBH = '" + wmlsb.getWMDBH() + "') " +
+                "where wmdbh = '" + wmlsb.getWMDBH() + "'|";
     }
 
     private String mRemoveRemoteSql = "";

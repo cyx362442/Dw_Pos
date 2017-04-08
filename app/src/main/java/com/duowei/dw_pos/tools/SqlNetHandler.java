@@ -60,7 +60,8 @@ public class SqlNetHandler {
         localSql += insertWmlsbSqlSet;
 
         localSql += "update WMLSBJB " +
-                "set YS = (select sum(XJ) from WMLSB where WMDBH = '" + wmdbh + "')|";
+                "set YS = (select sum(XJ) from WMLSB where WMDBH = '" + wmdbh + "') " +
+                "where wmdbh = '" + wmdbh + "'|";
 
         if (first) {
             // 平板打印信息表
