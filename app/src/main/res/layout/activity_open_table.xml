@@ -33,14 +33,17 @@
             <TextView
                 style="@style/textView_openTable"
                 android:text="来客类型："/>
-            <Spinner
-                android:id="@+id/spinner_open"
-                android:layout_width="120dp"
-                android:layout_height="50dp"
-                ></Spinner>
-            <ImageView
+            <TextView
+                android:id="@+id/tv_stytle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="……"
+                android:textColor="@color/colorGreen"/>
+            <ImageView
+                android:id="@+id/imgCustomer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:src="@drawable/ic_perm_contact_calendar_black_36dp"/>
         </LinearLayout>
         <LinearLayout
