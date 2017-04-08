@@ -13,7 +13,7 @@
        >
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="25dp"
             android:gravity="center">
             <TextView
                 android:layout_width="wrap_content"
@@ -21,7 +21,10 @@
                 android:text="结账情况"
                />
         </RelativeLayout>
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorGray"></View>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -37,22 +40,24 @@
 
                     <TextView
                         style="@style/textViewYunhuiyuan"
-                        android:text="消费总额"/>
+                        android:text="消费总额："/>
 
                     <TextView
                         android:id="@+id/tv_zr"
-                        style="@style/textView_yun"/>
+                        android:textSize="15dp"
+                        style="@style/textViewYunhuiyuan"/>
                 </LinearLayout>
                 <LinearLayout
                     style="@style/linearLayout_yunhuiyuan">
 
                     <TextView
                         style="@style/textViewYunhuiyuan"
-                        android:text="折扣金额"/>
+                        android:text="折扣金额："/>
 
                     <TextView
                         android:id="@+id/tv_zk"
-                        style="@style/textView_yun"/>
+                        android:textSize="15dp"
+                        style="@style/textViewYunhuiyuan"/>
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
@@ -66,22 +71,24 @@
 
                     <TextView
                         style="@style/textViewYunhuiyuan"
-                        android:text="应收金额"/>
+                        android:text="应收金额："/>
 
                     <TextView
                         android:id="@+id/tv_ys"
-                        style="@style/textView_yun"/>
+                        android:textSize="15dp"
+                        style="@style/textViewYunhuiyuan"/>
                 </LinearLayout>
                 <LinearLayout
                     style="@style/linearLayout_yunhuiyuan">
 
                     <TextView
                         style="@style/textViewYunhuiyuan"
-                        android:text="己付金额"/>
+                        android:text="己付金额："/>
 
                     <TextView
                         android:id="@+id/tv_yf"
-                        style="@style/textView_yun"/>
+                        android:textSize="15dp"
+                        style="@style/textViewYunhuiyuan"/>
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
@@ -96,11 +103,12 @@
 
                     <TextView
                         style="@style/textViewYunhuiyuan"
-                        android:text="未付金额"/>
+                        android:text="未付金额："/>
 
                     <TextView
                         android:id="@+id/tv_wf"
-                        style="@style/textView_yun"/>
+                        android:textSize="15dp"
+                        style="@style/textViewYunhuiyuan"/>
                 </LinearLayout>
                 <LinearLayout
                     style="@style/linearLayout_yunhuiyuan"
@@ -111,7 +119,8 @@
                         android:text="己付金额："/>
 
                     <TextView
-                        style="@style/textView_yun"/>
+                        android:textSize="15dp"
+                        style="@style/textViewYunhuiyuan"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
