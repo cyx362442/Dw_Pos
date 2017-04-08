@@ -29,6 +29,7 @@
         android:layout_marginLeft="10dp"
         android:layout_below="@+id/rlTop">
         <LinearLayout
+            android:id="@+id/llcustomer"
             style="@style/linearLayout_openTable">
             <TextView
                 style="@style/textView_openTable"
@@ -40,7 +41,6 @@
                 android:text="……"
                 android:textColor="@color/colorGreen"/>
             <ImageView
-                android:id="@+id/imgCustomer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"

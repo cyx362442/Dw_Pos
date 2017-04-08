@@ -4,11 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,9 +19,6 @@ import com.duowei.dw_pos.tools.CartList;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,10 +39,10 @@ public class OpenTableActivity extends AppCompatActivity {
     @BindView(R.id.btn_confirm)
     Button mBtnConfirm;
     String csmc;
-    @BindView(R.id.imgCustomer)
-    ImageView mImgCustomer;
     @BindView(R.id.tv_stytle)
     TextView mTvStytle;
+    @BindView(R.id.llcustomer)
+    LinearLayout mLlcustomer;
     private String customerStytle;
 
     @Override
@@ -77,10 +73,10 @@ public class OpenTableActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
     }
 
-    @OnClick({R.id.imgCustomer, R.id.btn_cancel, R.id.btn_confirm})
+    @OnClick({R.id.llcustomer, R.id.btn_cancel, R.id.btn_confirm})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.imgCustomer:
+            case R.id.llcustomer:
                 CustomerDialog dialog = new CustomerDialog(this);
                 break;
             case R.id.btn_cancel:
@@ -88,8 +84,8 @@ public class OpenTableActivity extends AppCompatActivity {
                 break;
             case R.id.btn_confirm:
                 String persons = mEditText2.getText().toString();
-                if(TextUtils.isEmpty(persons)){
-                    Toast.makeText(this,"请输入就餐人数",Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(persons)) {
+                    Toast.makeText(this, "请输入就餐人数", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 CartList.newInstance(this).setOpenInfo(new OpenInfo(
@@ -104,5 +100,9 @@ public class OpenTableActivity extends AppCompatActivity {
                 finish();
                 break;
         }
+    }
+
+    @OnClick(R.id.llcustomer)
+    public void onViewClicked() {
     }
 }

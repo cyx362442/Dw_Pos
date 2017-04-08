@@ -149,8 +149,9 @@ public class Prints {
         });
     }
 
-    float zj=0f;//消费总计
+    float zj;//消费总计
     public void print_commit(final WMLSBJB wmlsbjb, final List<WMLSB>wmlsbList){
+        zj=0f;
         for(WMLSB w:wmlsbList){
             float xj = w.getSL() * w.getDJ();
             zj=zj+xj;

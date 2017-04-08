@@ -33,6 +33,7 @@ import com.duowei.dw_pos.tools.SqlYun;
 import com.duowei.dw_pos.tools.Users;
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,8 +74,6 @@ public class CheckOutActivity extends AppCompatActivity {
     ImageView mImgweixin;
     @BindView(R.id.rl_weixin)
     RelativeLayout mRlWeixin;
-    @BindView(R.id.rl_jiezhang)
-    RelativeLayout mRlJiezhang;
     @BindView(R.id.tv_table)
     TextView mTvTable;
     @BindView(R.id.tvPersons)
@@ -85,6 +84,12 @@ public class CheckOutActivity extends AppCompatActivity {
     LinearLayout mLlCashier;
     @BindView(R.id.rl_yun)
     RelativeLayout mRlYun;
+    @BindView(R.id.imgxianjin)
+    ImageView mImgxianjin;
+    @BindView(R.id.rl_xianjin)
+    RelativeLayout mRlXianjin;
+    @BindView(R.id.imgyun)
+    ImageView mImgyun;
     private ArrayList<WMLSB> list_wmlsb = new ArrayList<>();
     private float mTotalMoney = 0;//总额(原始价格总额)
     private float mActualMoney = 0;//实际金额
@@ -93,7 +98,7 @@ public class CheckOutActivity extends AppCompatActivity {
     private float mZhaoling = 0.00f;
     private float mDaishou = 0.00f;
 
-    private final int YUPAYREQUEST=100;
+    private final int YUPAYREQUEST = 100;
 
     private IWoyouService woyouService;
     private ServiceConnection connService = new ServiceConnection() {
@@ -120,7 +125,7 @@ public class CheckOutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_out);
         ButterKnife.bind(this);
-        org.greenrobot.eventbus.EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
         CloseActivity.addAcitity(this);
         SharedPreferences user = getSharedPreferences("user", Context.MODE_PRIVATE);
         mPad = user.getString("pad", "");
@@ -168,6 +173,7 @@ public class CheckOutActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                     }
+
                     @Override
                     public void onResponse(String response) {
                         if (response.equals("]")) {
@@ -203,7 +209,7 @@ public class CheckOutActivity extends AppCompatActivity {
         });
     }
 
-    @OnClick({R.id.btn_dayin, R.id.btn_dingdan, R.id.rl_zhifubao, R.id.rl_weixin, R.id.rl_jiezhang, R.id.ll_cashier,R.id.rl_yun})
+    @OnClick({R.id.btn_dayin, R.id.btn_dingdan,R.id.rl_xianjin,R.id.rl_zhifubao, R.id.rl_weixin,R.id.ll_cashier, R.id.rl_yun})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_dayin:
@@ -235,20 +241,16 @@ public class CheckOutActivity extends AppCompatActivity {
                 startActivity(mIntent);
                 break;
             case R.id.rl_yun:
-                mIntent=new Intent(this,YunLandActivity.class);
+                mIntent = new Intent(this, YunLandActivity.class);
                 mIntent.putExtra("WMLSBJB", mWmlsbjb);
                 mIntent.putExtra("listWmlsb", list_wmlsb);
-                startActivityForResult(mIntent,YUPAYREQUEST);
+                startActivityForResult(mIntent, YUPAYREQUEST);
                 break;
             case R.id.ll_cashier:
-                inputMoney();
+//                inputMoney();
                 break;
-            case R.id.rl_jiezhang:
-                if (mDaishou > 0) {
-                    inputMoney();
-                } else {
-                    Http_cashier();
-                }
+            case R.id.rl_xianjin:
+                inputMoney();
                 break;
         }
     }
@@ -264,6 +266,7 @@ public class CheckOutActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError volleyError) {
                 Toast.makeText(CheckOutActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
             }
+
             @Override
             public void onResponse(String s) {
                 try {
@@ -312,32 +315,37 @@ public class CheckOutActivity extends AppCompatActivity {
                 mTvZhaoling.setText("￥" + String.format(Locale.CANADA, "%.2f", mZhaoling));
                 mDaishou = mZhaoling >= 0 ? 0.00f : -mZhaoling;
                 mTvDaishou.setText("￥" + String.format(Locale.CANADA, "%.2f", mDaishou));
+                Http_cashier();
                 dialog.cancel();
             }
         });
     }
-    /**云会员支付全额支付*/
+
+    /**
+     * 云会员支付全额支付
+     */
     @Subscribe
-    public void getYunPayLocal(YunSqlFinish event){
-        String insertXSJBXX="insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS," +
+    public void getYunPayLocal(YunSqlFinish event) {
+        String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS," +
                 "DDSJ,JYSJ,BZ,JZFSBM,WMBS,ZH,KHBH,QKJE,JCRS," +
                 "CZKYE,BY7,CXYH,JZFSMC,HYJF,ZL,HYBH,HYKDJ)" +
-                "VALUES('"+mWmdbh+"','"+mWmlsbjb.getYHBH()+"','"+Users.YHMC+"','无折扣',"+mTotalMoney+","+Moneys.xfzr+",0,"+mYingshou+",0,'"+mWmlsbjb.getZKFS()+"'," +
-                "'"+mWmlsbjb.getJYSJ()+"',GETDATE(),'"+mPad+"','"+mWmlsbjb.getJcfs()+"','"+ SqlYun.WMBS+"','"+mWmlsbjb.getZH()+"',0,0,"+Integer.parseInt(mWmlsbjb.getJCRS())+"," +
-                ""+SqlYun.CZKYE+",'','','云会员消费',"+SqlYun.jfbfb+",0,'"+SqlYun.HYBH+"','"+SqlYun.HYKDJ+"')|";
-        String insertXSMXXX="insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
-                "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='"+mWmdbh+"'|";
-        String updateWMLSBJB="update WMLSBJB set JSJ='"+mPad+"',SFYJZ='1',DJLSH='"+SqlYun.WMBS+"',YSJE="+Moneys.xfzr+",JSKSSJ=getdate(),BY8='"+SqlYun.from_user+"',JZBZ='"+SqlYun.JZBZ+"' where WMDBH='"+mWmdbh+"'|";
+                "VALUES('" + mWmdbh + "','" + mWmlsbjb.getYHBH() + "','" + Users.YHMC + "','无折扣'," + mTotalMoney + "," + Moneys.xfzr + ",0," + mYingshou + ",0,'" + mWmlsbjb.getZKFS() + "'," +
+                "'" + mWmlsbjb.getJYSJ() + "',GETDATE(),'" + mPad + "','" + mWmlsbjb.getJcfs() + "','" + SqlYun.WMBS + "','" + mWmlsbjb.getZH() + "',0,0," + Integer.parseInt(mWmlsbjb.getJCRS()) + "," +
+                "" + SqlYun.CZKYE + ",'','','云会员消费'," + SqlYun.jfbfb + ",0,'" + SqlYun.HYBH + "','" + SqlYun.HYKDJ + "')|";
+        String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
+                "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mWmdbh + "'|";
+        String updateWMLSBJB = "update WMLSBJB set JSJ='" + mPad + "',SFYJZ='1',DJLSH='" + SqlYun.WMBS + "',YSJE=" + Moneys.xfzr + ",JSKSSJ=getdate(),BY8='" + SqlYun.from_user + "',JZBZ='" + SqlYun.JZBZ + "' where WMDBH='" + mWmdbh + "'|";
         String sql = event.sql + insertXSJBXX + insertXSMXXX + updateWMLSBJB;
         DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
             }
+
             @Override
             public void onResponse(String response) {
-               if(response.contains("richado")){
-                   finish();
-               }
+                if (response.contains("richado")) {
+                    finish();
+                }
             }
         });
     }
@@ -346,6 +354,6 @@ public class CheckOutActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(connService);
-        org.greenrobot.eventbus.EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
     }
 }
