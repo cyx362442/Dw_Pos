@@ -119,7 +119,6 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
                         Toast.makeText(CartDetailActivity.this, "从服务器下载数据失败，不能进行提交操作!", Toast.LENGTH_SHORT).show();
                     }
                 }
-
             }
         });
 
@@ -164,6 +163,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
 
     @Subscribe
     public void commitSuccessed(Commit event){
+        //打印
         mPrinter.setWoyouService(woyouService);
         mPrinter.print_commit(event.wmlsbjb,event.wmlsbList);
     }

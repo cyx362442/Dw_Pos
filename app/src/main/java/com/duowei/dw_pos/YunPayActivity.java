@@ -105,6 +105,7 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
             for (int i = 0; i < yunhuiyuen.length; i++) {
                 yunhuiyuen[i].setTicket(i+2);
                 yunhuiyuen[i].setSelect(false);
+                yunhuiyuen[i].setFrom_user(mImsCards.getFrom_user());
                 mYunList.add(yunhuiyuen[i]);
             }
             toYunCardFragment();

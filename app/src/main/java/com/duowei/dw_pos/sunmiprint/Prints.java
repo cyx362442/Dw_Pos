@@ -12,6 +12,7 @@ import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.tools.DateTimes;
 
 import java.util.List;
+import java.util.Locale;
 
 import woyou.aidlservice.jiuiv5.ICallback;
 import woyou.aidlservice.jiuiv5.IWoyouService;
@@ -92,9 +93,9 @@ public class Prints {
                     }
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //______________________________________________________________________________
-                    woyouService.printTextWithFont("原价合计：" + Moneys.xfzr + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("折扣：" + Moneys.zkjr + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("应付：" + Moneys.ysjr + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("原价合计：" + String.format(Locale.CANADA, "%.2f", Moneys.xfzr) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("折扣：" + String.format(Locale.CANADA, "%.2f", Moneys.zkjr) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("应付：" + String.format(Locale.CANADA, "%.2f", Moneys.ysjr) + "\n", "", 30, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     woyouService.setAlignment(1, callback);
                     //______________________________________________________________________________
@@ -106,6 +107,7 @@ public class Prints {
             }
         });
     }
+    //现金\支付宝、微信结账
     public void print_jiezhang(final String ys, final String sx, final String zl){
         ThreadPoolManager.getInstance().executeTask(new Runnable() {
             @Override
@@ -131,9 +133,9 @@ public class Prints {
                     }
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_________________________________________________________________________________
-                    woyouService.printTextWithFont("消费总额：" + Moneys.xfzr + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("折扣金额：" + Moneys.zkjr + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("应收金额：" + Moneys.ysjr + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("原价合计：" + String.format(Locale.CANADA, "%.2f", Moneys.xfzr) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("折扣：" + String.format(Locale.CANADA, "%.2f", Moneys.zkjr) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("应付：" + String.format(Locale.CANADA, "%.2f", Moneys.ysjr) + "\n", "", 30, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_________________________________________________________________________________
                     woyouService.printTextWithFont("应收现金:￥" + ys + "\n", "", 30, callback);
@@ -149,14 +151,51 @@ public class Prints {
         });
     }
 
-    float zj;//消费总计
+    //云会员结账
+    public void print_yun(final Wmslbjb_jiezhang wmlsbjb, final List<WMLSB>wmlsbList){
+        ThreadPoolManager.getInstance().executeTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    woyouService.setAlignment(1, callback);
+                    woyouService.printTextWithFont("桌号：" +wmlsbjb.getZH() + "\n", "", 32, callback);
+                    woyouService.setAlignment(0, callback);
+                    woyouService.printTextWithFont("账单号：" + wmlsbjb.getWMDBH() + "\n", "", 28, callback);
+                    woyouService.printTextWithFont("日期：" + DateTimes.getTime2() + "\n", "", 28, callback);
+                    woyouService.printTextWithFont("点单员：" + wmlsbjb.getYHBH() + "    人数：" + wmlsbjb.getJCRS() + "\n", "", 28, callback);
+                    woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
+                    //_______________________________________________________________________________________________________________________________
+                    text[0] = "单品名称";
+                    text[1] = "数量";
+                    text[2] = "金额";
+                    woyouService.printColumnsText(text, width, align, callback);
+                    for (int i = 0; i < wmlsbList.size(); i++) {
+                        text[0] = wmlsbList.get(i).getXMMC();
+                        text[1] = wmlsbList.get(i).getSL() + "";
+                        text[2] = wmlsbList.get(i).getDJ()*wmlsbList.get(i).getSL() + "";
+                        woyouService.printColumnsText(text, width, align, callback);
+                    }
+                    woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
+                    //_________________________________________________________________________________
+                    woyouService.printTextWithFont("原价合计：" + String.format(Locale.CANADA, "%.2f", Moneys.xfzr) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("折扣：" + String.format(Locale.CANADA, "%.2f", Moneys.zkjr) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("应付：" + String.format(Locale.CANADA, "%.2f", Moneys.ysjr) + "\n", "", 30, callback);
+                    woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
+                    //_________________________________________________________________________________
+                    woyouService.printTextWithFont("应收现金:￥" + getZj(wmlsbList) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("收现:￥"+getZj(wmlsbList)+"  找零:"+0.00+"\n","",30,callback);
+                    woyouService.setAlignment(1, callback);// 对齐方式
+                    woyouService.lineWrap(1, callback);
+                    woyouService.printTextWithFont("谢谢光临！", "", 30, callback);
+                    woyouService.lineWrap(4, callback);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    //提交订单打印
     public void print_commit(final WMLSBJB wmlsbjb, final List<WMLSB>wmlsbList){
-        zj=0f;
-        for(WMLSB w:wmlsbList){
-            float xj = w.getSL() * w.getDJ();
-            zj=zj+xj;
-        }
-
         ThreadPoolManager.getInstance().executeTask(new Runnable() {
             @Override
             public void run() {
@@ -181,7 +220,7 @@ public class Prints {
                     }
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //______________________________________________________________________________
-                    woyouService.printTextWithFont("消费合计：" + zj + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("消费合计：" + getZj(wmlsbList) + "\n", "", 30, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     woyouService.setAlignment(1, callback);
                     woyouService.printTextWithFont("压桌单", "", 30, callback);
@@ -192,5 +231,12 @@ public class Prints {
             }
         });
     }
-
+    //总计金额
+    private float getZj(List<WMLSB>wmlsbList){
+        float zj=0f;
+        for(WMLSB w:wmlsbList){
+            zj=zj+w.getDJ()*w.getSL();
+        }
+        return zj;
+    }
 }

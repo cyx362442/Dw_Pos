@@ -81,9 +81,6 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
     private int by3=0;//总需积分;
     private Button mConfirm;
 
-    private final int YUNPAYUNFINISH=0;
-    private final int YUNPAYFINISH=1;
-
     public YunCardFragment() {
         // Required empty public constructor
     }
@@ -248,7 +245,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
 //                            mGv_jinfen.setAdapter(mGvJinfen);
                         }else if(by3>0&&by3<mYun.getCredit1()){//可用积分大于兑换积分和,直接抵扣
                             money=money>Moneys.wfjr?Moneys.wfjr:money;
-                            listYunPayFragment.add(new YunFu(mYun.getId(),mYun.getFrom_user(),mYun.getCardsn(),mYun.getCardgrade(), "云会员-积分消费", mYun.getCredit1(), mYun.getCredit2(), money, 0,mYun.getTicket()));
+                            listYunPayFragment.add(new YunFu(mYun.getId(),mYun.getFrom_user(),mYun.getCardsn(),mYun.getCardgrade(), "积分消费", mYun.getCredit1(), mYun.getCredit2(), money, 0,mYun.getTicket()));
                             listener.yunPayFragment(listYunPayFragment);
                             brushYunPayFragmentData();
                             mAdapter.notifyDataSetChanged();
@@ -304,13 +301,13 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         int inputNum = (int) inputMoney;
         /**储值卡消费*/
         if(payStyte==0){
-            listYunPayFragment.add(new YunFu(mYun.getId(),mYun.getFrom_user(),mYun.getCardsn(),mYun.getCardgrade(), "云会员-储值消费", mYun.getCredit1(), mYun.getCredit2(), inputMoney, 0,mYun.getTicket()));
+            listYunPayFragment.add(new YunFu(mYun.getId(),mYun.getFrom_user(),mYun.getCardsn(),mYun.getCardgrade(), "储值消费", mYun.getCredit1(), mYun.getCredit2(), inputMoney, 0,mYun.getTicket()));
         }
         /**电子券*/
         else if(payStyte>=2){
             //电子券扣掉的金额大于未付金额，取未付金额；否则，取实际扣掉的电子券金额；
             Float money=inputNum*mYun.getCouponmoney()>Moneys.wfjr?Moneys.wfjr:inputNum*mYun.getCouponmoney();
-            listYunPayFragment.add(new YunFu(mYun.getId(),mYun.getFrom_user(),mYun.getCardsn(),mYun.getCardgrade(), "云会员-电子券消费", mYun.getCredit1(), mYun.getCredit2(), money, inputNum,mYun.getTicket()));
+            listYunPayFragment.add(new YunFu(mYun.getId(),mYun.getFrom_user(),mYun.getCardsn(),mYun.getCardgrade(), mYun.getTitle(), mYun.getCredit1(), mYun.getCredit2(), money, inputNum,mYun.getTicket()));
         }
 
         brushYunPayFragmentData();
@@ -333,6 +330,9 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
             case R.id.btn_confirm:
                 if(listYunPayFragment.size()<=0){
                     Toast.makeText(getActivity(),"请选择付款方式",Toast.LENGTH_SHORT).show();
+                    return;
+                }else if(Moneys.wfjr>0){
+                    Toast.makeText(getActivity(),"金额不足",Toast.LENGTH_SHORT).show();
                     return;
                 }
                 mConfirm.setEnabled(false);
@@ -392,7 +392,6 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                         String NR="云会员-"+yunFu.title;
                         sqlXSFKFS3="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"',"+yunFu.id+",'"+NR+"',"+yunFu.money+","+yunFu.sl+")|";
                     }
-
                 }
                     //汇总
                     mSqlYun=sqlCZXF+sqlJFXF+sqlJYQ;
@@ -401,7 +400,6 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                     mSqlYun = mSqlYun +mSql1Deal_record;
                     //sqlServer汇总语句
                     mSqlLocal=sqlXSFKFS1+sqlXSFKFS2+sqlXSFKFS3+sqlCZKJYMXXX;
-
                 MyAsync async = new MyAsync();
                 async.execute();
 
@@ -423,9 +421,8 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         }
         @Override
         protected void onPostExecute(String result) {
-            Log.e("YunFuActivity===", result);
             if (result.contains("richado")) {
-                org.greenrobot.eventbus.EventBus.getDefault().post(new YunSqlFinish(mSqlLocal));
+                org.greenrobot.eventbus.EventBus.getDefault().post(new YunSqlFinish(mSqlLocal,mListWmlsb,mWmlsbjb));
                 getActivity().finish();
             }else{
                 mConfirm.setEnabled(true);

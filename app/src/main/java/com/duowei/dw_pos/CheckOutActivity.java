@@ -157,7 +157,6 @@ public class CheckOutActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
             }
-
             @Override
             public void onResponse(String response) {
                 Gson gson1 = new Gson();
@@ -173,7 +172,6 @@ public class CheckOutActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                     }
-
                     @Override
                     public void onResponse(String response) {
                         if (response.equals("]")) {
@@ -266,7 +264,6 @@ public class CheckOutActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError volleyError) {
                 Toast.makeText(CheckOutActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
             }
-
             @Override
             public void onResponse(String s) {
                 try {
@@ -284,7 +281,6 @@ public class CheckOutActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                         }
-
                         @Override
                         public void onResponse(String response) {
                             if (response.contains("richado")) {
@@ -295,7 +291,6 @@ public class CheckOutActivity extends AppCompatActivity {
                             }
                         }
                     });
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -325,7 +320,7 @@ public class CheckOutActivity extends AppCompatActivity {
      * 云会员支付全额支付
      */
     @Subscribe
-    public void getYunPayLocal(YunSqlFinish event) {
+    public void getYunPayLocal(final YunSqlFinish event) {
         String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS," +
                 "DDSJ,JYSJ,BZ,JZFSBM,WMBS,ZH,KHBH,QKJE,JCRS," +
                 "CZKYE,BY7,CXYH,JZFSMC,HYJF,ZL,HYBH,HYKDJ)" +
@@ -340,10 +335,12 @@ public class CheckOutActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
             }
-
             @Override
             public void onResponse(String response) {
                 if (response.contains("richado")) {
+                    //打印结账单
+                    mPrinter.setWoyouService(woyouService);
+                    mPrinter.print_yun(event.mWmlsbjb,event.mListWmlsb);
                     finish();
                 }
             }
