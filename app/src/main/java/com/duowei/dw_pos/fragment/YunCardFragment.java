@@ -300,16 +300,17 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public void getDialogInput(String msg,int payStyte) {
         mYun.setSelect(true);
-        float input = Float.parseFloat(msg);
+        float inputMoney = Float.parseFloat(msg);
+        int inputNum = (int) inputMoney;
         /**储值卡消费*/
         if(payStyte==0){
-            listYunPayFragment.add(new YunFu(mYun.getId(),mYun.getFrom_user(),mYun.getCardsn(),mYun.getCardgrade(), "云会员-储值消费", mYun.getCredit1(), mYun.getCredit2(), input, 0,mYun.getTicket()));
+            listYunPayFragment.add(new YunFu(mYun.getId(),mYun.getFrom_user(),mYun.getCardsn(),mYun.getCardgrade(), "云会员-储值消费", mYun.getCredit1(), mYun.getCredit2(), inputMoney, 0,mYun.getTicket()));
         }
         /**电子券*/
         else if(payStyte>=2){
             //电子券扣掉的金额大于未付金额，取未付金额；否则，取实际扣掉的电子券金额；
-            Float money=input*mYun.getCouponmoney()>Moneys.wfjr?Moneys.wfjr:input*mYun.getCouponmoney();
-            listYunPayFragment.add(new YunFu(mYun.getId(),mYun.getFrom_user(),mYun.getCardsn(),mYun.getCardgrade(), "云会员-电子券消费", mYun.getCredit1(), mYun.getCredit2(), money, Moneys.yfjr,mYun.getTicket()));
+            Float money=inputNum*mYun.getCouponmoney()>Moneys.wfjr?Moneys.wfjr:inputNum*mYun.getCouponmoney();
+            listYunPayFragment.add(new YunFu(mYun.getId(),mYun.getFrom_user(),mYun.getCardsn(),mYun.getCardgrade(), "云会员-电子券消费", mYun.getCredit1(), mYun.getCredit2(), money, inputNum,mYun.getTicket()));
         }
 
         brushYunPayFragmentData();
@@ -338,7 +339,9 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                 for(int i=0;i<listYunPayFragment.size();i++){
                     YunFu yunFu = listYunPayFragment.get(i);
                     saveSqlData(yunFu);
-                    /**储值卡消费*/
+                    /**
+                     * 储值卡消费
+                     */
                     if(yunFu.ticket==0){
                         //储值卡消费扣减
                         String sql2=SqlYun.updateIms_card_members1(yunFu.money,mWeid,yunFu.fromUser);
@@ -361,17 +364,36 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                         sqlCZKJYMXXX="INSERT INTO CZKJYMXXX(HYKH,JYSJ,JYLX,CZQJE,KCZJE,SSJE,KYE,KCZXL,SYJH,YHBH,BY3)" +
                                 "VALUES('"+yunFu.cardsn+"',getdate(), '消费',"+yunFu.credit2+", "+yunFu.money+",0, "+(yunFu.credit2 - yunFu.money)+" , '999','"+mWmlsbjb.getJSJ()+"' , '"+mWmlsbjb.getYHBH()+"','1')|";
                     }
-                    /**积分消费*/
-                    //积分获得
-                    String sql4 = SqlYun.updateIms_card_members2(-by3, mWeid, yunFu.fromUser);
-                    //积分获得记录
-                    String sql5 = SqlYun.insertIms_card_jf_record(mWeid, yunFu.fromUser, mJysj, "积分消费",yunFu.credit1, -by3,
-                            yunFu.credit1-by3, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, yunFu.id);
-                    sqlJFXF=sql4+sql5;
-                    //插入sqlserver
-                    sqlXSFKFS2="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"','999999998','云会员-积分消费',"+yunFu.money+",0)|";
+                    /**
+                     * 积分消费
+                     */
+                    else if(yunFu.ticket==1){
+                        //积分获得
+                        String sql4 = SqlYun.updateIms_card_members2(-by3, mWeid, yunFu.fromUser);
+                        //积分获得记录
+                        String sql5 = SqlYun.insertIms_card_jf_record(mWeid, yunFu.fromUser, mJysj, "积分消费",yunFu.credit1, -by3,
+                                yunFu.credit1-by3, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, yunFu.id);
+                        sqlJFXF=sql4+sql5;
+                        //插入sqlserver
+                        sqlXSFKFS2="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"','999999998','云会员-积分消费',"+yunFu.money+",0)|";
+                    }
+                    else if(yunFu.ticket==2){
+                        /**
+                         * 电子券消费
+                         */
+                        //电子券使用状态更新
+                        String sql7 = SqlYun.updateIms_card_members_coupon(mWmlsbjb.getYHBH(), mJysj, mDeal_id, mWeid, yunFu.id, yunFu.fromUser,yunFu.sl);
+                        //电子券使用记录
+                        String sql8 = SqlYun.insertCoupon_deal_record(mWeid, yunFu.id, yunFu.fromUser, mJysj, -yunFu.sl,
+                                mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, "云会员-" + yunFu.title, -yunFu.money,
+                                "云会员-" + yunFu.title + "(" + yunFu.sl + "张)", yunFu.id);
+                        sqlJYQ=sql7+sql8;
+                        //插入sqlserver
+                        String NR="云会员-"+yunFu.title;
+                        sqlXSFKFS3="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"',"+yunFu.id+",'"+NR+"',"+yunFu.money+","+yunFu.sl+")|";
+                    }
 
-
+                }
                     //汇总
                     mSqlYun=sqlCZXF+sqlJFXF+sqlJYQ;
                     //消费明细deal_record
@@ -379,10 +401,12 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                     mSqlYun = mSqlYun +mSql1Deal_record;
                     //sqlServer汇总语句
                     mSqlLocal=sqlXSFKFS1+sqlXSFKFS2+sqlXSFKFS3+sqlCZKJYMXXX;
-                }
 
                 MyAsync async = new MyAsync();
                 async.execute();
+
+                Moneys.yfjr=0;
+                Moneys.wfjr=Moneys.ysjr;
                 break;
             case R.id.btn_cancel:
                 Moneys.yfjr=0;

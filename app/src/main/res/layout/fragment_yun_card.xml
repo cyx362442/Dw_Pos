@@ -2,48 +2,54 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:background="@drawable/shape_cancel"
              tools:context="com.duowei.dw_pos.fragment.YunCardFragment">
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-        <GridView
-            android:id="@+id/gridView"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:horizontalSpacing="10dp"
-            android:numColumns="3"
-            android:verticalSpacing="10dp"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:background="@drawable/shape_cancel"
             android:layout_above="@+id/linearLayout">
-        </GridView>
+                <GridView
+                    android:id="@+id/gridView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:horizontalSpacing="10dp"
+                    android:numColumns="3"
+                    android:verticalSpacing="10dp"
+                    >
+                </GridView>
+        </RelativeLayout>
+                <LinearLayout
+                    android:id="@+id/linearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:layout_margin="2dp"
+                    >
+                    <Button
+                        android:id="@+id/btn_confirm"
+                        style="@style/ButtonConfirm"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_weight="1"
+                        android:textSize="15dp"
+                        />
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:layout_alignParentBottom="true"
-            >
-
-            <Button
-                android:id="@+id/btn_confirm"
-                style="@style/ButtonConfirm"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_weight="1"
-                android:textSize="15dp"
-                />
-
-            <Button
-                android:id="@+id/btn_cancel"
-                style="@style/ButtonCancel"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_weight="1"
-                android:textSize="15dp"
-                />
-        </LinearLayout>
-</RelativeLayout>
+                    <Button
+                        android:id="@+id/btn_cancel"
+                        style="@style/ButtonCancel"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_weight="1"
+                        android:textSize="15dp"
+                        />
+                </LinearLayout>
+    </LinearLayout>
 </FrameLayout>

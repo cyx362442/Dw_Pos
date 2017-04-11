@@ -15,10 +15,10 @@ public class YunFu implements Serializable{
     public float credit1;
     public float credit2;
     public float money;
-    public float sl;
+    public int sl;
     public int ticket;
 
-    public YunFu(int id,String fromUser,String cardsn,String cardgrade, String title, float credit1, float credit2, float money, float sl, int ticket) {
+    public YunFu(int id,String fromUser,String cardsn,String cardgrade, String title, float credit1, float credit2, float money, int sl, int ticket) {
         this.id=id;
         this.fromUser=fromUser;
         this.cardsn=cardsn;

@@ -2,6 +2,7 @@ package com.duowei.dw_pos.dialog;
 
 import android.content.Context;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -86,7 +87,11 @@ public class YunFuDialog implements View.OnClickListener{
         mTitle.setText(title);
         mContents.setText(content);
         mTitle.setFocusableInTouchMode(true);
-        mEtInput.setText(money+"");
+        if(title.equals("储值卡消费")){
+            mEtInput.setText(money+"");
+        }else if(title.equals("电子券消费")){
+            mEtInput.setText((int)money+"");
+        }
     }
 
     @Override

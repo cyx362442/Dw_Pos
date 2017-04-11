@@ -14,8 +14,8 @@
         android:orientation="vertical"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp">
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp">
 
         <TextView
             android:id="@+id/tv_name"
@@ -42,7 +42,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:minHeight="48dp"
+        android:layout_gravity="center_vertical"
+        android:minHeight="78dp"
         android:minWidth="48dp"
         android:src="@drawable/ic_add"/>
 

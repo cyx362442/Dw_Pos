@@ -54,7 +54,7 @@ public class YunListAdapter extends BaseAdapter{
 //            fangshi.setText("云会员-积分消费");
 //        }else if(listyf.get(i).ticket==2){
 //        }
-            fangshi.setText(listyf.get(i).title);
+        fangshi.setText(listyf.get(i).title);
         jr.setText(listyf.get(i).money+"");
         quan.setText(listyf.get(i).sl+"");
         return inflate;
