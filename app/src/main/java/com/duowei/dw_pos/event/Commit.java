@@ -10,10 +10,17 @@ import java.util.List;
  */
 
 public class Commit {
+    public boolean first=true;
     public WMLSBJB wmlsbjb;
     public List<WMLSB> wmlsbList;
 
-    public Commit(WMLSBJB wmlsbjb, List<WMLSB> wmlsbList) {
+    public Commit(boolean first,WMLSBJB wmlsbjb) {
+        this.first=first;
+        this.wmlsbjb = wmlsbjb;
+    }
+
+    public Commit(boolean first,WMLSBJB wmlsbjb, List<WMLSB> wmlsbList) {
+        this.first=first;
         this.wmlsbjb = wmlsbjb;
         this.wmlsbList = wmlsbList;
     }

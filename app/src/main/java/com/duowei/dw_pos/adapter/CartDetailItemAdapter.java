@@ -45,6 +45,10 @@ public class CartDetailItemAdapter extends BaseAdapter {
         mActivity = activity;
     }
 
+    public List<WMLSB> getAllList() {
+        return mAllList;
+    }
+
     /**
      * 设置本地未提交的数据
      *
