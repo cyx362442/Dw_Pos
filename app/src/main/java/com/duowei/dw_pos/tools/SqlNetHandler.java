@@ -2,6 +2,7 @@ package com.duowei.dw_pos.tools;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -33,7 +34,7 @@ public class SqlNetHandler {
      * @param wmdbh
      * @param first   true, 第一次提交；false，添加新的点单
      */
-    public void handleCommit(final Context context, String wmdbh, boolean first) {
+    public void handleCommit(final Context context, String wmdbh, final boolean first) {
         CartList cartList = CartList.newInstance(context);
         String localSql = "";
 
@@ -106,7 +107,11 @@ public class SqlNetHandler {
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     context.startActivity(intent);
 
-                    EventBus.getDefault().post(new Commit(mWmlsbjb,mWmlsbList));
+                    if(first){
+                        EventBus.getDefault().post(new Commit(first,mWmlsbjb));
+                    }else{
+                        EventBus.getDefault().post(new Commit(first,mWmlsbjb,mWmlsbList));
+                    }
                 } else {
                     Toast.makeText(context, "提交失败！", Toast.LENGTH_LONG).show();
                 }

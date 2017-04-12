@@ -165,10 +165,15 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     public void commitSuccessed(Commit event){
         //打印
         mPrinter.setWoyouService(woyouService);
-        mPrinter.print_commit(event.wmlsbjb,event.wmlsbList);
+        //第一次下单
+        if(event.first){
+            mPrinter.print_commit(event.wmlsbjb,mAdapter.getAllList());
+        }else{//加单
+            mPrinter.print_commit(event.wmlsbjb,event.wmlsbList);
+        }
     }
 
-    private void updateData() {
+    private void  updateData() {
         mAdapter.clear();
         mAdapter.addRemoteList(CartList.sWMLSBList);
         mAdapter.addLocalList(CartList.newInstance(this).getList());
