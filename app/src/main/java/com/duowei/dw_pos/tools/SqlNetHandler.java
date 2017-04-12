@@ -10,7 +10,6 @@ import com.duowei.dw_pos.bean.Pbdyxxb;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
 import com.duowei.dw_pos.event.Commit;
-import com.duowei.dw_pos.event.CustomerStytle;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 
