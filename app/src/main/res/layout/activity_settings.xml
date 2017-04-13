@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-              android:background="@mipmap/homebackgroundtwo"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@mipmap/homebackgroundtwo"
+    tools:context="com.duowei.dw_pos.SettingsActivity">
     <LinearLayout
         style="@style/linearLayout_setting"
         android:layout_margin="10dp">
@@ -39,7 +42,8 @@
             android:id="@+id/et_port"
             style="@style/editText_setting"
             android:selectAllOnFocus="true"
-            android:inputType="number"/>
+            android:inputType="number"
+            />
     </LinearLayout>
     <LinearLayout
         style="@style/linearLayout_setting">
@@ -53,6 +57,32 @@
             />
     </LinearLayout>
     <RelativeLayout
+        android:id="@+id/rl_autoStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+        <TextView
+            android:id="@+id/tv5"
+            style="@style/textview_setting"
+            android:text="开机自启动"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv5"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="5dp"
+            android:text="默认自启动"/>
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:clickable="false"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -65,5 +95,13 @@
             android:background="@drawable/shape_land"
             android:textColor="@color/colorWhite"
             android:text="下载数据库"/>
-    </RelativeLayout>
+        <Button
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_cancel"
+            android:layout_marginLeft="50dp"
+            android:textColor="@color/colorGreen"
+            android:text="返回"/>
+    </LinearLayout>
 </LinearLayout>
