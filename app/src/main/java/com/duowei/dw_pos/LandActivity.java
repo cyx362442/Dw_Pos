@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.duowei.dw_pos.bean.YHJBQK;
+import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.Users;
 
 import org.litepal.crud.DataSupport;
@@ -33,6 +34,7 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
         SQLiteStudioService.instance().start(this);
         mSp = getSharedPreferences("user", Context.MODE_PRIVATE);
         mEdit = mSp.edit();
+
         initUI();
     }
 
@@ -58,6 +60,9 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                     Toast.makeText(this,"账号不存在",Toast.LENGTH_SHORT).show();
                 }else if(yhjbqk.get(0).getYHMM().equals(password)){
                     Users.YHBH=account;
+                    String ip = mSp.getString("ip", "");
+                    String port = mSp.getString("port", "");
+                    Net.url="http://"+ip+":"+port+"/server/ServerSvlt?";
                     List<YHJBQK> yhmc = DataSupport.where("YHBH=?", account).find(YHJBQK.class);
                     Users.YHMC=yhmc.get(0).YHMC;
                     Users.TDQX=yhmc.get(0).TDQX;
