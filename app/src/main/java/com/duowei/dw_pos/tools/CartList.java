@@ -91,15 +91,13 @@ public class CartList {
 
         for (int i = 0; i < mList.size(); i++) {
             WMLSB wmlsb = mList.get(i);
-            if ("1".equals(wmlsb.getSfxs())) {
-                num += wmlsb.getSL();
-                price += wmlsb.getDJ() * wmlsb.getSL();
+            num += wmlsb.getSL();
+            price += wmlsb.getDJ() * wmlsb.getSL();
 
-                for (int j = 0; j < wmlsb.getSubWMLSBList().size(); j++) {
-                    WMLSB subWmlsb1 = wmlsb.getSubWMLSBList().get(j);
-                    num += subWmlsb1.getSL();
-                    price += subWmlsb1.getDJ() * subWmlsb1.getSL();
-                }
+            for (int j = 0; j < wmlsb.getSubWMLSBList().size(); j++) {
+                WMLSB subWmlsb1 = wmlsb.getSubWMLSBList().get(j);
+                num += subWmlsb1.getSL();
+                price += subWmlsb1.getDJ() * subWmlsb1.getSL();
             }
         }
 
@@ -226,7 +224,7 @@ public class CartList {
                 // 买赠项
                 EventBus.getDefault().post(new CartMsgDialogEvent("信息提示", "该单品是赠送品,因此您无法修改数量"));
 
-            } else if ("加价促销".equals(wmlsb.getBY13())){
+            } else if ("加价促销".equals(wmlsb.getBY13())) {
                 // 加价项
                 EventBus.getDefault().post(new CartMsgDialogEvent("信息提示", "该单品是加价促销品,因此您无法修改数量"));
 
@@ -362,6 +360,7 @@ public class CartList {
 
     /**
      * 第一次 添加 单品 买赠/加价促销
+     *
      * @param jyxmsz
      */
     private void processMzszjb(WMLSB wmlsb, JYXMSZ jyxmsz) {
@@ -508,7 +507,7 @@ public class CartList {
             WMLSB remote = mRemoveRemoteList.get(i);
 
             pbdyxxbSql += "insert into pbdyxxb(xh,wmdbh,xmbh,xmmc,dw,sl,dj,xj,pz,ysjg,syyxm,sfxs,tcbh,tcxmbh,tcfz,xtbz,czsj,zh,jsj,thyy) " +
-                    "select xh,wmdbh,xmbh,xmmc,dw,'1',dj,'" + remote.getDJ() + "',pz,ysjg,syyxm,sfxs,tcbh,tcxmbh,BY15,'2',getdate(),'" + sWMLSBJB.getZH()+ "','" + Users.pad + "','" + text + "'  " +
+                    "select xh,wmdbh,xmbh,xmmc,dw,'1',dj,'" + remote.getDJ() + "',pz,ysjg,syyxm,sfxs,tcbh,tcxmbh,BY15,'2',getdate(),'" + sWMLSBJB.getZH() + "','" + Users.pad + "','" + text + "'  " +
                     "from wmlsb where wmdbh='" + remote.getWMDBH() + "' and  XH='" + remote.getXH() + "'|";
         }
 
