@@ -1,6 +1,5 @@
 package com.duowei.dw_pos.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +7,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
 
+import com.duowei.dw_pos.ComboActivity;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.TCSD;
 import com.google.android.flexbox.FlexboxLayout;
@@ -22,14 +22,14 @@ import java.util.Map;
  */
 
 public class ComboAdapter extends BaseAdapter {
-    private Context mContext;
+    private ComboActivity mActivity;
     private Map<String, List<TCSD>> mMap;
     private String[] mKeys;
 
     private Button mOkButton;
 
-    public ComboAdapter(Context context, LinkedHashMap<String, List<TCSD>> map, Button okButton) {
-        mContext = context;
+    public ComboAdapter(ComboActivity activity, LinkedHashMap<String, List<TCSD>> map, Button okButton) {
+        mActivity = activity;
         mMap = map;
         mKeys = mMap.keySet().toArray(new String[mMap.size()]);
 
@@ -55,7 +55,7 @@ public class ComboAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_combo, parent, false);
+            convertView = LayoutInflater.from(mActivity).inflate(R.layout.list_item_combo, parent, false);
         }
 
         final List<TCSD> list = getItem(position);
@@ -63,7 +63,7 @@ public class ComboAdapter extends BaseAdapter {
         flexboxLayout.removeAllViews();
         for (int i = 0; i < list.size(); i++) {
             TCSD tcsd = list.get(i);
-            final CheckedTextView textView = (CheckedTextView) LayoutInflater.from(mContext).inflate(R.layout.flexbox_item, null);
+            final CheckedTextView textView = (CheckedTextView) LayoutInflater.from(mActivity).inflate(R.layout.flexbox_item, null);
             if (tcsd.getSFXZ().equals("1")) {
                 textView.setChecked(true);
             } else {
@@ -86,7 +86,7 @@ public class ComboAdapter extends BaseAdapter {
 
             FlexboxLayout.LayoutParams layoutParams = new FlexboxLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(20, 0, 20, 0);
-            textView.setText(tcsd.getXMMC1());
+            textView.setText(tcsd.getXMMC1() + " ¥" + tcsd.getDJ());
             flexboxLayout.addView(textView);
         }
 
@@ -94,6 +94,8 @@ public class ComboAdapter extends BaseAdapter {
     }
 
     private void checkOkButtonStatus() {
+        float totalSubMoney = 0;
+
         ArrayList<TCSD> enableList = new ArrayList<>();
 
         for (int i = 0; i < mMap.size(); i++) {
@@ -102,6 +104,7 @@ public class ComboAdapter extends BaseAdapter {
                 TCSD tcsd = tcsdList.get(j);
                 if (tcsd.getSFXZ() != null && tcsd.getSFXZ().equals("1")) {
                     enableList.add(tcsd);
+                    totalSubMoney += tcsd.SL * tcsd.DJ;
                 }
             }
         }
@@ -111,5 +114,7 @@ public class ComboAdapter extends BaseAdapter {
         } else {
             mOkButton.setEnabled(false);
         }
+
+        mActivity.setTotalPrice(totalSubMoney);
     }
 }
