@@ -2,10 +2,10 @@ package com.duowei.dw_pos.tools;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.duowei.dw_pos.CartDetailActivity;
 import com.duowei.dw_pos.DinningActivity;
 import com.duowei.dw_pos.bean.Pbdyxxb;
 import com.duowei.dw_pos.bean.WMLSB;
@@ -35,6 +35,8 @@ public class SqlNetHandler {
      * @param first   true, 第一次提交；false，添加新的点单
      */
     public void handleCommit(final Context context, String wmdbh, final boolean first) {
+        final CartDetailActivity activity = (CartDetailActivity) context;
+
         CartList cartList = CartList.newInstance(context);
         String localSql = "";
 
@@ -96,11 +98,15 @@ public class SqlNetHandler {
         DownHTTP.postVolley7(Net.url, localSql, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                activity.closeCommitDialog();
+
                 Toast.makeText(context, "网络错误", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onResponse(String response) {
+                activity.closeCommitDialog();
+
                 if (response.contains("richado")) {
                     Toast.makeText(context, "提交成功！", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, DinningActivity.class);

@@ -1,5 +1,6 @@
 package com.duowei.dw_pos;
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -50,6 +51,14 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     private String mWmdbh;
     /** 加载成功 */
     private boolean mLoadSuccess = false;
+
+    private ProgressDialog mCommitDialog;
+
+    public void closeCommitDialog () {
+        if (mCommitDialog != null && mCommitDialog.isShowing()) {
+            mCommitDialog.dismiss();
+        }
+    }
 
     private Prints mPrinter;
     private IWoyouService woyouService;
@@ -107,6 +116,8 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mCommitDialog = ProgressDialog.show(CartDetailActivity.this, null, "提交中...", true, false);
+
                 if (mWmdbh == null) {
                     // 第一次提交
                     String currentDatetime = DateTimeUtils.getCurrentDatetime();
