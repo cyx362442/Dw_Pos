@@ -321,6 +321,10 @@ public class CheckOutActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String money = dialog.mEtInput.getText().toString().trim();
                 mYishou = Float.parseFloat(money);
+                if(mYingshou>mYishou){
+                    Toast.makeText(CheckOutActivity.this,"输入金额不足",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 mTvYishou.setText("￥" + String.format(Locale.CANADA, "%.2f", mYishou));
                 mZhaoling = (mYishou - mYingshou) >= 0 ? mYishou - mYingshou : mYishou - mYingshou;
                 mTvZhaoling.setText("￥" + String.format(Locale.CANADA, "%.2f", mZhaoling));
