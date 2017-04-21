@@ -72,6 +72,30 @@ public class YunGvAdapter extends BaseAdapter {
         }else if(cards.getTicket()==2&& cards.isSelect()==false){
             hold.ll.setBackgroundResource(R.drawable.item_normal);
         }
+        /**电子券2*/
+        if(cards.getTicket()==3&& cards.isSelect()==true){
+            hold.ll.setBackgroundResource(R.drawable.item_click);
+        }else if(cards.getTicket()==3&& cards.isSelect()==false){
+            hold.ll.setBackgroundResource(R.drawable.item_normal);
+        }
+        /**电子券3*/
+        if(cards.getTicket()==4&& cards.isSelect()==true){
+            hold.ll.setBackgroundResource(R.drawable.item_click);
+        }else if(cards.getTicket()==4&& cards.isSelect()==false){
+            hold.ll.setBackgroundResource(R.drawable.item_normal);
+        }
+        /**电子券4*/
+        if(cards.getTicket()==5&& cards.isSelect()==true){
+            hold.ll.setBackgroundResource(R.drawable.item_click);
+        }else if(cards.getTicket()==5&& cards.isSelect()==false){
+            hold.ll.setBackgroundResource(R.drawable.item_normal);
+        }
+        /**电子券5*/
+        if(cards.getTicket()==6&& cards.isSelect()==true){
+            hold.ll.setBackgroundResource(R.drawable.item_click);
+        }else if(cards.getTicket()==6&& cards.isSelect()==false){
+            hold.ll.setBackgroundResource(R.drawable.item_normal);
+        }
 
         if(cards.getTicket()==0){
             hold.content.setText("储值消费");
@@ -81,7 +105,20 @@ public class YunGvAdapter extends BaseAdapter {
             hold.content.setText("积分消费");
             hold.money.setText(cards.getCredit1()+"");
         }
+        /**各电子券*/
         else if(cards.getTicket()==2){
+            hold.content.setText(cards.getTitle());
+            hold.money.setText(cards.getSL()+"张");
+        }else if(cards.getTicket()==3){
+            hold.content.setText(cards.getTitle());
+            hold.money.setText(cards.getSL()+"张");
+        }else if(cards.getTicket()==4){
+            hold.content.setText(cards.getTitle());
+            hold.money.setText(cards.getSL()+"张");
+        }else if(cards.getTicket()==5){
+            hold.content.setText(cards.getTitle());
+            hold.money.setText(cards.getSL()+"张");
+        }else if(cards.getTicket()==6){
             hold.content.setText(cards.getTitle());
             hold.money.setText(cards.getSL()+"张");
         }

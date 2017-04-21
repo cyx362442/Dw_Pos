@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -90,6 +91,8 @@ public class CheckOutActivity extends AppCompatActivity {
     RelativeLayout mRlXianjin;
     @BindView(R.id.imgyun)
     ImageView mImgyun;
+    @BindView(R.id.progressBar)
+    ProgressBar mProgressBar;
     private ArrayList<WMLSB> list_wmlsb = new ArrayList<>();
     private float mTotalMoney = 0;//总额(原始价格总额)
     private float mActualMoney = 0;//实际金额
@@ -148,6 +151,7 @@ public class CheckOutActivity extends AppCompatActivity {
     }
 
     private void Http_initData() {
+        mProgressBar.setVisibility(View.VISIBLE);
         list_wmlsb.clear();
         mTotalMoney = 0.00f;
         mActualMoney = 0.00f;
@@ -156,7 +160,10 @@ public class CheckOutActivity extends AppCompatActivity {
         DownHTTP.postVolley6(Net.url, sqlWmlsbjb, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                mProgressBar.setVisibility(View.GONE);
+                Toast.makeText(CheckOutActivity.this,"数据加载失败",Toast.LENGTH_SHORT).show();
             }
+
             @Override
             public void onResponse(String response) {
                 Gson gson1 = new Gson();
@@ -171,7 +178,10 @@ public class CheckOutActivity extends AppCompatActivity {
                 DownHTTP.postVolley6(Net.url, sqlWmlsb, new VolleyResultListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        mProgressBar.setVisibility(View.GONE);
+                        Toast.makeText(CheckOutActivity.this,"数据加载失败",Toast.LENGTH_SHORT).show();
                     }
+
                     @Override
                     public void onResponse(String response) {
                         if (response.equals("]")) {
@@ -201,13 +211,15 @@ public class CheckOutActivity extends AppCompatActivity {
                         Moneys.ysjr = mYingshou;
                         Moneys.wfjr = mActualMoney - mYishou;
                         mPrinter.setPrintMsg(mWmlsbjb, mWmlsbs);
+
+                        mProgressBar.setVisibility(View.GONE);
                     }
                 });
             }
         });
     }
 
-    @OnClick({R.id.btn_dayin, R.id.btn_dingdan,R.id.rl_xianjin,R.id.rl_zhifubao, R.id.rl_weixin,R.id.ll_cashier, R.id.rl_yun})
+    @OnClick({R.id.btn_dayin, R.id.btn_dingdan, R.id.rl_xianjin, R.id.rl_zhifubao, R.id.rl_weixin, R.id.ll_cashier, R.id.rl_yun})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_dayin:
@@ -257,12 +269,14 @@ public class CheckOutActivity extends AppCompatActivity {
      * 现金结账
      */
     private void Http_cashier() {
+        mProgressBar.setVisibility(View.VISIBLE);
         String sj = mWmlsbjb.getSj().replaceAll("-", "");
         String exec = "exec prc_AADBPRK_android_001 '" + sj + "',1|";
         DownHTTP.postVolley6(Net.url, exec, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 Toast.makeText(CheckOutActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
+                mProgressBar.setVisibility(View.GONE);
             }
             @Override
             public void onResponse(String s) {
@@ -280,6 +294,8 @@ public class CheckOutActivity extends AppCompatActivity {
                     DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(CheckOutActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
+                            mProgressBar.setVisibility(View.GONE);
                         }
                         @Override
                         public void onResponse(String response) {
@@ -287,6 +303,7 @@ public class CheckOutActivity extends AppCompatActivity {
                                 mPrinter.setWoyouService(woyouService);
                                 mPrinter.print_jiezhang(String.format(Locale.CANADA, "%.2f", mYingshou),
                                         String.format(Locale.CANADA, "%.2f", mYishou), String.format(Locale.CANADA, "%.2f", mZhaoling));
+                                mProgressBar.setVisibility(View.GONE);
                                 finish();
                             }
                         }
@@ -297,7 +314,6 @@ public class CheckOutActivity extends AppCompatActivity {
             }
         });
     }
-
     private void inputMoney() {
         final CheckOutDialog dialog = new CheckOutDialog(this, "现金支付", mYingshou);
         dialog.mConfirm.setOnClickListener(new View.OnClickListener() {
@@ -315,12 +331,12 @@ public class CheckOutActivity extends AppCompatActivity {
             }
         });
     }
-
     /**
      * 云会员支付全额支付
      */
     @Subscribe
     public void getYunPayLocal(final YunSqlFinish event) {
+        mProgressBar.setVisibility(View.VISIBLE);
         String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS," +
                 "DDSJ,JYSJ,BZ,JZFSBM,WMBS,ZH,KHBH,QKJE,JCRS," +
                 "CZKYE,BY7,CXYH,JZFSMC,HYJF,ZL,HYBH,HYKDJ)" +
@@ -334,19 +350,21 @@ public class CheckOutActivity extends AppCompatActivity {
         DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Toast.makeText(CheckOutActivity.this, "云会员付款失败", Toast.LENGTH_SHORT).show();
+                mProgressBar.setVisibility(View.GONE);
             }
             @Override
             public void onResponse(String response) {
                 if (response.contains("richado")) {
                     //打印结账单
                     mPrinter.setWoyouService(woyouService);
-                    mPrinter.print_yun(event.mWmlsbjb,event.mListWmlsb);
+                    mPrinter.print_yun(event.mWmlsbjb, event.mListWmlsb);
+                    mProgressBar.setVisibility(View.GONE);
                     finish();
                 }
             }
         });
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

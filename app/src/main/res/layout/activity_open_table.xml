@@ -60,20 +60,20 @@
         </LinearLayout>
         <LinearLayout
             style="@style/linearLayout_openTable"
-            android:layout_weight="2">
+            android:layout_weight="1.5">
             <TextView
                 style="@style/textView_openTable"
                 android:text="备        注："/>
             <EditText
                 android:id="@+id/editText3"
                 style="@style/editText_openTable"
-                android:layout_height="100dp"
+                android:layout_height="80dp"
                 />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="4">
+            android:layout_weight="4.5">
             <Button
                 android:id="@+id/btn_cancel"
                 android:layout_width="match_parent"

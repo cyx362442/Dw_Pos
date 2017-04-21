@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -101,6 +102,7 @@ public class YunLandActivity extends AppCompatActivity {
     /**EventBus提起Post请求返回的云会员等级信息*/
     @Subscribe
     public void getImsCardLand(ImsCardMembers event) {
+        String zkfs="";
         if(event.response.equals("]")||event.response.equals("")||event.response.equals("error")){
             Toast.makeText(this,"登录失败",Toast.LENGTH_SHORT).show();
         }else{
@@ -108,17 +110,23 @@ public class YunLandActivity extends AppCompatActivity {
             ImsCardMember[] cards = gson.fromJson(event.response, ImsCardMember[].class);
             String cardgrade = cards[0].getCardgrade();
             List<FXHYKSZ> list = DataSupport.select("ZKFS").where("HYKDJ=?",cardgrade).find(FXHYKSZ.class);
-            String zkfs = list.get(0).getZKFS();
+            if(list.size()>0){
+                zkfs = list.get(0).getZKFS();
+            }
             String hyj=zkfs.equals("会员价1")?"hyj":zkfs.equals("会员价2")?"hyj2":zkfs.equals("会员价3")?"hyj3":zkfs.equals("会员价4")?"hyj4":
-                    zkfs.equals("会员价5")?"hyj5":zkfs.equals("会员价6")?"hyj6":zkfs.equals("会员价7")?"hyj7":zkfs.equals("会员价8")?"hyj8":"hyj9";
+                    zkfs.equals("会员价5")?"hyj5":zkfs.equals("会员价6")?"hyj6":zkfs.equals("会员价7")?"hyj7":zkfs.equals("会员价8")?"hyj8":zkfs.equals("会员价9")?"hyj9":"";
             /**重新计算打折后的会员价*/
             float totalMoney=0f;
-            for(WMLSB wmlsb:mListWmlsb){
                 //遍历每一项的会员价
-                float hyPrice = getHyPrice(hyj, wmlsb.getXMBH());
-                wmlsb.setDJ(hyPrice>0&&wmlsb.getDJ()>hyPrice?hyPrice:wmlsb.getDJ());//未打折，按新的会员价重新计算单价.己打过折扣，还是按原来打折后的单价算;
-                wmlsb.setXJ(wmlsb.getDJ()*wmlsb.getSL());//重算小计金额
-                totalMoney=totalMoney+wmlsb.getXJ();//重算总金额
+            for(WMLSB wmlsb:mListWmlsb){
+                if(!TextUtils.isEmpty(hyj)){//有设置了会员价
+                    float hyPrice = getHyPrice(hyj, wmlsb.getXMBH());
+                    wmlsb.setDJ(hyPrice>0&&wmlsb.getDJ()>hyPrice?hyPrice:wmlsb.getDJ());//未打折，按新的会员价重新计算单价.己打过折扣，还是按原来打折后的单价算;
+                    wmlsb.setXJ(wmlsb.getDJ()*wmlsb.getSL());//重算小计金额
+                    totalMoney=totalMoney+wmlsb.getXJ();//重算总金额
+                }else{
+                    totalMoney=totalMoney+wmlsb.getXJ();//重算总金额
+                }
             }
             /**改变应收金额、折扣金额*/
             Moneys.ysjr=totalMoney;

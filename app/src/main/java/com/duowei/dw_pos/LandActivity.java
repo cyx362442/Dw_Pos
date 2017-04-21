@@ -60,6 +60,7 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                     Toast.makeText(this,"账号不存在",Toast.LENGTH_SHORT).show();
                 }else if(yhjbqk.get(0).getYHMM().equals(password)){
                     Users.YHBH=account;
+                    Users.pad=mSp.getString("pad","");
                     String ip = mSp.getString("ip", "");
                     String port = mSp.getString("port", "");
                     Net.url="http://"+ip+":"+port+"/server/ServerSvlt?";

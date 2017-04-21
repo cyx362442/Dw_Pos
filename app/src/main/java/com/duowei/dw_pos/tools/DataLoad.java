@@ -2,6 +2,7 @@ package com.duowei.dw_pos.tools;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -91,6 +92,7 @@ public class DataLoad {
             }
             @Override
             public void onResponse(final String response) {
+                Log.e("respone==",response);
                 if(response.equals("]")){
                     Http_DMJYXMSSLB();
                 }else{

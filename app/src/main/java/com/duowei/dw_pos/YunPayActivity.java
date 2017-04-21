@@ -97,6 +97,7 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
     @Subscribe
     public void getImsCards(ImsCardCouponStores event) {
         String respone = event.reslut;
+        Log.e("respone====",respone);
         if (!respone.equals("error")) {
             mYunList.clear();
             addImsCardData();
