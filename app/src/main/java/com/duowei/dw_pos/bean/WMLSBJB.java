@@ -40,7 +40,7 @@ public class WMLSBJB{
     private String JSKSSJ;
     private String BY6;
     private String SFFS;
-    private String BY12;
+    private String BY12 = "";
 
     public String getWMDBH() {
         return WMDBH;

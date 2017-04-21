@@ -61,7 +61,7 @@ public class WMLSB implements Serializable {
     private String sfxs;
     private String by2;
     private String by5;
-    private String BY12;
+    private String BY12 = "";
     private String BY13;
     private String SFZS;
     private String BY15;
@@ -359,6 +359,11 @@ public class WMLSB implements Serializable {
         this.DWSL = this.SL;
 
         this.SFYXD = "0";
+
+        // 称重
+        if (!TextUtils.isEmpty(jyxmsz.getBY3())) {
+            setBY12(jyxmsz.getBY3());
+        }
     }
 
     /**
@@ -412,8 +417,8 @@ public class WMLSB implements Serializable {
             setZSSJ(null);
         }
 
-        String mainSql = "INSERT INTO WMLSB (WMDBH,           XMBH,           XMMC,           TM,           DW,          SL,         DJ,                           XJ,          PZ,                TCBH,             SFYXD, XSZT, FTJE,        YSJG,           SFZS,              SYYXM,      SQRXM, ZSSJ,            DWSL,           sfxs,      by1,            by2,            by3,        by4,   by5,      SJC,  BY6,  BY7,  BY8,  BY9,  BY10, BY11,         TCXMBH,                       BY12, BY13, PBJSJM, PBXH, BY14,     BY15,       BY16,        BY17,                 BY18,     BY19, BY20, BY21, BY22, BY23, BY24, BY25) " +
-                "               VALUES ('" + WMDBH + "', '" + XMBH + "', '" + XMMC + "', '" + TM + "', '" + DW + "', " + SL + ", " + DJ + ", " + getDJ() * getSL() + ", '" + getPZ() + "', '" + getTCBH() + "', '" + SFYXD + "', '', null, " + YSJG + ", '" + getSFZS() + "', '" + SYYXM + "', null, " + getZSSJ() + ", " + DWSL + ", '" + sfxs + "', null, '" + by2 + "', " + getBY3() + ", null, GETDATE(), null, null, null, null, null, null, null, '" + getTCXMBH() + "', '', '" + getBY13() + "', null, null, null, '" + getBY15() + "', null, '" + getBY17() + "', '" + getBY18() + "', null, null, '" + getBY21() + "', null, null, null, null)|";
+        String mainSql = "INSERT INTO WMLSB (WMDBH,           XMBH,           XMMC,           TM,           DW,          SL,         DJ,                           XJ,          PZ,                TCBH,             SFYXD, XSZT, FTJE,        YSJG,           SFZS,              SYYXM,      SQRXM, ZSSJ,            DWSL,           sfxs,      by1,            by2,            by3,        by4,   by5,      SJC,  BY6,  BY7,  BY8,  BY9,  BY10, BY11,         TCXMBH,             BY12,               BY13, PBJSJM, PBXH, BY14,     BY15,       BY16,        BY17,                 BY18,     BY19, BY20, BY21, BY22, BY23, BY24, BY25) " +
+                "               VALUES ('" + WMDBH + "', '" + XMBH + "', '" + XMMC + "', '" + TM + "', '" + DW + "', " + SL + ", " + DJ + ", " + getDJ() * getSL() + ", '" + getPZ() + "', '" + getTCBH() + "', '" + SFYXD + "', '', null, " + YSJG + ", '" + getSFZS() + "', '" + SYYXM + "', null, " + getZSSJ() + ", " + DWSL + ", '" + sfxs + "', null, '" + by2 + "', " + getBY3() + ", null, GETDATE(), null, null, null, null, null, null, null, '" + getTCXMBH() + "', '"+ getBY12() +"', '" + getBY13() + "', null, null, null, '" + getBY15() + "', null, '" + getBY17() + "', '" + getBY18() + "', null, null, '" + getBY21() + "', null, null, null, null)|";
 
         if (mSubWMLSBList.size() > 0) {
             // 有加价促销项

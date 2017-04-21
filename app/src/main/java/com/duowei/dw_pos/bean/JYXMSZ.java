@@ -64,6 +64,7 @@ public class JYXMSZ extends DataSupport{
     public String HYJ7;
     public String HYJ8;
     public String HYJ9;
+    public String BY3;
 
     public String getXMBH() {
         return XMBH;
@@ -169,6 +170,10 @@ public class JYXMSZ extends DataSupport{
         return HYJ9;
     }
 
+    public String getBY3() {
+        return BY3;
+    }
+
     public void setXMBH(String XMBH) {
         this.XMBH = XMBH;
     }
@@ -271,5 +276,9 @@ public class JYXMSZ extends DataSupport{
 
     public void setHYJ9(String HYJ9) {
         this.HYJ9 = HYJ9;
+    }
+
+    public void setBY3(String BY3) {
+        this.BY3 = BY3;
     }
 }
