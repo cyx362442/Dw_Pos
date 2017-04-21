@@ -55,6 +55,8 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     private ProgressDialog mCommitDialog;
 
     public void closeCommitDialog () {
+        mSubmitButton.setEnabled(true);
+
         if (mCommitDialog != null && mCommitDialog.isShowing()) {
             mCommitDialog.dismiss();
         }
@@ -116,6 +118,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.setEnabled(false);
                 mCommitDialog = ProgressDialog.show(CartDetailActivity.this, null, "提交中...", true, false);
 
                 if (mWmdbh == null) {
