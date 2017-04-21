@@ -101,7 +101,7 @@ public class CartList {
             }
         }
 
-        return new CartInfo(num, price);
+        return new CartInfo(num, Float.valueOf(String.format(Locale.CHINA, "%.2f", price)));
     }
 
 

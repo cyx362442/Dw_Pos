@@ -31,6 +31,7 @@ import com.duowei.dw_pos.tools.Users;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 订单详情
@@ -253,7 +254,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
             total += w.getSL() * w.getDJ();
         }
 
-        return total;
+        return Float.valueOf(String.format(Locale.CHINA, "%.2f", total));
     }
 
     private void setTasteShow(RecyclerView recyclerView, String pz) {
