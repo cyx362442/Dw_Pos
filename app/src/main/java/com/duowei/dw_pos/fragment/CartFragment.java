@@ -73,6 +73,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         mCartIconLayout = (FrameLayout) view.findViewById(R.id.fl_cart);
 
         view.findViewById(R.id.btn_commit).setOnClickListener(this);
+        mCartIconLayout.setOnClickListener(this);
 
         //注册广播
         registerBoradcastReceiver();
@@ -118,7 +119,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         int id = v.getId();
 
-        if (id == R.id.btn_commit) {
+        if (id == R.id.btn_commit || id == R.id.fl_cart) {
             if (getArguments() == null) {
                 Intent intent = new Intent(getContext(), CartDetailActivity.class);
                 getContext().startActivity(intent);

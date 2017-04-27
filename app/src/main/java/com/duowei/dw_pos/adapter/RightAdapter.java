@@ -1,8 +1,8 @@
 package com.duowei.dw_pos.adapter;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +16,16 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.duowei.dw_pos.CashierDeskActivity;
 import com.duowei.dw_pos.ComboActivity;
 import com.duowei.dw_pos.R;
+import com.duowei.dw_pos.bean.DMKWDYDP;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.bean.TCSD;
+import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.event.ClearSearchEvent;
+import com.duowei.dw_pos.fragment.TasteChoiceDialogFragment;
 import com.duowei.dw_pos.tools.CartList;
 
 import org.greenrobot.eventbus.EventBus;
@@ -37,7 +41,7 @@ import java.util.List;
 public class RightAdapter extends BaseAdapter implements Filterable {
     private static HolderClickListener mHolderClickListener;
 
-    private Context mContext;
+    private CashierDeskActivity mContext;
     private List mList;
 
     private CartList mCartList;
@@ -51,7 +55,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
 
     private boolean isAll = false;
 
-    public RightAdapter(Context context) {
+    public RightAdapter(CashierDeskActivity context) {
         mContext = context;
 
         mAllList = new ArrayList();
@@ -101,7 +105,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
 
         Object object = getItem(position);
         if (object instanceof JYXMSZ) {
-            // 单品信息
+            // 单品
             final JYXMSZ item = (JYXMSZ) object;
             holder.tv_name.setText(item.getXMMC());
             holder.tv_money.setText(String.valueOf("¥" + item.getXSJG()));
@@ -111,7 +115,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                 public void onClick(View v) {
                     EventBus.getDefault().post(new ClearSearchEvent());
 
-                    mCartList.add(item);
+                    WMLSB wmlsb = mCartList.add(item);
 
                     if (mHolderClickListener != null) {
                         int[] start_location = new int[2];
@@ -121,10 +125,24 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                         Drawable drawable = holder.btn_add.getDrawable();//复制一个新的商品图标
                         mHolderClickListener.onHolderClick(drawable, start_location);
                     }
+
+                    // 有必选口味处理
+                    if (wmlsb != null) {
+                        List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
+
+                        if (tasteList != null && tasteList.size() > 0) {
+                            TasteChoiceDialogFragment fragment = new TasteChoiceDialogFragment();
+                            Bundle args = new Bundle();
+                            args.putSerializable("wmlsb", wmlsb);
+                            fragment.setArguments(args);
+                            fragment.show(mContext.getSupportFragmentManager(), null);
+                        }
+                    }
                 }
             });
 
         } else if (object instanceof TCMC) {
+            // 套餐
             final TCMC item = (TCMC) object;
             holder.tv_name.setText(item.getXMMC());
 
@@ -273,5 +291,4 @@ public class RightAdapter extends BaseAdapter implements Filterable {
     public interface HolderClickListener {
         void onHolderClick(Drawable drawable, int[] start_location);
     }
-
 }

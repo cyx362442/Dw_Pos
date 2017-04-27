@@ -110,14 +110,15 @@ public class CartList {
      *
      * @param jyxmsz
      */
-    public void add(JYXMSZ jyxmsz) {
+    public WMLSB add(JYXMSZ jyxmsz) {
         processCxdmxxx(jyxmsz);
 
         boolean find = false;
 
+        WMLSB wmlsb = null;
         String xmbh = jyxmsz.getXMBH();
         for (int i = 0; i < mList.size(); i++) {
-            WMLSB wmlsb = mList.get(i);
+            wmlsb = mList.get(i);
             if ("1".equals(wmlsb.getSfxs()) && TextUtils.isEmpty(wmlsb.getBY15()) && xmbh.endsWith(wmlsb.getXMBH())) {
                 // 购物车已存在当前单品
                 // 数量+1
@@ -139,7 +140,7 @@ public class CartList {
         if (!find) {
             // 购物车没有当前要添加的单品
             // 直接添加
-            WMLSB wmlsb = new WMLSB(jyxmsz);
+            wmlsb = new WMLSB(jyxmsz);
             mList.add(wmlsb);
 
             if (!hasCXDMXXX) {
@@ -148,6 +149,8 @@ public class CartList {
 
             EventBus.getDefault().post(new CartUpdateEvent());
         }
+
+        return wmlsb;
     }
 
     /**
@@ -455,7 +458,7 @@ public class CartList {
                 }
 
                 WMLSB remote = sWMLSBList.get(i);
-                if (wmlsb.getBy5().equals(remote.getBy5())) {
+                if (wmlsb == remote) {
                     mRemoveRemoteSql += "update wmlsb " +
                             "set sl = sl - 1 " +
                             "where wmdbh = '" + remote.getWMDBH() + "' and xh = " + remote.getXH() + "|";
@@ -464,6 +467,7 @@ public class CartList {
                 }
             }
 
+            // 当前是否有加价促销的子项
             if (!TextUtils.isEmpty(wmlsb.getBY21())) {
                 String by21 = wmlsb.getBY21().substring(2);
                 mRemoveRemoteSql += "update wmlsb " +

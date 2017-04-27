@@ -35,7 +35,7 @@ import java.util.List;
  */
 
 public class TasteChoiceDialogFragment extends AppCompatDialogFragment {
-    private static final String TAG = "TasteChoiceDialogFragme";
+    private static final String TAG = "TasteChoiceDialog";
 
     private Context mContext;
 
@@ -50,7 +50,6 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getContext();
-
         mWMLSB = (WMLSB) getArguments().getSerializable("wmlsb");
     }
 

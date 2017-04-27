@@ -56,6 +56,7 @@
                 android:id="@+id/editText2"
                 android:selectAllOnFocus="true"
                 android:inputType="number"
+                android:text="1"
                 style="@style/editText_openTable"/>
         </LinearLayout>
         <LinearLayout

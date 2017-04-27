@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CheckedTextView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/text"
-    android:layout_width="wrap_content"
+    android:layout_width="100dp"
     android:layout_height="wrap_content"
+    android:background="@drawable/flexbox_item_bg"
+    android:clickable="true"
+    android:lines="2"
+    android:paddingBottom="8dp"
     android:paddingLeft="12dp"
     android:paddingRight="12dp"
     android:paddingTop="8dp"
-    android:paddingBottom="8dp"
-    android:clickable="true"
     android:textColor="@color/flexbox_item_text"
-    android:background="@drawable/flexbox_item_bg"
+    android:gravity="center_vertical"
+    app:layout_columnWeight="1"
     tools:text="Text">
-
 </CheckedTextView>

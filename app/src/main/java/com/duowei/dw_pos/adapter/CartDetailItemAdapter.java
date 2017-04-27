@@ -124,6 +124,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
         holder.iv_add.setVisibility(View.VISIBLE);
         holder.iv_add.setEnabled(true);
         holder.btn_taste.setVisibility(View.VISIBLE);
+        holder.recycler_view_taste.setAdapter(null);
 
 
         final WMLSB item = getItem(position);
