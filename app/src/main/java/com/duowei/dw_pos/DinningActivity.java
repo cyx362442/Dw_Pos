@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,13 +41,16 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     private List<String>listName=new ArrayList<>();
     private Spinner mSp;
     private GridView mGv;
-    private List<JYCSSZ> mJycssz;
+    private List<JYCSSZ> mJycssz=new ArrayList<>();
     private MyGridAdapter mGv_adapter;
     private TextView mUser;
     private TableUse[] mTableUses=new TableUse[]{};
     private Intent mIntent;
     private String mUrl;
     private ProgressBar mPb;
+    private Handler mHandler;
+    private Runnable mRun;
+    private String mCsbh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +59,6 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         findViewById(R.id.btn_exit).setOnClickListener(this);
         SharedPreferences user = getSharedPreferences("user", Context.MODE_PRIVATE);
         mUrl = user.getString("url", "");
-
         initUi();
     }
 
@@ -63,6 +67,8 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         mUser = (TextView) findViewById(R.id.tv_user);
         mSp = (Spinner) findViewById(R.id.spinnner);
         mGv = (GridView) findViewById(R.id.gridView);
+        mGv_adapter = new MyGridAdapter(this, mJycssz,mTableUses);
+        mGv.setAdapter(mGv_adapter);
         mGv.setOnItemClickListener(this);
     }
 
@@ -77,6 +83,44 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     protected void onResume() {
         super.onResume();
         Http_TalbeUse();
+        //自动刷新餐桌
+        if(mHandler!=null){
+            mHandler.removeCallbacks(mRun);
+        }
+        mHandler = new Handler();
+        mHandler.postDelayed(mRun = new Runnable() {
+            @Override
+            public void run() {
+                mHandler.postDelayed(this,3000);
+                brushTable();
+                Log.e("======","刷新^^");
+            }
+        },5000);
+    }
+
+    private void brushTable() {
+        DownHTTP.postVolley6(mUrl, sqlUse, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+            @Override
+            public void onResponse(String response) {
+                if(!response.equals("]")){
+                    Gson gson = new Gson();
+                    mTableUses = gson.fromJson(response, TableUse[].class);
+                }else{
+                    mTableUses=new TableUse[0];
+                }
+                if(TextUtils.isEmpty(mCsbh)){
+                    mJycssz = DataSupport.select("CSMC").where("FCSBH!=?","").order("CSBH ASC").find(JYCSSZ.class);
+                }else{
+                    mJycssz = DataSupport.select("CSMC").where("FCSBH=?",mCsbh).order("CSBH ASC").find(JYCSSZ.class);
+                }
+                mGv_adapter.setUsed(mTableUses);
+                mGv_adapter.setList(mJycssz);
+                mGv_adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private synchronized void Http_TalbeUse() {
@@ -103,8 +147,9 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
 
     private void initGridView(String str1,String str2) {
         mJycssz = DataSupport.select("CSMC").where(str1, str2).order("CSBH ASC").find(JYCSSZ.class);
-        mGv_adapter = new MyGridAdapter(this, mJycssz,mTableUses);
-        mGv.setAdapter(mGv_adapter);
+        mGv_adapter.setUsed(mTableUses);
+        mGv_adapter.setList(mJycssz);
+        mGv_adapter.notifyDataSetChanged();
         mPb.setVisibility(View.GONE);
     }
 
@@ -164,16 +209,25 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
         if(position==0){
             initGridView("FCSBH!=?","");
+            mCsbh="";
         }else{
             String csmc = listName.get(position);
             List<JYCSSZ> jycssz = DataSupport.select("CSBH").where("CSMC=?", csmc).find(JYCSSZ.class);
-            String csbh = jycssz.get(0).CSBH;
-            initGridView("FCSBH=?",csbh);
+            mCsbh = jycssz.get(0).CSBH;
+            initGridView("FCSBH=?", mCsbh);
         }
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(mHandler!=null){
+            mHandler.removeCallbacks(mRun);
+        }
     }
 }
