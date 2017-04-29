@@ -54,6 +54,7 @@
             android:id="@+id/et_pad"
             style="@style/editText_setting"
             android:selectAllOnFocus="true"
+            android:hint="如：P1"
             />
     </LinearLayout>
     <RelativeLayout

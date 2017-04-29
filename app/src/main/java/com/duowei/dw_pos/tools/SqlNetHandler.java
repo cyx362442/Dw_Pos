@@ -2,6 +2,7 @@ package com.duowei.dw_pos.tools;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;

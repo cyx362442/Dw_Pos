@@ -72,6 +72,7 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                     String port = mSp.getString("port", "");
                     Net.url="http://"+ip+":"+port+"/server/ServerSvlt?";
                     List<YHJBQK> yhmc = DataSupport.where("YHBH=?", account).find(YHJBQK.class);
+                    Users.YHBH=account;
                     Users.YHMC=yhmc.get(0).YHMC;
                     Users.TDQX=yhmc.get(0).TDQX;
                     mIntent = new Intent(this, DinningActivity.class);

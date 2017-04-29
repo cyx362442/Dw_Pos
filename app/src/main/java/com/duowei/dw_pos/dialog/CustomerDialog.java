@@ -2,7 +2,7 @@ package com.duowei.dw_pos.dialog;
 
 import android.content.Context;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -14,12 +14,12 @@ import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.adapter.CustomerAdapter;
 import com.duowei.dw_pos.bean.GKLX;
 import com.duowei.dw_pos.event.CustomerStytle;
-import com.google.common.eventbus.EventBus;
 
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by Administrator on 2017-04-08.
@@ -62,7 +62,7 @@ public class CustomerDialog implements AdapterView.OnItemClickListener {
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         String stytle = gkName.get(position);
-        org.greenrobot.eventbus.EventBus.getDefault().post(new CustomerStytle(stytle));
+        EventBus.getDefault().post(new CustomerStytle(stytle));
         mDialog.dismiss();
     }
 }

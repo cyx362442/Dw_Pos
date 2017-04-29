@@ -108,7 +108,7 @@ public class Prints {
         });
     }
     //现金\支付宝、微信结账
-    public void print_jiezhang(final String ys, final String sx, final String zl){
+    public void print_jiezhang(final String ys, final String sx, final String zl, final String payStyle){
         ThreadPoolManager.getInstance().executeTask(new Runnable() {
             @Override
             public void run() {
@@ -139,7 +139,11 @@ public class Prints {
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_________________________________________________________________________________
                     woyouService.printTextWithFont("应收现金:￥" + ys + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("收现:￥"+sx+"  找零:"+zl+"\n","",30,callback);
+                    if(payStyle.equals("收现")){
+                        woyouService.printTextWithFont(payStyle+":￥"+sx+"  找零:"+zl+"\n","",30,callback);
+                    }else{
+                        woyouService.printTextWithFont(payStyle+"支付:￥"+sx+"\n","",30,callback);
+                    }
                     woyouService.setAlignment(1, callback);// 对齐方式
                     woyouService.lineWrap(1, callback);
                     woyouService.printTextWithFont("谢谢光临！", "", 30, callback);
@@ -183,7 +187,7 @@ public class Prints {
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_________________________________________________________________________________
                     woyouService.printTextWithFont("应收现金:￥" + getZj(wmlsbList) + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("收现:￥"+getZj(wmlsbList)+"  找零:"+0.00+"\n","",30,callback);
+                    woyouService.printTextWithFont("云会员支付:￥"+getZj(wmlsbList)+"\n","",30,callback);
                     woyouService.setAlignment(1, callback);// 对齐方式
                     woyouService.lineWrap(1, callback);
                     woyouService.printTextWithFont("谢谢光临！", "", 30, callback);
