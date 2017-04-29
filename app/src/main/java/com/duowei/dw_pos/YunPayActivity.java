@@ -60,6 +60,7 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_yun_pay);
+        EventBus.getDefault().register(this);
         ButterKnife.bind(this);
         mWmlsbjb = (Wmslbjb_jiezhang) getIntent().getSerializableExtra("WMLSBJB");
         mWmlsb = (ArrayList<WMLSB>) getIntent().getSerializableExtra("WMLSB");
@@ -77,7 +78,6 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
         mCard.setText(mImsCards.getCardsn());
         mName.setText(mImsCards.getRealname());
         toYunAccountFragment();

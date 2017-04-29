@@ -156,7 +156,7 @@ public class CheckOutActivity extends AppCompatActivity {
         list_wmlsb.clear();
         mTotalMoney = 0.00f;
         mActualMoney = 0.00f;
-        String sqlWmlsbjb = "select convert(varchar(10),getdate(),120) as sj,WMDBH,ZH,JCRS,YS,isnull(BY1,'')BY1,isnull(ZKFS,'无'),convert(varchar(19), JYSJ,120)JYSJ,isnull(jcfs,'')jcfs,DJLSH,YHBH,JSJ " +
+        String sqlWmlsbjb = "select convert(varchar(10),getdate(),120) as sj,WMDBH,ZH,JCRS,YS,isnull(BY1,'')BY1,isnull(ZKFS,'无')ZKFS,convert(varchar(19), JYSJ,120)JYSJ,isnull(jcfs,'')jcfs,DJLSH,YHBH,JSJ " +
                 "from WMLSBJB where WMDBH='" + mWmdbh + "'|";
         DownHTTP.postVolley6(Net.url, sqlWmlsbjb, new VolleyResultListener() {
             @Override
@@ -174,7 +174,7 @@ public class CheckOutActivity extends AppCompatActivity {
                 mTvTime.setText(mWmlsbjb.getJYSJ());
                 mTvPersons.setText(mWmlsbjb.getJCRS() + "人");
                 mTvOpener.setText(mWmlsbjb.getYHBH());
-                Log.e("jcfs====","来客类型："+mWmlsbjb.getJcfs());
+                Log.e("ZKFS====","来客类型："+mWmlsbjb.getZKFS());
 
                 String sqlWmlsb = "SELECT convert(varchar(30),getdate(),121) ZSSJ2, isnull(BY3,0)BY3,* FROM WMLSB WHERE WMDBH = '" + mWmdbh + "'|";
                 DownHTTP.postVolley6(Net.url, sqlWmlsb, new VolleyResultListener() {
@@ -287,7 +287,7 @@ public class CheckOutActivity extends AppCompatActivity {
                     JSONObject jsonObject = jsonArray.getJSONObject(0);
                     int prk = jsonObject.getInt("prk");
                     String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS,DDSJ,JYSJ,BZ,JZFSBM,BMMC,WMBS,ZH,KHBH,QKJE,JCRS,BY7)" +
-                            "VALUES('" + mWmlsbjb.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣','" + Moneys.xfzr + "','" + Moneys.zkjr + "'," + mYingshou + ",'" + mWmlsbjb.getYS() + "',0,'无'," +
+                            "VALUES('" + mWmlsbjb.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣','" + Moneys.xfzr + "','" + Moneys.zkjr + "'," + mYingshou + ",'" + mWmlsbjb.getYS() + "',0,'" + mWmlsbjb.getZKFS() + "'," +
                             "'" + mWmlsbjb.getJYSJ() + "',GETDATE(),'" + mPad + "','" + mWmlsbjb.getJcfs() + "','','" + prk + "','" + mWmlsbjb.getZH() + "'," + mYishou + "," + mZhaoling + ",'" + mWmlsbjb.getJCRS() + "','')|";
                     String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
                             "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mWmlsbjb.getWMDBH() + "'|";
@@ -363,7 +363,7 @@ public class CheckOutActivity extends AppCompatActivity {
                     String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS," +
                             "DDSJ,JYSJ,BZ,JZFSBM,WMBS,ZH,KHBH,QKJE,JCRS," +
                             "CZKYE,BY7,CXYH,JZFSMC,HYJF,ZL,HYBH,HYKDJ)" +
-                            "VALUES('" + mWmdbh + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣'," + mTotalMoney + "," + Moneys.xfzr + ",0," + mYingshou + ",0,'" + mWmlsbjb.getZKFS() + "'," +
+                            "VALUES('" + mWmdbh + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣'," + Moneys.xfzr + "," + Moneys.zkjr + ",0," + Moneys.ysjr + ",0,'" + mWmlsbjb.getZKFS() + "'," +
                             "'" + mWmlsbjb.getJYSJ() + "',GETDATE(),'" + mPad + "','" + mWmlsbjb.getJcfs() + "','" + prk + "','" + mWmlsbjb.getZH() + "',0,0," + Integer.parseInt(mWmlsbjb.getJCRS()) + "," +
                             "" + SqlYun.CZKYE + ",'','','云会员消费'," + SqlYun.jfbfb + ",0,'" + SqlYun.HYBH + "','" + SqlYun.HYKDJ + "')|";
                     String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
