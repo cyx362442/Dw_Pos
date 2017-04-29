@@ -190,7 +190,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void  updateData() {
+    private void updateData() {
         mAdapter.clear();
         mAdapter.addRemoteList(CartList.sWMLSBList);
         mAdapter.addLocalList(CartList.newInstance(this).getList());

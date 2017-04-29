@@ -28,6 +28,7 @@ import com.duowei.dw_pos.tools.CartList;
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.crud.DataSupport;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -112,7 +113,8 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment {
                 });
 
         if (mMode == 1) {
-            builder.setTitle("整单备注");
+            builder.setTitle("整单备注(只对未下单有效)");
+
         } else if (mMode == 2) {
             builder.setTitle("选择口味");
         }
@@ -133,15 +135,18 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment {
 
         } else if (mMode == 2) {
             if (mWMLSB != null) {
-                DMKWDYDP dmkwdydp = DataSupport.where("xmbh = ?", mWMLSB.getXMBH()).findFirst(DMKWDYDP.class);
+                List<DMKWDYDP> dmkwdydpList = DataSupport.where("xmbh = ?", mWMLSB.getXMBH()).find(DMKWDYDP.class);
 
-                if (dmkwdydp != null) {
-                    // 套餐 子项
-                    // 单品
-                    List<DMPZSD> dmpzsdList = DataSupport.where("pzbm = ?", dmkwdydp.getPZBM()).find(DMPZSD.class);
+                List<DMPZSD> dmpzsdList = new ArrayList<>();
+                for (int i = 0; i < dmkwdydpList.size(); i++) {
+                    DMKWDYDP dmkwdydp = dmkwdydpList.get(i);
+                    dmpzsdList.add(DataSupport.where("pzbm = ?", dmkwdydp.getPZBM()).findFirst(DMPZSD.class));
+                }
+
+                if (dmpzsdList.size() > 0) {
                     mTasteAdapter.addAll(dmpzsdList);
                 } else {
-                    List<DMPZSD> dmpzsdList = DataSupport.findAll(DMPZSD.class);
+                    dmpzsdList.addAll(DataSupport.findAll(DMPZSD.class));
                     mTasteAdapter.addAll(dmpzsdList);
                 }
 
