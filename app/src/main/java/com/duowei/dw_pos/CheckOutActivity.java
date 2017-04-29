@@ -279,14 +279,12 @@ public class CheckOutActivity extends AppCompatActivity {
                 Toast.makeText(CheckOutActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
                 mProgressBar.setVisibility(View.GONE);
             }
-
             @Override
             public void onResponse(String s) {
                 try {
                     JSONArray jsonArray = new JSONArray(s);
                     JSONObject jsonObject = jsonArray.getJSONObject(0);
                     int prk = jsonObject.getInt("prk");
-                    Log.e("prk=====", prk + "号");
                     String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS,DDSJ,JYSJ,BZ,JZFSBM,BMMC,WMBS,ZH,KHBH,QKJE,JCRS,BY7)" +
                             "VALUES('" + mWmlsbjb.getWMDBH() + "','" + mWmlsbjb.getYHBH() + "','" + Users.YHMC + "','无折扣','" + Moneys.xfzr + "','" + Moneys.zkjr + "'," + mYingshou + ",'" + mWmlsbjb.getYS() + "',0,'无'," +
                             "'" + mWmlsbjb.getJYSJ() + "',GETDATE(),'" + mPad + "','" + mWmlsbjb.getJcfs() + "','','" + prk + "','" + mWmlsbjb.getZH() + "'," + mYishou + "," + mZhaoling + ",'" + mWmlsbjb.getJCRS() + "','')|";

@@ -3,10 +3,14 @@ package com.duowei.dw_pos;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.duowei.dw_pos.bean.YHJBQK;
@@ -25,6 +29,7 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
     private EditText mEtAccount;
     private EditText mEtPassword;
     private Intent mIntent;
+    private TextView mVersion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +46,11 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
     private void initUI() {
         mEtAccount = (EditText) findViewById(R.id.et_account);
         mEtPassword = (EditText) findViewById(R.id.et_password);
+        mVersion = (TextView) findViewById(R.id.tv_version);
         findViewById(R.id.tv_setting).setOnClickListener(this);
         findViewById(R.id.btn_land).setOnClickListener(this);
         findViewById(R.id.btn_exit).setOnClickListener(this);
+        mVersion.setText(getVersionName());
     }
     @Override
     public void onClick(View view) {
@@ -78,6 +85,17 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+    private String getVersionName() {
+        String versionName="版本号：1.0";
+        try {
+            PackageInfo info = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
+            versionName = "版本号："+info.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return versionName;
+    }
+
     @Override
     protected void onDestroy() {
         SQLiteStudioService.instance().stop();
