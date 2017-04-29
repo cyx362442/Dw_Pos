@@ -93,7 +93,6 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
             public void run() {
                 mHandler.postDelayed(this,3000);
                 brushTable();
-                Log.e("======","刷新^^");
             }
         },5000);
     }
