@@ -52,6 +52,15 @@ public class OpenTableActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         CartList.newInstance(this).clear();
+
+        mEditText2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    mEditText2.requestFocus();
+                }
+            }
+        });
     }
 
     @Subscribe

@@ -1,7 +1,6 @@
 package com.duowei.dw_pos.adapter;
 
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
@@ -279,10 +278,12 @@ public class CartDetailItemAdapter extends BaseAdapter {
     private View.OnClickListener mTasteClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            TasteChoiceDialogFragment fragment = new TasteChoiceDialogFragment();
-            Bundle args = new Bundle();
-            args.putSerializable("wmlsb", (WMLSB) v.getTag());
-            fragment.setArguments(args);
+//            TasteChoiceDialogFragment fragment = new TasteChoiceDialogFragment();
+//            Bundle args = new Bundle();
+//            args.putSerializable("wmlsb", (WMLSB) v.getTag());
+//            fragment.setArguments(args);
+//            fragment.show(mActivity.getSupportFragmentManager(), null);
+            TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance((WMLSB) v.getTag());
             fragment.show(mActivity.getSupportFragmentManager(), null);
         }
     };

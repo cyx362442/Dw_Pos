@@ -28,7 +28,7 @@
                 android:layout_height="match_parent"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
-                android:src="@drawable/ic_left_arrow"
+                app:srcCompat="@drawable/ic_left_arrow"
                 android:tint="@android:color/white"/>
 
             <TextView
@@ -38,6 +38,14 @@
                 android:layout_centerInParent="true"
                 android:text="订餐详情"
                 android:textColor="@android:color/white"/>
+
+            <Button
+                android:id="@+id/btn_all_order_remark"
+                style="?attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="整单备注"/>
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>

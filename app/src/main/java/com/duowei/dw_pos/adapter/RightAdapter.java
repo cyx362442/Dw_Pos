@@ -2,7 +2,6 @@ package com.duowei.dw_pos.adapter;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -131,10 +130,12 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                         List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
 
                         if (tasteList != null && tasteList.size() > 0) {
-                            TasteChoiceDialogFragment fragment = new TasteChoiceDialogFragment();
-                            Bundle args = new Bundle();
-                            args.putSerializable("wmlsb", wmlsb);
-                            fragment.setArguments(args);
+//                            TasteChoiceDialogFragment fragment = new TasteChoiceDialogFragment();
+//                            Bundle args = new Bundle();
+//                            args.putSerializable("wmlsb", wmlsb);
+//                            fragment.setArguments(args);
+//                            fragment.show(mContext.getSupportFragmentManager(), null);
+                            TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb);
                             fragment.show(mContext.getSupportFragmentManager(), null);
                         }
                     }

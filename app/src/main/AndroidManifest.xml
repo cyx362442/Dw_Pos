@@ -34,7 +34,8 @@
         </activity>
         <activity android:name=".DinningActivity">
         </activity>
-        <activity android:name=".OpenTableActivity">
+        <activity android:name=".OpenTableActivity"
+            android:windowSoftInputMode="stateAlwaysVisible">
         </activity>
         <activity
             android:name=".CashierDeskActivity"

@@ -24,6 +24,7 @@ import com.duowei.dw_pos.event.CartUpdateEvent;
 import com.duowei.dw_pos.event.Commit;
 import com.duowei.dw_pos.fragment.LoadingDialogFragment;
 import com.duowei.dw_pos.fragment.MessageDialogFragment;
+import com.duowei.dw_pos.fragment.TasteChoiceDialogFragment;
 import com.duowei.dw_pos.sunmiprint.Prints;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.DateTimeUtils;
@@ -110,6 +111,8 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             }
         });
 
+        findViewById(R.id.btn_all_order_remark).setOnClickListener(this);
+
         mTitleView = (TextView) findViewById(R.id.tv_title);
         mListView = (ListView) findViewById(R.id.list);
         mAddButton = (Button) findViewById(R.id.btn_add);
@@ -176,7 +179,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Subscribe
-    public void commitSuccessed(Commit event){
+    public void commitSuccess(Commit event){
         //打印
         mPrinter.setWoyouService(woyouService);
         //第一次下单
@@ -219,6 +222,10 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             Intent intent = new Intent(this, CashierDeskActivity.class);
             intent.putExtras(getIntent().getExtras());
             startActivity(intent);
+
+        } else if (id == R.id.btn_all_order_remark) {
+            TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance();
+            fragment.show(getSupportFragmentManager(), null);
         }
     }
 }
