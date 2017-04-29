@@ -95,7 +95,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
             holder.tv_name = (TextView) convertView.findViewById(R.id.tv_name);
             holder.tv_money = (TextView) convertView.findViewById(R.id.tv_money);
             holder.btn_add = (ImageButton) convertView.findViewById(R.id.btn_add);
-            holder.ll_view=(LinearLayout)convertView.findViewById(R.id.temp);
+            holder.ll_view = (LinearLayout) convertView.findViewById(R.id.temp);
 
             convertView.setTag(holder);
         } else {
@@ -125,18 +125,19 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                         mHolderClickListener.onHolderClick(drawable, start_location);
                     }
 
-                    // 有必选口味处理
+                    // 必选口味处理
                     if (wmlsb != null) {
-                        List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
+                        JYXMSZ jyxmsz = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).findFirst(JYXMSZ.class);
 
-                        if (tasteList != null && tasteList.size() > 0) {
-//                            TasteChoiceDialogFragment fragment = new TasteChoiceDialogFragment();
-//                            Bundle args = new Bundle();
-//                            args.putSerializable("wmlsb", wmlsb);
-//                            fragment.setArguments(args);
-//                            fragment.show(mContext.getSupportFragmentManager(), null);
-                            TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb);
-                            fragment.show(mContext.getSupportFragmentManager(), null);
+                        if (jyxmsz != null && "1".equals(jyxmsz.getSFYHQ())) {
+                            // 必须口味
+                            List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
+
+                            if (tasteList != null) {
+                                // 有选中必须口味框，都弹出口味选择
+                                TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb);
+                                fragment.show(mContext.getSupportFragmentManager(), null);
+                            }
                         }
                     }
                 }
@@ -201,7 +202,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         return mFilter;
     }
 
-    private  class ViewHolder {
+    private class ViewHolder {
         TextView tv_name;
         TextView tv_money;
         ImageButton btn_add;
@@ -286,9 +287,11 @@ public class RightAdapter extends BaseAdapter implements Filterable {
             }
         }
     }
+
     public static void setOnSetHolderClickListener(HolderClickListener holderClickListener) {
         mHolderClickListener = holderClickListener;
     }
+
     public interface HolderClickListener {
         void onHolderClick(Drawable drawable, int[] start_location);
     }

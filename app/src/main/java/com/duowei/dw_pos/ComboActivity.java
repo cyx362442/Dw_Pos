@@ -94,7 +94,7 @@ public class ComboActivity extends AppCompatActivity {
         }
 
 
-        Cursor cursor = DataSupport.findBySQL("select distinct tm from tcsd where xmbh = '" + mXmbh + "' and tm != 'A'");
+        Cursor cursor = DataSupport.findBySQL("select distinct tm from tcsd where xmbh = '" + mXmbh + "' and tm != 'A' order by tm");
         List<String> tmList = new ArrayList<>();
         while (cursor.moveToNext()) {
             tmList.add(cursor.getString(cursor.getColumnIndex("tm")));
