@@ -259,7 +259,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
      * @return 单品信息 列表
      */
     private List<JYXMSZ> getJyxmszList(String lbbm) {
-        return DataSupport.where("lbbm = ?", lbbm).order("xl").find(JYXMSZ.class);
+        return DataSupport.where("lbbm = ?", lbbm).find(JYXMSZ.class);
 //        ArrayList<JYXMSZ> list = new ArrayList<>();
 //        for (int i = 0; i < mRightJyxmszAllList.size(); i++) {
 //            JYXMSZ jyxmsz = mRightJyxmszAllList.get(i);

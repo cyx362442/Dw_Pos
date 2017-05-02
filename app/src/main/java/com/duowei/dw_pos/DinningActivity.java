@@ -21,9 +21,9 @@ import com.android.volley.VolleyError;
 import com.duowei.dw_pos.adapter.MyGridAdapter;
 import com.duowei.dw_pos.bean.JYCSSZ;
 import com.duowei.dw_pos.bean.TableUse;
+import com.duowei.dw_pos.event.FinishEvent;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
-import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.Users;
 import com.google.gson.Gson;
 
@@ -34,6 +34,8 @@ import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.EventBus;
 
 public class DinningActivity extends AppCompatActivity implements  View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
     private String sqlUse="select datediff(mi,jysj,getdate())scjc,a.csmc,b.* from wmlsbjb b,jycssz a where (charindex('@'+a.csmc+',@',b.zh)>0 or charindex(a.csmc+',',b.zh)>0) and isnull(sfyjz,'0')<>'1' and wmdbh in(select wmdbh from wmlsb)|";
@@ -56,6 +58,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dinning);
+        EventBus.getDefault().register(this);
         findViewById(R.id.btn_exit).setOnClickListener(this);
         SharedPreferences user = getSharedPreferences("user", Context.MODE_PRIVATE);
         mUrl = user.getString("url", "");
@@ -70,6 +73,12 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         mGv_adapter = new MyGridAdapter(this, mJycssz,mTableUses);
         mGv.setAdapter(mGv_adapter);
         mGv.setOnItemClickListener(this);
+    }
+
+    @Subscribe
+    public void finishActivity(FinishEvent event){
+        Log.e("event=====","关闭……");
+        finish();
     }
 
     @Override
@@ -228,5 +237,11 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         if(mHandler!=null){
             mHandler.removeCallbacks(mRun);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

@@ -149,7 +149,7 @@ public class DataLoad {
         String sql="select XMBH,XMMC,isnull(PY,'')PY,isnull(TM,'')TM,isnull(DW,'')DW,LBBM,LBMC,XSJG,isnull(SFTC,'0')SFTC,isnull(GQ,'0')GQ," +
                 "isnull(SFQX,'')SFQX,XL,isnull(HLBMMC,'')HLBMMC,isnull(SFYHQ,'')SFYHQ,isnull(BY16,'')BY16,isnull(BY6,0)BY6,isnull(YHJ,0)YHJ," +
                 "isnull(HYJ,0)HYJ,isnull(HYJ2,0)HYJ2,isnull(HYJ3,0)HYJ3,isnull(HYJ4,0)HYJ4,isnull(HYJ5,0)HYJ5,isnull(HYJ6,0)HYJ6," +
-                "isnull(HYJ7,0)HYJ7,isnull(HYJ8,0)HYJ8,isnull(HYJ9,0)HYJ9,isnull(BY3,'') BY3 from JYXMSZ where isnull(SFQX,'0')<>'1'|";
+                "isnull(HYJ7,0)HYJ7,isnull(HYJ8,0)HYJ8,isnull(HYJ9,0)HYJ9,isnull(BY3,'') BY3 from JYXMSZ where isnull(SFQX,'0')<>'1' order by XL asc|";
         DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
