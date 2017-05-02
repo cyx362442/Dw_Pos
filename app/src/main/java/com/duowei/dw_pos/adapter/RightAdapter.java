@@ -14,6 +14,7 @@ import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.duowei.dw_pos.CashierDeskActivity;
 import com.duowei.dw_pos.ComboActivity;
@@ -107,13 +108,21 @@ public class RightAdapter extends BaseAdapter implements Filterable {
             // 单品
             final JYXMSZ item = (JYXMSZ) object;
             holder.tv_name.setText(item.getXMMC());
-            holder.tv_money.setText(String.valueOf("¥" + item.getXSJG()));
+            if(item.getGQ().equals("1")){
+                holder.tv_money.setText("停售");
+            }else{
+                holder.tv_money.setText(String.valueOf("¥" + item.getXSJG()));
+            }
 
             holder.btn_add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EventBus.getDefault().post(new ClearSearchEvent());
+                    if(item.getGQ().equals("1")){
+                        Toast.makeText(mContext,"该单品己停售",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
+                    EventBus.getDefault().post(new ClearSearchEvent());
                     WMLSB wmlsb = mCartList.add(item);
 
                     if (mHolderClickListener != null) {

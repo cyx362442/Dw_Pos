@@ -22,8 +22,11 @@ import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
+import com.duowei.dw_pos.bean.YHJBQK;
 import com.duowei.dw_pos.constant.ExtraParm;
 import com.duowei.dw_pos.dialog.CheckOutDialog;
+import com.duowei.dw_pos.dialog.ConfirmDialog;
+import com.duowei.dw_pos.event.FinishEvent;
 import com.duowei.dw_pos.event.YunSqlFinish;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
@@ -35,13 +38,15 @@ import com.duowei.dw_pos.tools.SqlYun;
 import com.duowei.dw_pos.tools.Users;
 import com.google.gson.Gson;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -49,7 +54,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import woyou.aidlservice.jiuiv5.IWoyouService;
 
-public class CheckOutActivity extends AppCompatActivity {
+public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog.OnconfirmClick {
     @BindView(R.id.tv_user)
     TextView mTvUser;
     @BindView(R.id.btn_dayin)
@@ -123,6 +128,7 @@ public class CheckOutActivity extends AppCompatActivity {
     private String mWmdbh;
     private String mPad;
     private Prints mPrinter;
+    private ConfirmDialog mConfirmDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +136,8 @@ public class CheckOutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_check_out);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
+        mConfirmDialog = ConfirmDialog.instance();
+
         CloseActivity.addAcitity(this);
         SharedPreferences user = getSharedPreferences("user", Context.MODE_PRIVATE);
         mPad = user.getString("pad", "");
@@ -137,11 +145,6 @@ public class CheckOutActivity extends AppCompatActivity {
         mWmdbh = getIntent().getStringExtra("WMDBH");
         mPrinter = Prints.getPrinter();
         mPrinter.bindPrintService(this, connService);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
     }
 
     @Override
@@ -174,7 +177,6 @@ public class CheckOutActivity extends AppCompatActivity {
                 mTvTime.setText(mWmlsbjb.getJYSJ());
                 mTvPersons.setText(mWmlsbjb.getJCRS() + "人");
                 mTvOpener.setText(mWmlsbjb.getYHBH());
-                Log.e("ZKFS====","来客类型："+mWmlsbjb.getZKFS());
 
                 String sqlWmlsb = "SELECT convert(varchar(30),getdate(),121) ZSSJ2, isnull(BY3,0)BY3,* FROM WMLSB WHERE WMDBH = '" + mWmdbh + "'|";
                 DownHTTP.postVolley6(Net.url, sqlWmlsb, new VolleyResultListener() {
@@ -191,6 +193,7 @@ public class CheckOutActivity extends AppCompatActivity {
                             mTvZekou.setText("￥" + 0.00);
                             mTvYishou.setText("￥" + 0.00);
                             mTvDaishou.setText("￥" + 0.00);
+                            mProgressBar.setVisibility(View.GONE);
                             return;
                         }
                         Gson gson = new Gson();
@@ -239,6 +242,8 @@ public class CheckOutActivity extends AppCompatActivity {
                 startActivity(mIntent);
                 break;
             case R.id.rl_zhifubao:
+                if (canCheck()) return;
+
                 mIntent = new Intent(this, WebViewPayActivity.class);
                 mIntent.putExtra("WMLSBJB", mWmlsbjb);
                 mIntent.putExtra("listWmlsb", list_wmlsb);
@@ -246,6 +251,8 @@ public class CheckOutActivity extends AppCompatActivity {
                 startActivity(mIntent);
                 break;
             case R.id.rl_weixin:
+                if (canCheck()) return;
+
                 mIntent = new Intent(this, WebViewPayActivity.class);
                 mIntent.putExtra("WMLSBJB", mWmlsbjb);
                 mIntent.putExtra("listWmlsb", list_wmlsb);
@@ -253,6 +260,8 @@ public class CheckOutActivity extends AppCompatActivity {
                 startActivity(mIntent);
                 break;
             case R.id.rl_yun:
+                if (canCheck()) return;
+
                 mIntent = new Intent(this, YunLandActivity.class);
                 mIntent.putExtra("WMLSBJB", mWmlsbjb);
                 mIntent.putExtra("listWmlsb", list_wmlsb);
@@ -262,9 +271,22 @@ public class CheckOutActivity extends AppCompatActivity {
 //                inputMoney();
                 break;
             case R.id.rl_xianjin:
+                if (canCheck()) return;
+
                 inputMoney();
                 break;
         }
+    }
+
+    private boolean canCheck() {
+        List<YHJBQK> yhjbqk = DataSupport.select("ZPQX").where("YHBH=?", Users.YHBH).find(YHJBQK.class);
+        String zpqx = yhjbqk.get(0).getZPQX();
+        if(!zpqx.equals("1")){
+            mConfirmDialog.show(this,"当前账号没有结账权限，是否切换有结账权限账号登录？");
+            mConfirmDialog.setOnconfirmClick(this);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -392,6 +414,13 @@ public class CheckOutActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    //接口回调，dialog确定键监听
+    @Override
+    public void confirmListener() {
+        EventBus.getDefault().post(new FinishEvent());
+        mConfirmDialog.cancel();
+        finish();
     }
 
     @Override

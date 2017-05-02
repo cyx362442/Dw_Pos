@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.duowei.dw_pos.R;
 
+import java.util.Locale;
+
 /**
  * Created by Administrator on 2017-04-02.
  */
@@ -88,7 +90,7 @@ public class YunFuDialog implements View.OnClickListener{
         mContents.setText(content);
         mTitle.setFocusableInTouchMode(true);
         if(title.equals("储值卡消费")){
-            mEtInput.setText(money+"");
+            mEtInput.setText(String.format(Locale.CANADA, "%.2f", money));
         }else if(title.equals("电子券消费")){
             mEtInput.setText((int)money+"");
         }

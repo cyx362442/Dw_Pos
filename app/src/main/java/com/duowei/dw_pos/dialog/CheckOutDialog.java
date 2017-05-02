@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.duowei.dw_pos.R;
 
+import java.util.Locale;
+
 /**
  * Created by Administrator on 2017-03-25.
  */
@@ -67,7 +69,7 @@ public class CheckOutDialog implements View.OnClickListener {
         mCancel.setOnClickListener(this);
         mTitle.setText(title);
         mTitle.setFocusableInTouchMode(true);
-        mEtInput.setText(money+"");
+        mEtInput.setText(String.format(Locale.CANADA, "%.2f", money));
     }
 
     @Override
