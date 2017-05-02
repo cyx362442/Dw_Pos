@@ -112,7 +112,7 @@ public class CartList {
      * @param jyxmsz
      */
     public WMLSB add(JYXMSZ jyxmsz) {
-        processCxdmxxx(jyxmsz);
+        float dj = processCxdmxxx(jyxmsz);
 
         boolean find = false;
 
@@ -130,6 +130,7 @@ public class CartList {
                     for (int j = 0; j < wmlsb.getSubWMLSBList().size(); j++) {
                         WMLSB subWmlsb = wmlsb.getSubWMLSBList().get(j);
                         subWmlsb.setSL(subWmlsb.getSL() + 1);
+                        subWmlsb.setDJ(dj);
                     }
                 }
 
@@ -142,6 +143,7 @@ public class CartList {
             // 购物车没有当前要添加的单品
             // 直接添加
             wmlsb = new WMLSB(jyxmsz);
+            wmlsb.setDJ(dj);
             mList.add(wmlsb);
 
             if (!hasCXDMXXX) {
@@ -362,7 +364,8 @@ public class CartList {
     /**
      * 处理 单品 促销单明细信息CXDMXXX
      */
-    private void processCxdmxxx(JYXMSZ jyxmsz) {
+    private float processCxdmxxx(JYXMSZ jyxmsz) {
+        float xsjgzhj=jyxmsz.getXSJG();
         hasCXDMXXX = false;
 
         CXDMXXX cxdmxxx = DataSupport.where("xmbh = ?", jyxmsz.getXMBH()).findFirst(CXDMXXX.class);
@@ -385,13 +388,14 @@ public class CartList {
                             String bz = cxdmxxx.getBZ();
                             if (!TextUtils.isEmpty(bz) && "1".equals(bz)) {
                                 // 赠送
-                                jyxmsz.setXSJG(0);
+//                                jyxmsz.setXSJG(0);
+                                xsjgzhj=0;
                                 Log.d(TAG, "processCxdmxxx: " + jyxmsz.getXMMC() + "赠送");
                                 hasCXDMXXX = true;
                             } else {
                                 // 使用折后价
-                                float xsjgzhj = Float.parseFloat(cxdmxxx.getXSJGZHJ());
-                                jyxmsz.setXSJG(xsjgzhj);
+                                xsjgzhj = Float.parseFloat(cxdmxxx.getXSJGZHJ());
+//                                jyxmsz.setXSJG(xsjgzhj);
                                 Log.d(TAG, "processCxdmxxx: " + jyxmsz.getXMMC() + " 设置价格 " + xsjgzhj);
                                 hasCXDMXXX = true;
                             }
@@ -405,6 +409,7 @@ public class CartList {
         } else {
             Log.d(TAG, "processCxdmxxx: " + jyxmsz.getXMMC() + " 没有促销单明细信息");
         }
+        return xsjgzhj;
     }
 
     private static boolean hasCXDMXXX = false;
