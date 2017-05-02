@@ -92,17 +92,18 @@ public class CartList {
 
         for (int i = 0; i < mList.size(); i++) {
             WMLSB wmlsb = mList.get(i);
-            num += wmlsb.getSL();
+//            num += wmlsb.getSL();
             price += wmlsb.getDJ() * wmlsb.getSL();
 
             for (int j = 0; j < wmlsb.getSubWMLSBList().size(); j++) {
                 WMLSB subWmlsb1 = wmlsb.getSubWMLSBList().get(j);
-                num += subWmlsb1.getSL();
+//                num += subWmlsb1.getSL();
+                num += wmlsb.getSubWMLSBList().size();
                 price += subWmlsb1.getDJ() * subWmlsb1.getSL();
             }
         }
 
-        return new CartInfo(num, Float.valueOf(String.format(Locale.CHINA, "%.2f", price)));
+        return new CartInfo(mList.size() + num, Float.valueOf(String.format(Locale.CHINA, "%.2f", price)));
     }
 
 
@@ -506,16 +507,18 @@ public class CartList {
                             "set sl = sl - 1 " +
                             "where xh = " + wmlsb.getXH() + "|";
 
+                    wmlsb.setSL(1);
                     mRemoveRemoteList.add(wmlsb);
                     break;
                 }
 
                 WMLSB remote = sWMLSBList.get(i);
-                if (wmlsb == remote) {
+                if (wmlsb == remote || wmlsb.getBy5().equals(remote.getZSSJ())) {
                     mRemoveRemoteSql += "update wmlsb " +
                             "set sl = sl - 1 " +
                             "where wmdbh = '" + remote.getWMDBH() + "' and xh = " + remote.getXH() + "|";
 
+                    wmlsb.setSL(1);
                     mRemoveRemoteList.add(remote);
                 }
             }
@@ -527,6 +530,7 @@ public class CartList {
                         "set sl = sl - 1 " +
                         "where xh = " + by21 + "|";
 
+                wmlsb.setSL(1);
                 mRemoveRemoteList.add(wmlsb);
             }
 
@@ -537,15 +541,22 @@ public class CartList {
                 if (wmlsb.getTCBH().equals(remote.getTCBH())) {
                     mRemoveRemoteSql += "update wmlsb " +
                             "set sl = sl - dwsl " +
-                            "where wmdbh = '" + remote.getWMDBH() + "' and tcbh = '" + remote.getTCBH() + "'|";
-
+                            "where wmdbh = '" + remote.getWMDBH() +
+                            "' and tcbh = '" + remote.getTCBH() + "'" +
+                            " and xh = " + remote.getXH() + "|";
+//
+                    if (remote.getSL() > remote.getDWSL()) {
+                        remote.setSL(remote.getDWSL());
+                    } else {
+                        remote.setSL(remote.getSL());
+                    }
                     mRemoveRemoteList.add(remote);
                 }
             }
         }
 
         mRemoveRemoteSql += "delete wmlsb " +
-                "where sl < 1 and wmdbh = '" + wmlsb.getWMDBH() + "'|";
+                "where sl <= 0 and wmdbh = '" + wmlsb.getWMDBH() + "'|";
 
         mRemoveRemoteSql += "update WMLSB " +
                 "set xj = DJ * SL " +
@@ -563,9 +574,10 @@ public class CartList {
         for (int i = 0; i < mRemoveRemoteList.size(); i++) {
             WMLSB remote = mRemoveRemoteList.get(i);
 
-            pbdyxxbSql += "insert into pbdyxxb(xh,wmdbh,xmbh,xmmc,dw,sl,dj,xj,pz,ysjg,syyxm,sfxs,tcbh,tcxmbh,tcfz,xtbz,czsj,zh,jsj,thyy) " +
-                    "select xh,wmdbh,xmbh,xmmc,dw,'1',dj,'" + remote.getDJ() + "',pz,ysjg,syyxm,sfxs,tcbh,tcxmbh,BY15,'2',getdate(),'" + sWMLSBJB.getZH() + "','" + Users.pad + "','" + text + "'  " +
-                    "from wmlsb where wmdbh='" + remote.getWMDBH() + "' and  XH='" + remote.getXH() + "'|";
+            pbdyxxbSql += "insert into pbdyxxb(xh,wmdbh,xmbh,xmmc,dw,sl,dj,xj,pz,ysjg,syyxm,sfxs,tcbh,tcxmbh,tcfz,xtbz,czsj,zh,jsj,thyy,jcrs) " +
+                    "select xh,wmdbh,xmbh,xmmc,dw," + remote.getSL() + ",dj,'" + remote.getDJ() + "',pz,ysjg,syyxm,sfxs,tcbh,tcxmbh,BY15,'2',getdate(),'" +
+                    sWMLSBJB.getZH() + "','" + Users.pad + "','" + text + "', " + sWMLSBJB.getJCRS() +
+                    " from wmlsb where wmdbh='" + remote.getWMDBH() + "' and  XH='" + remote.getXH() + "'|";
         }
 
         return pbdyxxbSql + mRemoveRemoteSql;

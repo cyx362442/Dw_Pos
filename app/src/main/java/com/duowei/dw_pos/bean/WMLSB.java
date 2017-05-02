@@ -47,7 +47,7 @@ public class WMLSB implements Serializable {
     private String WMDBH;
     private String XMBH;
     private String XMMC;
-    private String TM;
+    private String TM = "";
     private String DW;
     private float SL;
     private float DJ;
@@ -235,6 +235,9 @@ public class WMLSB implements Serializable {
     }
 
     public String getBy5() {
+        if (TextUtils.isEmpty(by5)) {
+            return "";
+        }
         return by5;
     }
 

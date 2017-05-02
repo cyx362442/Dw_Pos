@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -111,7 +110,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
             holder.tv_num = (TextView) convertView.findViewById(R.id.tv_num);
             holder.iv_add = (ImageView) convertView.findViewById(R.id.iv_add);
             holder.taste_layout = (LinearLayout) convertView.findViewById(R.id.taste_layout);
-            holder.btn_taste = (Button) convertView.findViewById(R.id.btn_taste);
+            holder.btn_taste = (TextView) convertView.findViewById(R.id.btn_taste);
             holder.recycler_view_taste = (RecyclerView) convertView.findViewById(R.id.recycler_view_taste);
             holder.btn_edit = (ImageButton) convertView.findViewById(R.id.btn_edit);
 
@@ -338,7 +337,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
         ImageView iv_add;
 
         LinearLayout taste_layout;
-        Button btn_taste;
+        TextView btn_taste;
         RecyclerView recycler_view_taste;
         ImageButton btn_edit;
     }
