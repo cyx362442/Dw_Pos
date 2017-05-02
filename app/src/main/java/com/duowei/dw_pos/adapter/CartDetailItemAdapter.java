@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import com.duowei.dw_pos.CartDetailActivity;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.WMLSB;
+import com.duowei.dw_pos.fragment.InputNumDialogFragment;
 import com.duowei.dw_pos.fragment.ModifyDialogFragment;
 import com.duowei.dw_pos.fragment.ModifyLoginDialogFragment;
 import com.duowei.dw_pos.fragment.TasteChoiceDialogFragment;
@@ -28,6 +30,7 @@ import com.duowei.dw_pos.impl.OnSuccessListener;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.Users;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -110,6 +113,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
             holder.taste_layout = (LinearLayout) convertView.findViewById(R.id.taste_layout);
             holder.btn_taste = (Button) convertView.findViewById(R.id.btn_taste);
             holder.recycler_view_taste = (RecyclerView) convertView.findViewById(R.id.recycler_view_taste);
+            holder.btn_edit = (ImageButton) convertView.findViewById(R.id.btn_edit);
 
             convertView.setTag(holder);
         } else {
@@ -124,24 +128,44 @@ public class CartDetailItemAdapter extends BaseAdapter {
         holder.iv_add.setEnabled(true);
         holder.btn_taste.setVisibility(View.VISIBLE);
         holder.recycler_view_taste.setAdapter(null);
+        holder.btn_edit.setVisibility(View.GONE);
 
 
         final WMLSB item = getItem(position);
 
         holder.tv_no.setText(String.valueOf(position + 1));
 
-        holder.tv_price.setText(String.valueOf("¥" + item.getDJ() * item.getSL()));
+        BigDecimal total = new BigDecimal(item.getDJ())
+                .multiply(new BigDecimal(item.getSL()))
+                .setScale(2, BigDecimal.ROUND_HALF_UP);
+        holder.tv_price.setText(String.valueOf("¥" + total));
 
-        holder.tv_num.setText(String.valueOf(Math.round(item.getSL())));
+        holder.tv_num.setText(String.valueOf(item.getSL()));
+
         if (!TextUtils.isEmpty(item.getTCBH())) {
             // 套餐主项 子项
             if ("A".equals(item.getBY15())) {
                 // 主项
                 holder.tv_name.setText(item.getXMMC());
-//                holder.ll_right.setVisibility(View.VISIBLE);
                 holder.iv_remove.setVisibility(View.VISIBLE);
                 holder.iv_add.setVisibility(View.VISIBLE);
-                holder.taste_layout.setVisibility(View.GONE);
+                holder.btn_taste.setVisibility(View.INVISIBLE);
+
+                // 数量修改
+                holder.btn_edit.setVisibility(View.VISIBLE);
+                holder.btn_edit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        InputNumDialogFragment fragment = new InputNumDialogFragment();
+                        fragment.show(mActivity.getSupportFragmentManager(), null);
+                        fragment.setOnOkBtnClickListener(new InputNumDialogFragment.OnOkBtnClickListener() {
+                            @Override
+                            public void onOkBtnClick(float inputValue) {
+                                CartList.newInstance(mActivity).modifyNum(item, inputValue);
+                            }
+                        });
+                    }
+                });
             } else {
                 // 子项
                 holder.tv_name.setText("  " + item.getXMMC());
@@ -164,6 +188,25 @@ public class CartDetailItemAdapter extends BaseAdapter {
                 spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, localMsg.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 spannable.setSpan(new RelativeSizeSpan(0.75f), 0, localMsg.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 holder.tv_name.append(spannable);
+
+                holder.btn_edit.setVisibility(View.GONE);
+            } else {
+                // 数量修改
+                holder.btn_edit.setVisibility(View.VISIBLE);
+                holder.btn_edit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        InputNumDialogFragment fragment = new InputNumDialogFragment();
+                        fragment.show(mActivity.getSupportFragmentManager(), null);
+
+                        fragment.setOnOkBtnClickListener(new InputNumDialogFragment.OnOkBtnClickListener() {
+                            @Override
+                            public void onOkBtnClick(float inputValue) {
+                                CartList.newInstance(mActivity).modifyNum(item, inputValue);
+                            }
+                        });
+                    }
+                });
             }
 
             holder.ll_right.setVisibility(View.VISIBLE);
@@ -192,6 +235,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
             holder.tv_name.setTextColor(Color.RED);
             holder.btn_taste.setVisibility(View.GONE);
             holder.iv_add.setEnabled(false);
+            holder.btn_edit.setVisibility(View.GONE);
 
             if ("加价促销".equals(item.getBY13())) {
                 holder.iv_remove.setEnabled(false);
@@ -278,11 +322,6 @@ public class CartDetailItemAdapter extends BaseAdapter {
     private View.OnClickListener mTasteClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-//            TasteChoiceDialogFragment fragment = new TasteChoiceDialogFragment();
-//            Bundle args = new Bundle();
-//            args.putSerializable("wmlsb", (WMLSB) v.getTag());
-//            fragment.setArguments(args);
-//            fragment.show(mActivity.getSupportFragmentManager(), null);
             TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance((WMLSB) v.getTag());
             fragment.show(mActivity.getSupportFragmentManager(), null);
         }
@@ -301,5 +340,6 @@ public class CartDetailItemAdapter extends BaseAdapter {
         LinearLayout taste_layout;
         Button btn_taste;
         RecyclerView recycler_view_taste;
+        ImageButton btn_edit;
     }
 }

@@ -22,6 +22,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.joda.time.DateTime;
 import org.litepal.crud.DataSupport;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -200,7 +201,7 @@ public class CartList {
     }
 
     /**
-     * 购物车详情 添加
+     * 购物车点击 + 按钮
      *
      * @param wmlsb
      */
@@ -211,13 +212,13 @@ public class CartList {
             // 套餐
             if (by15.equals("A")) {
                 // 主
-                wmlsb.setSL(wmlsb.getSL() + 1);
+                wmlsb.setSL(new BigDecimal(wmlsb.getSL()).add(new BigDecimal(1)).floatValue());
 
                 // 子
                 for (int i = 0; i < mList.size(); i++) {
                     WMLSB w = mList.get(i);
                     if (w.getTCBH().equals(wmlsb.getTCBH()) && !w.getBY15().equals("A")) {
-                        w.setSL(w.getSL() + w.getDWSL());
+                        w.setSL(new BigDecimal(w.getSL()).add(new BigDecimal(w.getDWSL())).floatValue());
                     }
                 }
             }
@@ -232,11 +233,11 @@ public class CartList {
                 EventBus.getDefault().post(new CartMsgDialogEvent("信息提示", "该单品是加价促销品,因此您无法修改数量"));
 
             } else {
-                wmlsb.setSL(wmlsb.getSL() + 1);
+                wmlsb.setSL(new BigDecimal(wmlsb.getSL()).add(new BigDecimal(1)).floatValue());
 
                 for (int i = 0; i < wmlsb.getSubWMLSBList().size(); i++) {
                     WMLSB subWmlsb1 = wmlsb.getSubWMLSBList().get(i);
-                    subWmlsb1.setSL(subWmlsb1.getSL() + 1);
+                    subWmlsb1.setSL(new BigDecimal(subWmlsb1.getSL()).add(new BigDecimal(1)).floatValue());
                 }
             }
         }
@@ -244,12 +245,17 @@ public class CartList {
         EventBus.getDefault().post(new CartUpdateEvent());
     }
 
+    /**
+     * 购物车点击 - 按钮
+     *
+     * @param wmlsb
+     */
     public void remove(WMLSB wmlsb) {
         String by15 = wmlsb.getBY15();
 
         if (!TextUtils.isEmpty(by15)) {
             // 套餐
-            if (wmlsb.getSL() == 1) {
+            if (wmlsb.getSL() <= 1) {
                 mList.remove(wmlsb);
 
                 Iterator<WMLSB> it = mList.iterator();
@@ -261,12 +267,13 @@ public class CartList {
                 }
 
             } else {
-                // -1
-                wmlsb.setSL(wmlsb.getSL() - 1);
+                // -
+                wmlsb.setSL(new BigDecimal(wmlsb.getSL()).subtract(new BigDecimal(1)).floatValue());
+
                 for (int i = 0; i < mList.size(); i++) {
                     WMLSB w = mList.get(i);
                     if (w.getTCBH().equals(wmlsb.getTCBH()) && !w.getBY15().equals("A")) {
-                        w.setSL(w.getSL() - w.getDWSL());
+                        w.setSL(new BigDecimal(w.getSL()).subtract(new BigDecimal(w.getDWSL())).floatValue());
                     }
                 }
             }
@@ -279,7 +286,7 @@ public class CartList {
                 return;
             }
 
-            if (wmlsb.getSL() == 1) {
+            if (wmlsb.getSL() <= 1) {
                 mList.remove(wmlsb);
                 for (int i = 0; i < mList.size(); i++) {
                     List<WMLSB> subWmlsbList = mList.get(i).getSubWMLSBList();
@@ -288,16 +295,57 @@ public class CartList {
                     }
                 }
             } else {
-                wmlsb.setSL(wmlsb.getSL() - 1);
+                wmlsb.setSL(new BigDecimal(String.valueOf(wmlsb.getSL())).subtract(new BigDecimal(1)).floatValue());
 
                 //处理 买赠、加价
                 for (int i = 0; i < wmlsb.getSubWMLSBList().size(); i++) {
                     WMLSB subWmlsb1 = wmlsb.getSubWMLSBList().get(i);
-                    subWmlsb1.setSL(subWmlsb1.getSL() - 1);
+                    subWmlsb1.setSL(new BigDecimal(subWmlsb1.getSL()).subtract(new BigDecimal(1)).floatValue());
                     if (subWmlsb1.getSL() < 1) {
                         wmlsb.getSubWMLSBList().remove(subWmlsb1);
                     }
                 }
+            }
+        }
+        EventBus.getDefault().post(new CartUpdateEvent());
+    }
+
+    /**
+     * 购物车点击 数量修改 按钮
+     *
+     * @param wmlsb
+     */
+    public void modifyNum(WMLSB wmlsb, float num) {
+        String by15 = wmlsb.getBY15();
+
+        if (!TextUtils.isEmpty(by15)) {
+            // 套餐
+
+            // 主项
+            wmlsb.setSL(num);
+
+            for (int i = 0; i < mList.size(); i++) {
+                // 子项
+                WMLSB w = mList.get(i);
+                if (w.getTCBH().equals(wmlsb.getTCBH()) && !w.getBY15().equals("A")) {
+                    w.setSL(num);
+                }
+            }
+
+        } else {
+            // 单品
+            if ("加价促销".equals(wmlsb.getBY13())) {
+                // 加价不允许修改
+                EventBus.getDefault().post(new CartMsgDialogEvent("信息提示", "该单品是加价促销品,因此您无法修改数量"));
+                return;
+            }
+
+            wmlsb.setSL(num);
+
+            //处理 买赠、加价
+            for (int i = 0; i < wmlsb.getSubWMLSBList().size(); i++) {
+                WMLSB subWmlsb1 = wmlsb.getSubWMLSBList().get(i);
+                subWmlsb1.setSL(num);
             }
         }
         EventBus.getDefault().post(new CartUpdateEvent());
