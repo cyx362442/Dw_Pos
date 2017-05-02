@@ -193,6 +193,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                             mTvZekou.setText("￥" + 0.00);
                             mTvYishou.setText("￥" + 0.00);
                             mTvDaishou.setText("￥" + 0.00);
+                            mProgressBar.setVisibility(View.GONE);
                             return;
                         }
                         Gson gson = new Gson();

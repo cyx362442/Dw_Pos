@@ -10,6 +10,7 @@ import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.tools.DateTimes;
+import com.duowei.dw_pos.tools.Users;
 
 import java.util.List;
 import java.util.Locale;
@@ -78,7 +79,7 @@ public class Prints {
                     woyouService.setAlignment(0, callback);
                     woyouService.printTextWithFont("账单号：" + mWmlsbjb.getWMDBH() + "\n", "", 28, callback);
                     woyouService.printTextWithFont("日期：" + mWmlsbjb.getJYSJ() + "\n", "", 28, callback);
-                    woyouService.printTextWithFont("点单员：" + mWmlsbjb.getYHBH() + "    人数：" + mWmlsbjb.getJCRS() + "\n", "", 28, callback);
+                    woyouService.printTextWithFont("点单员：" + Users.YHMC + "    人数：" + mWmlsbjb.getJCRS() + "\n", "", 28, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_______________________________________________________________________________________________________________________________
                     text[0] = "单品名称";
@@ -118,7 +119,7 @@ public class Prints {
                     woyouService.setAlignment(0, callback);
                     woyouService.printTextWithFont("账单号：" + mWmlsbjb.getWMDBH() + "\n", "", 28, callback);
                     woyouService.printTextWithFont("日期：" + mWmlsbjb.getJYSJ() + "\n", "", 28, callback);
-                    woyouService.printTextWithFont("收银员：" + mWmlsbjb.getYHBH() + "    人数：" + mWmlsbjb.getJCRS() + "\n", "", 28, callback);
+                    woyouService.printTextWithFont("收银员：" + Users.YHMC + "    人数：" + mWmlsbjb.getJCRS() + "\n", "", 28, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_______________________________________________________________________________________________________________________________
                     text[0] = "单品名称";
@@ -166,7 +167,7 @@ public class Prints {
                     woyouService.setAlignment(0, callback);
                     woyouService.printTextWithFont("账单号：" + wmlsbjb.getWMDBH() + "\n", "", 28, callback);
                     woyouService.printTextWithFont("日期：" + DateTimes.getTime2() + "\n", "", 28, callback);
-                    woyouService.printTextWithFont("点单员：" + wmlsbjb.getYHBH() + "    人数：" + wmlsbjb.getJCRS() + "\n", "", 28, callback);
+                    woyouService.printTextWithFont("点单员：" + Users.YHMC + "    人数：" + wmlsbjb.getJCRS() + "\n", "", 28, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_______________________________________________________________________________________________________________________________
                     text[0] = "单品名称";
@@ -209,7 +210,7 @@ public class Prints {
                     woyouService.setAlignment(0, callback);
                     woyouService.printTextWithFont("账单号：" + wmlsbjb.getWMDBH() + "\n", "", 28, callback);
                     woyouService.printTextWithFont("日期：" + DateTimes.getTime2() + "\n", "", 28, callback);
-                    woyouService.printTextWithFont("点单员：" + wmlsbjb.getYHBH() + "    人数：" + wmlsbjb.getJCRS() + "\n", "", 28, callback);
+                    woyouService.printTextWithFont("点单员：" + Users.YHMC + "    人数：" + wmlsbjb.getJCRS() + "\n", "", 28, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_______________________________________________________________________________________________________________________________
                     text[0] = "单品名称";
