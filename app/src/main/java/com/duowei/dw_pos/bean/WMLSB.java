@@ -78,6 +78,10 @@ public class WMLSB implements Serializable {
     /** 买赠 加价 使用字段 */
     private List<WMLSB> mSubWMLSBList = new ArrayList<>();
 
+    //本地使用字段
+    // 购物车序号
+    public int index = -1;
+
     public String getZSSJ() {
         return ZSSJ;
     }

@@ -1,6 +1,8 @@
 package com.duowei.dw_pos.adapter;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.bean.TCSD;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.event.ClearSearchEvent;
+import com.duowei.dw_pos.fragment.InputNumDialogFragment;
 import com.duowei.dw_pos.fragment.TasteChoiceDialogFragment;
 import com.duowei.dw_pos.tools.CartList;
 
@@ -35,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * Created by Administrator on 2017-03-23.
  */
 
@@ -109,22 +111,22 @@ public class RightAdapter extends BaseAdapter implements Filterable {
             // 单品
             final JYXMSZ item = (JYXMSZ) object;
             holder.tv_name.setText(item.getXMMC());
-            if(item.getGQ().equals("1")){
+            if (item.getGQ().equals("1")) {
                 holder.tv_money.setText("停售");
-            }else{
+            } else {
                 holder.tv_money.setText(String.valueOf("¥" + item.getXSJG()));
             }
 
             holder.btn_add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(item.getGQ().equals("1")){
-                        Toast.makeText(mContext,"该单品己停售",Toast.LENGTH_SHORT).show();
+                    if (item.getGQ().equals("1")) {
+                        Toast.makeText(mContext, "该单品己停售", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
                     EventBus.getDefault().post(new ClearSearchEvent());
-                    WMLSB wmlsb = mCartList.add(item);
+                    final WMLSB wmlsb = mCartList.add(item);
 
                     if (mHolderClickListener != null) {
                         int[] start_location = new int[2];
@@ -135,19 +137,35 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                         mHolderClickListener.onHolderClick(drawable, start_location);
                     }
 
-                    // 必选口味处理
-                    if (wmlsb != null) {
-                        JYXMSZ jyxmsz = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).findFirst(JYXMSZ.class);
 
-                        if (jyxmsz != null && "1".equals(jyxmsz.getSFYHQ())) {
-                            // 必须口味
-                            List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
+                    JYXMSZ jyxmsz = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).findFirst(JYXMSZ.class);
 
-                            if (tasteList != null) {
-                                // 有选中必须口味框，都弹出口味选择
-                                TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb);
-                                fragment.show(mContext.getSupportFragmentManager(), null);
+                    // 称重处理
+                    boolean hasWeight = false;
+                    SharedPreferences sharedPref = mContext.getSharedPreferences("user", Context.MODE_PRIVATE);
+                    boolean weightSetting = sharedPref.getBoolean("weight", false);
+                    if (weightSetting && "1".equals(jyxmsz.getBY3())) {
+                        hasWeight = true;
+
+                        InputNumDialogFragment fragment = new InputNumDialogFragment();
+                        fragment.show(mContext.getSupportFragmentManager(), null);
+                        fragment.setOnOkBtnClickListener(new InputNumDialogFragment.OnOkBtnClickListener() {
+                            @Override
+                            public void onOkBtnClick(float inputValue) {
+                                CartList.newInstance(mContext).modifyNum(wmlsb, inputValue);
                             }
+                        });
+                    }
+
+                    // 必选口味处理(有称重是，就不处理必选口味了)
+                    if (!hasWeight && "1".equals(jyxmsz.getSFYHQ())) {
+
+                        List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
+
+                        if (tasteList != null) {
+                            // 有选中必须口味框，都弹出口味选择
+                            TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb);
+                            fragment.show(mContext.getSupportFragmentManager(), null);
                         }
                     }
                 }

@@ -64,6 +64,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
                 mAllList.add(list.get(i).getSubWMLSBList().get(j));
             }
         }
+        clearIndex(mAllList);
         notifyDataSetChanged();
     }
 
@@ -74,12 +75,18 @@ public class CartDetailItemAdapter extends BaseAdapter {
      */
     public void addRemoteList(List<WMLSB> list) {
         mAllList.addAll(list);
+        clearIndex(mAllList);
         notifyDataSetChanged();
     }
 
     public void clear() {
         mAllList.clear();
         notifyDataSetChanged();
+    }
+
+    private void clearIndex(List<WMLSB> list) {
+        for (WMLSB w : list)
+            w.index = -1;
     }
 
     @Override
@@ -133,7 +140,8 @@ public class CartDetailItemAdapter extends BaseAdapter {
 
         final WMLSB item = getItem(position);
 
-        holder.tv_no.setText(String.valueOf(position + 1));
+//        holder.tv_no.setText(String.valueOf(position + 1));
+        holder.tv_no.setText(null);
 
         // 金额
         BigDecimal total = new BigDecimal(item.getDJ())
@@ -148,6 +156,11 @@ public class CartDetailItemAdapter extends BaseAdapter {
             if ("A".equals(item.getBY15())) {
                 // 主项
 //                holder.tv_no.setText(String.valueOf(mIndex++));
+                if (item.index == -1 ) {
+                    item.index = mIndex++;
+                }
+                holder.tv_no.setText(String.valueOf(item.index));
+
                 holder.tv_name.setText(item.getXMMC());
                 holder.iv_remove.setVisibility(View.VISIBLE);
                 holder.iv_add.setVisibility(View.VISIBLE);
@@ -182,6 +195,11 @@ public class CartDetailItemAdapter extends BaseAdapter {
         } else {
             // 单品
 //            holder.tv_no.setText(String.valueOf(mIndex++));
+            if (item.index == -1 ) {
+                item.index = mIndex++;
+            }
+             holder.tv_no.setText(String.valueOf(item.index));
+
             holder.tv_name.setText(item.getXMMC());
 
             // 附加信息显示
