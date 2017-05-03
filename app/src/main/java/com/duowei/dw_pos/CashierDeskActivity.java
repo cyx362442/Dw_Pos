@@ -274,7 +274,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
      * @return 总的单品信息 列表
      */
     private List<JYXMSZ> getJyxmszAllList() {
-        return DataSupport.findAll(JYXMSZ.class);
+        return DataSupport.where("SFTC != ?", "1").find(JYXMSZ.class);
     }
 
     /**

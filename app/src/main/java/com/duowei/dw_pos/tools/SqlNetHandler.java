@@ -2,7 +2,6 @@ package com.duowei.dw_pos.tools;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -32,10 +31,11 @@ public class SqlNetHandler {
      * 提交订单
      *
      * @param context
+     * @param totalMoney 总的价格
      * @param wmdbh
      * @param first   true, 第一次提交；false，添加新的点单
      */
-    public void handleCommit(final Context context, String wmdbh, final boolean first) {
+    public void handleCommit(final Context context, float totalMoney, String wmdbh, final boolean first) {
         final CartDetailActivity activity = (CartDetailActivity) context;
 
         CartList cartList = CartList.newInstance(context);
@@ -72,9 +72,13 @@ public class SqlNetHandler {
         }
         localSql += insertWmlsbSqlSet;
 
-        localSql += "update WMLSBJB " +
-                "set YS = (select sum(XJ) from WMLSB where WMDBH = '" + wmdbh + "') " +
-                "where wmdbh = '" + wmdbh + "'|";
+        // 总的价格设置
+//        localSql += "update WMLSBJB " +
+//                "set YS = (select sum(XJ) from WMLSB where WMDBH = '" + wmdbh + "') " +
+//                "where wmdbh = '" + wmdbh + "'|";
+        localSql += "update WMLSBJB" +
+                " set YS = " + totalMoney +
+                " where wmdbh = '" + wmdbh + "'|";
 
         if (first) {
             // 平板打印信息表

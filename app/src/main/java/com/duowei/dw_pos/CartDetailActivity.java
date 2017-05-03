@@ -127,11 +127,11 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
                 if (mWmdbh == null) {
                     // 第一次提交
                     String currentDatetime = DateTimeUtils.getCurrentDatetime();
-                    new SqlNetHandler().handleCommit(CartDetailActivity.this, Users.pad + currentDatetime, true);
+                    new SqlNetHandler().handleCommit(CartDetailActivity.this, mAdapter.getTotalPrice(), Users.pad + currentDatetime, true);
                 } else {
                     // 第二次提交
                     if (mLoadSuccess) {
-                        new SqlNetHandler().handleCommit(CartDetailActivity.this, mWmdbh, false);
+                        new SqlNetHandler().handleCommit(CartDetailActivity.this, mAdapter.getTotalPrice(), mWmdbh, false);
                     } else {
                         Toast.makeText(CartDetailActivity.this, "从服务器下载数据失败，不能进行提交操作!", Toast.LENGTH_SHORT).show();
                     }

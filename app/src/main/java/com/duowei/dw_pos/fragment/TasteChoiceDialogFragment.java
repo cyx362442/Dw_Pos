@@ -140,7 +140,10 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment {
                 List<DMPZSD> dmpzsdList = new ArrayList<>();
                 for (int i = 0; i < dmkwdydpList.size(); i++) {
                     DMKWDYDP dmkwdydp = dmkwdydpList.get(i);
-                    dmpzsdList.add(DataSupport.where("pzbm = ?", dmkwdydp.getPZBM()).findFirst(DMPZSD.class));
+                    DMPZSD item = DataSupport.where("pzbm = ?", dmkwdydp.getPZBM()).findFirst(DMPZSD.class);
+                    if (item != null) {
+                        dmpzsdList.add(item);
+                    }
                 }
 
                 if (dmpzsdList.size() > 0) {
@@ -196,7 +199,11 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment {
             // 设置口味选中项
             Pattern pattern = Pattern.compile("\\((.*?)\\)");
             for (int i = 0; i < mTasteAdapter.getCount(); i++) {
-                String nr = mTasteAdapter.getItem(i).getNR();
+                DMPZSD item = mTasteAdapter.getItem(i);
+                if (item == null) {
+                    break;
+                }
+                String nr = item.getNR();
 
                 Matcher matcher = pattern.matcher(pzString);
                 while (matcher.find()) {

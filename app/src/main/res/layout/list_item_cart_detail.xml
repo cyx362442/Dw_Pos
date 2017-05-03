@@ -17,7 +17,7 @@
             style="@style/CartDetailItemStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.5"
             tools:text="序"/>
 
         <TextView
@@ -34,7 +34,7 @@
             style="@style/CartDetailItemStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
+            android:layout_weight="1.5"
             tools:text="金额"/>
 
         <LinearLayout
@@ -47,6 +47,7 @@
                 android:id="@+id/iv_remove"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="4dp"
                 android:src="@drawable/ic_remove"/>
 
             <TextView
@@ -63,6 +64,7 @@
                 android:id="@+id/iv_add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="4dp"
                 android:src="@drawable/ic_add"/>
         </LinearLayout>
 
@@ -97,6 +99,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="4dp"
+            android:padding="4dp"
             android:background="@drawable/ic_edit"/>
 
     </LinearLayout>

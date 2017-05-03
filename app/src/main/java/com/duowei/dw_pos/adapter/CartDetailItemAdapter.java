@@ -32,7 +32,6 @@ import com.duowei.dw_pos.tools.Users;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * 订单详情
@@ -42,6 +41,8 @@ public class CartDetailItemAdapter extends BaseAdapter {
 
     private CartDetailActivity mActivity;
     private List<WMLSB> mAllList = new ArrayList<>();
+
+    private int mIndex = 1;
 
     public CartDetailItemAdapter(CartDetailActivity activity) {
         mActivity = activity;
@@ -134,6 +135,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
 
         holder.tv_no.setText(String.valueOf(position + 1));
 
+        // 金额
         BigDecimal total = new BigDecimal(item.getDJ())
                 .multiply(new BigDecimal(item.getSL()))
                 .setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -145,6 +147,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
             // 套餐主项 子项
             if ("A".equals(item.getBY15())) {
                 // 主项
+//                holder.tv_no.setText(String.valueOf(mIndex++));
                 holder.tv_name.setText(item.getXMMC());
                 holder.iv_remove.setVisibility(View.VISIBLE);
                 holder.iv_add.setVisibility(View.VISIBLE);
@@ -178,6 +181,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
             }
         } else {
             // 单品
+//            holder.tv_no.setText(String.valueOf(mIndex++));
             holder.tv_name.setText(item.getXMMC());
 
             // 附加信息显示
@@ -297,7 +301,8 @@ public class CartDetailItemAdapter extends BaseAdapter {
             total += w.getSL() * w.getDJ();
         }
 
-        return Float.valueOf(String.format(Locale.CHINA, "%.2f", total));
+//        return Float.valueOf(String.format(Locale.CHINA, "%.2f", total));
+        return BigDecimal.valueOf(total).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
     }
 
     private void setTasteShow(RecyclerView recyclerView, String pz) {

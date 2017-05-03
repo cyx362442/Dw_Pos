@@ -103,7 +103,8 @@ public class CartList {
             }
         }
 
-        return new CartInfo(mList.size() + num, Float.valueOf(String.format(Locale.CHINA, "%.2f", price)));
+//        return new CartInfo(mList.size() + num, Float.valueOf(String.format(Locale.CHINA, "%.2f", price)));
+        return new CartInfo(mList.size() + num, BigDecimal.valueOf(price).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue());
     }
 
 
@@ -118,27 +119,29 @@ public class CartList {
         boolean find = false;
 
         WMLSB wmlsb = null;
-        String xmbh = jyxmsz.getXMBH();
-        for (int i = 0; i < mList.size(); i++) {
-            wmlsb = mList.get(i);
-            if ("1".equals(wmlsb.getSfxs()) && TextUtils.isEmpty(wmlsb.getBY15()) && xmbh.endsWith(wmlsb.getXMBH())) {
-                // 购物车已存在当前单品
-                // 数量+1
-                wmlsb.setSL(wmlsb.getSL() + 1);
 
-                if (!hasCXDMXXX) {
-
-                    for (int j = 0; j < wmlsb.getSubWMLSBList().size(); j++) {
-                        WMLSB subWmlsb = wmlsb.getSubWMLSBList().get(j);
-                        subWmlsb.setSL(subWmlsb.getSL() + 1);
-                        subWmlsb.setDJ(dj);
-                    }
-                }
-
-                EventBus.getDefault().post(new CartUpdateEvent());
-                find = true;
-            }
-        }
+        // 点击添加时另起一行，不在判断购物车中是否存在同样的数据
+//        String xmbh = jyxmsz.getXMBH();
+//        for (int i = 0; i < mList.size(); i++) {
+//            wmlsb = mList.get(i);
+//            if ("1".equals(wmlsb.getSfxs()) && TextUtils.isEmpty(wmlsb.getBY15()) && xmbh.endsWith(wmlsb.getXMBH())) {
+//                // 购物车已存在当前单品
+//                // 数量+1
+//                wmlsb.setSL(wmlsb.getSL() + 1);
+//
+//                if (!hasCXDMXXX) {
+//
+//                    for (int j = 0; j < wmlsb.getSubWMLSBList().size(); j++) {
+//                        WMLSB subWmlsb = wmlsb.getSubWMLSBList().get(j);
+//                        subWmlsb.setSL(subWmlsb.getSL() + 1);
+//                        subWmlsb.setDJ(dj);
+//                    }
+//                }
+//
+//                EventBus.getDefault().post(new CartUpdateEvent());
+//                find = true;
+//            }
+//        }
 
         if (!find) {
             // 购物车没有当前要添加的单品
