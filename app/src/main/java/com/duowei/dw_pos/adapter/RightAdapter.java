@@ -45,25 +45,21 @@ public class RightAdapter extends BaseAdapter implements Filterable {
     private static HolderClickListener mHolderClickListener;
 
     private CashierDeskActivity mContext;
-    private List mList;
+    private List mList = new ArrayList();
 
     private CartList mCartList;
 
     private final Object mLock = new Object();
-    private List mOriginalValues;
+    private List mOriginalValues = new ArrayList();
     private ArrayFilter mFilter;
 
-    private List mAllList;
-    private List mAllOriginalValues;
+    private List mAllList = new ArrayList();
+    private List mAllOriginalValues = new ArrayList();
 
     private boolean isAll = false;
 
     public RightAdapter(CashierDeskActivity context) {
         mContext = context;
-
-        mAllList = new ArrayList();
-        mList = new ArrayList();
-
         mCartList = CartList.newInstance(mContext);
     }
 
@@ -198,23 +194,18 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         return convertView;
     }
 
-    public void setList(List list, List allList) {
+    public void setList(List list) {
         isAll = false;
-
         mList = list;
-        mAllList = allList;
 
         notifyDataSetChanged();
 
-        if (mOriginalValues == null) {
-            mOriginalValues = new ArrayList();
-        }
         mOriginalValues.clear();
         mOriginalValues.addAll(mList);
+    }
 
-        if (mAllOriginalValues == null) {
-            mAllOriginalValues = new ArrayList();
-        }
+    public void setAllList(List allList) {
+        mAllList = allList;
 
         if (allList != null) {
             mAllOriginalValues.clear();
@@ -281,7 +272,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                         }
                     } else if (object instanceof TCMC) {
                         TCMC item = (TCMC) object;
-                        if (item.getXMMC().startsWith(prefixString) || item.getPY().contains(prefixString)) {
+                        if (item.getXMMC().contains(prefixString) || item.getPY().contains(prefixString)) {
                             newValues.add(item);
                         }
                     }

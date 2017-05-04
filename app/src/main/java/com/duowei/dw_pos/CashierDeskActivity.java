@@ -3,6 +3,7 @@ package com.duowei.dw_pos;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -61,6 +62,13 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
 
     private CartFragment mCartFragment;
 
+    private Handler mHandler = new Handler();
+
+    /**
+     * 1 单品 2 套餐
+     */
+    private int mFlag = 1;
+
     private TextWatcher mTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -112,6 +120,17 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
             public void run() {
                 mRightJyxmszAllList = getJyxmszAllList();
                 mRightTcmcAllList = getTcmcAllList();
+
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mFlag == 1) {
+                            mRightAdapter.setAllList(mRightJyxmszAllList);
+                        } else {
+                            mRightAdapter.setAllList(mRightTcmcAllList);
+                        }
+                    }
+                });
             }
         }.start();
     }
@@ -155,8 +174,6 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void initData() {
-        Log.d(TAG, "initData: start");
-
         mLeftAdapter = new LeftAdapter(this);
         mLeftListView.setAdapter(mLeftAdapter);
 
@@ -174,7 +191,6 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
-        Log.d(TAG, "initData: end");
         setupData();
     }
 
@@ -182,7 +198,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
      * 设置单品数据
      */
     private void setupData() {
-        Log.d(TAG, "setupData: start");
+        mFlag = 1;
 
         mLeftAdapter.setList(getDmjyxmsslbList());
         mLeftListView.setItemChecked(0, true);
@@ -190,23 +206,26 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
 
         int checkedPosition = mLeftListView.getCheckedItemPosition();
         if (checkedPosition != ListView.INVALID_POSITION) {
-            mRightAdapter.setList(getJyxmszList(((DMJYXMSSLB) mLeftAdapter.getItem(checkedPosition)).getLBBM()), mRightJyxmszAllList);
+            mRightAdapter.setList(getJyxmszList(((DMJYXMSSLB) mLeftAdapter.getItem(checkedPosition)).getLBBM()));
+            mRightAdapter.setAllList(mRightJyxmszAllList);
         }
 
-        Log.d(TAG, "setupData: end");
     }
 
     /**
      * 设置套餐数据
      */
     private void setupData2() {
+        mFlag = 2;
+
         mLeftAdapter.setList(getTcmc1List());
         mLeftListView.setItemChecked(0, true);
         mLeftListView.smoothScrollToPosition(0);
 
         int checkedPosition = mLeftListView.getCheckedItemPosition();
         if (checkedPosition != ListView.INVALID_POSITION) {
-            mRightAdapter.setList(getTcmc2List(((String) mLeftAdapter.getItem(checkedPosition))), mRightTcmcAllList);
+            mRightAdapter.setList(getTcmc2List(((String) mLeftAdapter.getItem(checkedPosition))));
+            mRightAdapter.setAllList(mRightTcmcAllList);
         }
     }
 
@@ -235,12 +254,14 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         if (object instanceof DMJYXMSSLB) {
             // 单品项点击
             DMJYXMSSLB item = (DMJYXMSSLB) object;
-            mRightAdapter.setList(getJyxmszList(item.getLBBM()), mRightJyxmszAllList);
+            mRightAdapter.setList(getJyxmszList(item.getLBBM()));
+            mRightAdapter.setAllList(mRightJyxmszAllList);
 
         } else if (object instanceof String) {
             // 套餐项 点击
             String item = (String) object;
-            mRightAdapter.setList(getTcmc2List(item), mRightTcmcAllList);
+            mRightAdapter.setList(getTcmc2List(item));
+            mRightAdapter.setAllList(mRightTcmcAllList);
         }
     }
 
