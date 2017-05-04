@@ -87,6 +87,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
     private void clearIndex(List<WMLSB> list) {
         for (WMLSB w : list)
             w.index = -1;
+        mIndex = 1;
     }
 
     @Override

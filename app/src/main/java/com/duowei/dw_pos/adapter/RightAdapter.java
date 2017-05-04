@@ -1,8 +1,6 @@
 package com.duowei.dw_pos.adapter;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -23,6 +21,7 @@ import com.duowei.dw_pos.ComboActivity;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.DMKWDYDP;
 import com.duowei.dw_pos.bean.JYXMSZ;
+import com.duowei.dw_pos.bean.Jgsz;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.bean.TCSD;
 import com.duowei.dw_pos.bean.WMLSB;
@@ -138,9 +137,8 @@ public class RightAdapter extends BaseAdapter implements Filterable {
 
                     // 称重处理
                     boolean hasWeight = false;
-                    SharedPreferences sharedPref = mContext.getSharedPreferences("user", Context.MODE_PRIVATE);
-                    boolean weightSetting = sharedPref.getBoolean("weight", false);
-                    if (weightSetting && "1".equals(jyxmsz.getBY3())) {
+                    Jgsz jgsz = DataSupport.findFirst(Jgsz.class);
+                    if (jgsz != null && "1".equals(jgsz.by52) && "1".equals(jyxmsz.getBY3())) {
                         hasWeight = true;
 
                         InputNumDialogFragment fragment = new InputNumDialogFragment();
@@ -249,7 +247,6 @@ public class RightAdapter extends BaseAdapter implements Filterable {
 
             } else {
                 isAll = true;
-
 
                 String prefixString = constraint.toString().toUpperCase();
 

@@ -84,30 +84,6 @@
             android:layout_centerVertical="true"/>
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/rl_weight"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:gravity="center_vertical">
-
-        <TextView
-            style="@style/textview_setting"
-            android:text="选择称重单品自动弹出输入框"/>
-
-        <CheckBox
-            android:id="@+id/cb_weight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:clickable="false"
-            android:layout_alignParentRight="true"/>
-
-    </RelativeLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

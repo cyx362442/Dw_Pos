@@ -2,7 +2,7 @@
 <litepal>
     <dbname value="dwpos" ></dbname>
 
-    <version value="14" ></version>
+    <version value="16" ></version>
     <list>
         <mapping class="com.duowei.dw_pos.bean.YHJBQK"></mapping>
     </list>
@@ -50,5 +50,8 @@
     </list>
     <list>
         <mapping class="com.duowei.dw_pos.bean.FXHYKSZ"></mapping>
+    </list>
+    <list>
+        <mapping class="com.duowei.dw_pos.bean.Jgsz"></mapping>
     </list>
 </litepal>

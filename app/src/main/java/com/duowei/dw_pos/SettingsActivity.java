@@ -35,10 +35,6 @@ public class SettingsActivity extends AppCompatActivity {
     CheckBox mCheckbox;
     @BindView(R.id.rl_autoStart)
     RelativeLayout mRlAutoStart;
-    @BindView(R.id.rl_weight)
-    RelativeLayout mRlWeight;
-    @BindView(R.id.cb_weight)
-    CheckBox mCbWeight;
     @BindView(R.id.btn_load)
     Button mBtnLoad;
     @BindView(R.id.btn_back)
@@ -50,7 +46,6 @@ public class SettingsActivity extends AppCompatActivity {
     private String mPort;
     private String mPad;
     private boolean auto;
-    private boolean weight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,12 +68,9 @@ public class SettingsActivity extends AppCompatActivity {
         }else{
             mCheckbox.setChecked(false);
         }
-
-        weight = mSp.getBoolean("weight", false);
-        mCbWeight.setChecked(weight);
     }
 
-    @OnClick({R.id.rl_autoStart, R.id.rl_weight, R.id.btn_load, R.id.btn_back})
+    @OnClick({R.id.rl_autoStart, R.id.btn_load, R.id.btn_back})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl_autoStart:
@@ -89,13 +81,6 @@ public class SettingsActivity extends AppCompatActivity {
                 }
                 auto=!auto;
                 mEdit.putBoolean("auto",auto);
-                mEdit.commit();
-                break;
-
-            case R.id.rl_weight:
-                weight = !weight;
-                mCbWeight.setChecked(weight);
-                mEdit.putBoolean("weight", weight);
                 mEdit.commit();
                 break;
 
