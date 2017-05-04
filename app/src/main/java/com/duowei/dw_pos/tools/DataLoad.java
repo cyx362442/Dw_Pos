@@ -14,7 +14,6 @@ import com.duowei.dw_pos.bean.FXHYKSZ;
 import com.duowei.dw_pos.bean.GKLX;
 import com.duowei.dw_pos.bean.JYCSSZ;
 import com.duowei.dw_pos.bean.JYXMSZ;
-import com.duowei.dw_pos.bean.Jgsz;
 import com.duowei.dw_pos.bean.MZSZJBXX;
 import com.duowei.dw_pos.bean.MZSZMXXX;
 import com.duowei.dw_pos.bean.PaySet;
@@ -430,7 +429,7 @@ public class DataLoad {
             @Override
             public void onResponse(final String response) {
                 if(response.equals("]")){
-                    Http_CXDMXXX();
+                   mProgressDialog.dismiss();
                 }else{
                     new Thread(new Runnable() {
                         @Override
@@ -459,7 +458,7 @@ public class DataLoad {
             @Override
             public void onResponse(final String response) {
                 if(response.equals("]")){
-                    Http_MZSZJBXX();
+                    mProgressDialog.dismiss();
                 }else{
                     new Thread(new Runnable() {
                         @Override
@@ -488,7 +487,7 @@ public class DataLoad {
             @Override
             public void onResponse(final String response) {
                 if(response.equals("]")){
-                    Http_MZSZMXXX();
+                    mProgressDialog.dismiss();
                 }else{
                     new Thread(new Runnable() {
                         @Override
@@ -517,7 +516,7 @@ public class DataLoad {
             @Override
             public void onResponse(final String response) {
                 if(response.equals("]")){
-                    Http_JGSZ();
+                    mProgressDialog.dismiss();
                 }else{
                     new Thread(new Runnable() {
                         @Override
@@ -527,35 +526,6 @@ public class DataLoad {
                             MZSZMXXX[] mzszjbxxes = gson.fromJson(response, MZSZMXXX[].class);
                             for(MZSZMXXX m : mzszjbxxes){
                                 m.save();
-                            }
-                        }
-                    }).start();
-                    Http_JGSZ();
-                }
-            }
-        });
-    }
-
-    private void Http_JGSZ() {
-        mProgressDialog.setMessage("机构设置……");
-        String sql="select by52 from jgsz|";
-        DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-            @Override
-            public void onResponse(final String response) {
-                if(response.equals("]")){
-                    mProgressDialog.dismiss();
-                }else{
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            DataSupport.deleteAll(Jgsz.class);
-                            Gson gson = new Gson();
-                            Jgsz[] jgszs = gson.fromJson(response, Jgsz[].class);
-                            for(Jgsz j : jgszs){
-                                j.save();
                             }
                         }
                     }).start();
