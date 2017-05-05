@@ -281,18 +281,18 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
 
         } else if (mMode == 2) {
             mWMLSB.setPZ(sb.toString());
-        }
 
-        // 添加特殊口味
-        if (mIntegerDMPZSDMap.size() > 0) {
-            Collection<DMPZSD> dmpzsds = mIntegerDMPZSDMap.values();
-            Iterator<DMPZSD> dmpzsdIterator = dmpzsds.iterator();
-            while (dmpzsdIterator.hasNext()) {
-                String dycp = dmpzsdIterator.next().DYCP;
-                String xmbh = dycp.substring(dycp.indexOf('@') + 1, dycp.indexOf('#'));
-                JYXMSZ jyxmsz = DataSupport.where("xmbh = ?", xmbh).findFirst(JYXMSZ.class);
-                if (jyxmsz != null) {
-                    CartList.newInstance(mContext).add(jyxmsz);
+            // 添加特殊口味
+            if (mIntegerDMPZSDMap.size() > 0) {
+                Collection<DMPZSD> dmpzsds = mIntegerDMPZSDMap.values();
+                Iterator<DMPZSD> dmpzsdIterator = dmpzsds.iterator();
+                while (dmpzsdIterator.hasNext()) {
+                    String dycp = dmpzsdIterator.next().DYCP;
+                    String xmbh = dycp.substring(dycp.indexOf('@') + 1, dycp.indexOf('#'));
+                    JYXMSZ jyxmsz = DataSupport.where("xmbh = ?", xmbh).findFirst(JYXMSZ.class);
+                    if (jyxmsz != null) {
+                        CartList.newInstance(mContext).add(jyxmsz);
+                    }
                 }
             }
         }
