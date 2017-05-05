@@ -29,6 +29,9 @@ public class CheckVersion {
     }
     public void checkJYXMSZ(){
         List<TBSJ> tbrp = DataSupport.select("tbrq").where("tablename=?","JYXMSZ").find(TBSJ.class);
+        if(tbrp.size()<=0){
+            return;
+        }
         String sql="select tablename,CONVERT(varchar(100), tbrq, 20)as tbrq from tbsj where tbrq>'"+tbrp.get(0).getTbrq()+"'and tablename='jyxmsz'|";
         DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
             @Override
