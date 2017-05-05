@@ -59,7 +59,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void initUI() {
-        mEtIp.setText(mSp.getString("ip","192.168.1.78"));
+        mEtIp.setText(mSp.getString("ip",""));
         mEtPort.setText(mSp.getString("port","2233"));
         mEtPad.setText(mSp.getString("pad",""));
         auto=mSp.getBoolean("auto",true);

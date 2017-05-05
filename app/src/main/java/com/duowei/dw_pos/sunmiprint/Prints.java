@@ -73,6 +73,9 @@ public class Prints {
         ThreadPoolManager.getInstance().executeTask(new Runnable() {
             @Override
             public void run() {
+                if(woyouService==null){
+                    return;
+                }
                 try {
                     woyouService.setAlignment(1, callback);
                     woyouService.printTextWithFont("桌号：" + mWmlsbjb.getZH() + "\n", "", 32, callback);
@@ -113,6 +116,9 @@ public class Prints {
         ThreadPoolManager.getInstance().executeTask(new Runnable() {
             @Override
             public void run() {
+                if(woyouService==null){
+                    return;
+                }
                 try {
                     woyouService.setAlignment(1, callback);// 对齐方式
                     woyouService.printTextWithFont("桌号：" + mWmlsbjb.getZH() + "\n", "", 32, callback);
@@ -161,6 +167,9 @@ public class Prints {
         ThreadPoolManager.getInstance().executeTask(new Runnable() {
             @Override
             public void run() {
+                if(woyouService==null){
+                    return;
+                }
                 try {
                     woyouService.setAlignment(1, callback);
                     woyouService.printTextWithFont("桌号：" +wmlsbjb.getZH() + "\n", "", 32, callback);
@@ -204,8 +213,11 @@ public class Prints {
         ThreadPoolManager.getInstance().executeTask(new Runnable() {
             @Override
             public void run() {
+                if(woyouService==null){
+                    return;
+                }
                 try {
-                    woyouService.setAlignment(1, callback);
+                     woyouService.setAlignment(1, callback);
                     woyouService.printTextWithFont("桌号：" +wmlsbjb.getZH() + "\n", "", 32, callback);
                     woyouService.setAlignment(0, callback);
                     woyouService.printTextWithFont("账单号：" + wmlsbjb.getWMDBH() + "\n", "", 28, callback);

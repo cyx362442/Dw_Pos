@@ -68,7 +68,7 @@
         </receiver>
 
         <activity android:name=".SettingsActivity"
-                  android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
+                  android:windowSoftInputMode="stateHidden" >
         </activity>
     </application>
 

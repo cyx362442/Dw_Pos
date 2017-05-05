@@ -52,6 +52,9 @@
         <mapping class="com.duowei.dw_pos.bean.FXHYKSZ"></mapping>
     </list>
     <list>
+        <mapping class="com.duowei.dw_pos.bean.TBSJ"></mapping>
+    </list>
+    <list>
         <mapping class="com.duowei.dw_pos.bean.Jgsz"></mapping>
     </list>
 </litepal>
