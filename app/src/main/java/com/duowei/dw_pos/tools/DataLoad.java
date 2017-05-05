@@ -305,7 +305,7 @@ public class DataLoad {
     //口味信息
     private void Http_DMPZSD() {
         mProgressDialog.setMessage("口味信息……");
-        String sql="SELECT PZBM,NR,PXH,isnull(ZDBZ,'0')ZDBZ FROM DMPZSD ORDER BY PXH ASC |";
+        String sql="SELECT PZBM,NR,PXH,isnull(ZDBZ,'0')ZDBZ, DYCP FROM DMPZSD ORDER BY PXH ASC |";
         DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {

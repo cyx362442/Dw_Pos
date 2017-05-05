@@ -11,6 +11,7 @@ public class DMPZSD extends DataSupport {
     public String NR;
     public String PXH;
     public String ZDBZ;
+    public String DYCP;
 
     public String getPZBM() {
         return PZBM;

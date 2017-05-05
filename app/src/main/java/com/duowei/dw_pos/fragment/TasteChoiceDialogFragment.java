@@ -13,14 +13,16 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.DMKWDYDP;
 import com.duowei.dw_pos.bean.DMPZSD;
+import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.event.CartUpdateEvent;
 import com.duowei.dw_pos.tools.CartList;
@@ -29,7 +31,11 @@ import org.greenrobot.eventbus.EventBus;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,7 +43,7 @@ import java.util.regex.Pattern;
  * 口味选择、整单备注
  */
 
-public class TasteChoiceDialogFragment extends AppCompatDialogFragment {
+public class TasteChoiceDialogFragment extends AppCompatDialogFragment implements AdapterView.OnItemClickListener {
     private static final String TAG = "TasteChoiceDialog";
 
     private Context mContext;
@@ -96,6 +102,7 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_taste_choice_dialog, null);
         mListView = (ListView) view.findViewById(R.id.list);
+        mListView.setOnItemClickListener(this);
         mEditText = (EditText) view.findViewById(R.id.edit);
 
         mTasteAdapter = new TasteAdapter(mContext);
@@ -271,11 +278,39 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment {
                     subWmlsb1.setPZ("" + subWmlsb1.getPZ() + sb.toString());
                 }
             }
-            EventBus.getDefault().post(new CartUpdateEvent());
 
         } else if (mMode == 2) {
             mWMLSB.setPZ(sb.toString());
-            EventBus.getDefault().post(new CartUpdateEvent());
+        }
+
+        // 添加特殊口味
+        if (mIntegerDMPZSDMap.size() > 0) {
+            Collection<DMPZSD> dmpzsds = mIntegerDMPZSDMap.values();
+            Iterator<DMPZSD> dmpzsdIterator = dmpzsds.iterator();
+            while (dmpzsdIterator.hasNext()) {
+                String dycp = dmpzsdIterator.next().DYCP;
+                String xmbh = dycp.substring(dycp.indexOf('@') + 1, dycp.indexOf('#'));
+                JYXMSZ jyxmsz = DataSupport.where("xmbh = ?", xmbh).findFirst(JYXMSZ.class);
+                if (jyxmsz != null) {
+                    CartList.newInstance(mContext).add(jyxmsz);
+                }
+            }
+        }
+
+        EventBus.getDefault().post(new CartUpdateEvent());
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        CheckedTextView ctv = (CheckedTextView) view;
+        DMPZSD dmpzsd = mTasteAdapter.getItem(position);
+        if (!TextUtils.isEmpty(dmpzsd.DYCP)) {
+            // 有口味特殊要求
+            if (ctv.isChecked()) {
+                mIntegerDMPZSDMap.put(position, dmpzsd);
+            } else {
+                mIntegerDMPZSDMap.remove(position);
+            }
         }
     }
 
@@ -289,8 +324,12 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment {
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             View view = super.getView(position, convertView, parent);
-            ((TextView) view).setText(getItem(position).getNR());
+            CheckedTextView ctv = (CheckedTextView) view.findViewById(android.R.id.text1);
+            ctv.setText("" + getItem(position).getNR());
+
             return view;
         }
     }
+
+    private Map<Integer, DMPZSD> mIntegerDMPZSDMap = new HashMap<>();
 }
