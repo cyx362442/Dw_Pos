@@ -192,8 +192,8 @@ public class Prints {
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_________________________________________________________________________________
                     woyouService.printTextWithFont("原价合计：" + String.format(Locale.CANADA, "%.2f", Moneys.xfzr) + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("折扣：" + String.format(Locale.CANADA, "%.2f", Moneys.zkjr) + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("应付：" + String.format(Locale.CANADA, "%.2f", Moneys.ysjr) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("折扣：" + String.format(Locale.CANADA, "%.2f",Moneys.xfzr-getZj(wmlsbList)) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("应付：" + String.format(Locale.CANADA, "%.2f", getZj(wmlsbList)) + "\n", "", 30, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_________________________________________________________________________________
                     woyouService.printTextWithFont("应收现金:￥" + getZj(wmlsbList) + "\n", "", 30, callback);
