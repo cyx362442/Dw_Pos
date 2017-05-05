@@ -19,6 +19,7 @@ import com.duowei.dw_pos.bean.MZSZJBXX;
 import com.duowei.dw_pos.bean.MZSZMXXX;
 import com.duowei.dw_pos.bean.PaySet;
 import com.duowei.dw_pos.bean.SZLB;
+import com.duowei.dw_pos.bean.TBSJ;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.bean.TCSD;
 import com.duowei.dw_pos.bean.WXFWQDZ;
@@ -556,6 +557,35 @@ public class DataLoad {
                             Jgsz[] jgszs = gson.fromJson(response, Jgsz[].class);
                             for(Jgsz j : jgszs){
                                 j.save();
+                            }
+                        }
+                    }).start();
+                    Http_TBSJ();
+                }
+            }
+        });
+    }
+
+    private void Http_TBSJ() {
+        mProgressDialog.setMessage("数据库更新时间表……");
+        String sql="select tablename,CONVERT(varchar(100), tbrq, 20)as tbrq  from TBSJ|";
+        DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+            @Override
+            public void onResponse(final String response) {
+                if(response.equals("]")){
+                    mProgressDialog.dismiss();
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DataSupport.deleteAll(TBSJ.class);
+                            Gson gson = new Gson();
+                            TBSJ[] tbsjs = gson.fromJson(response, TBSJ[].class);
+                            for(TBSJ t : tbsjs){
+                                t.save();
                             }
                         }
                     }).start();
