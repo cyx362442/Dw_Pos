@@ -50,8 +50,6 @@ public class CheckOutDialog implements View.OnClickListener {
         mDialog.setView(mLayout);
         mDialog.show();
         WindowManager.LayoutParams params = mDialog.getWindow().getAttributes();
-//        params.width = 550;
-//        params.height = 400 ;
         mDialog.getWindow().setAttributes(params);
         initWidget();
     }
@@ -69,7 +67,7 @@ public class CheckOutDialog implements View.OnClickListener {
         mCancel.setOnClickListener(this);
         mTitle.setText(title);
         mTitle.setFocusableInTouchMode(true);
-        mEtInput.setText(String.format(Locale.CANADA, "%.2f", money));
+        mEtInput.setText(money+"");
     }
 
     @Override

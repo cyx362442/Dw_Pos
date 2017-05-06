@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,6 +17,8 @@ import com.duowei.dw_pos.bean.WXFWQDZ;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.bean.YunFu;
 import com.duowei.dw_pos.event.ImsCardCouponStores;
+import com.duowei.dw_pos.event.YunSubmit;
+import com.duowei.dw_pos.event.YunSubmitFail;
 import com.duowei.dw_pos.fragment.YunAccountFragment;
 import com.duowei.dw_pos.fragment.YunCardFragment;
 import com.duowei.dw_pos.fragment.YunPayFragment;
@@ -34,7 +35,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class YunPayActivity extends AppCompatActivity implements YunCardFragment.GvClickListener {
 
@@ -112,7 +112,15 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         }
         mProgressBar.setVisibility(View.GONE);
     }
-
+    @Subscribe
+    public void yunSubmit(YunSubmit event){
+        Log.e("event=====","云提交……");
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+    @Subscribe
+    public void yunSubmitFail(YunSubmitFail event){
+        mProgressBar.setVisibility(View.GONE);
+    }
     private void toYunAccountFragment() {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();

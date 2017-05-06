@@ -13,6 +13,7 @@ import com.duowei.dw_pos.bean.YunFu;
 import com.duowei.dw_pos.tools.DateTimes;
 import com.duowei.dw_pos.tools.Users;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 
@@ -93,14 +94,14 @@ public class Prints {
                     for (int i = 0; i < mWmlsbs.length; i++) {
                         text[0] = mWmlsbs[i].getXMMC();
                         text[1] = mWmlsbs[i].getSL() + "";
-                        text[2] = mWmlsbs[i].getXJ() + "";
+                        text[2] = bigDecimal(mWmlsbs[i].getXJ()) + "";
                         woyouService.printColumnsText(text, width, align, callback);
                     }
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //______________________________________________________________________________
-                    woyouService.printTextWithFont("原价合计：" + String.format(Locale.CANADA, "%.2f", Moneys.xfzr) + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("折扣：" + String.format(Locale.CANADA, "%.2f", Moneys.zkjr) + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("应付：" + String.format(Locale.CANADA, "%.2f", Moneys.ysjr) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("原价合计：" + bigDecimal(Moneys.xfzr) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("折扣：" + bigDecimal(Moneys.zkjr) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("应付：" + bigDecimal(Moneys.ysjr) + "\n", "", 30, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     woyouService.setAlignment(1, callback);
                     //______________________________________________________________________________
@@ -136,14 +137,14 @@ public class Prints {
                     for (int i = 0; i < mWmlsbs.length; i++) {
                         text[0] = mWmlsbs[i].getXMMC();
                         text[1] = mWmlsbs[i].getSL() + "";
-                        text[2] = mWmlsbs[i].getXJ() + "";
+                        text[2] = bigDecimal(mWmlsbs[i].getXJ()) + "";
                         woyouService.printColumnsText(text, width, align, callback);
                     }
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_________________________________________________________________________________
-                    woyouService.printTextWithFont("原价合计：" + String.format(Locale.CANADA, "%.2f", Moneys.xfzr) + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("折扣：" + String.format(Locale.CANADA, "%.2f", Moneys.zkjr) + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("应付：" + String.format(Locale.CANADA, "%.2f", Moneys.ysjr) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("原价合计：" + bigDecimal(Moneys.xfzr) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("折扣：" + bigDecimal(Moneys.zkjr) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("应付：" + bigDecimal(Moneys.ysjr) + "\n", "", 30, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_________________________________________________________________________________
                     woyouService.printTextWithFont("应收现金:￥" + ys + "\n", "", 30, callback);
@@ -187,20 +188,20 @@ public class Prints {
                     for (int i = 0; i < wmlsbList.size(); i++) {
                         text[0] = wmlsbList.get(i).getXMMC();
                         text[1] = wmlsbList.get(i).getSL() + "";
-                        text[2] = wmlsbList.get(i).getDJ()*wmlsbList.get(i).getSL() + "";
+                        text[2] = bigDecimal(wmlsbList.get(i).getDJ()*wmlsbList.get(i).getSL()) + "";
                         woyouService.printColumnsText(text, width, align, callback);
                     }
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_________________________________________________________________________________
-                    woyouService.printTextWithFont("原价合计：" + String.format(Locale.CANADA, "%.2f", Moneys.xfzr) + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("折扣：" + String.format(Locale.CANADA, "%.2f",Moneys.xfzr-getZj(wmlsbList)) + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("应付：" + String.format(Locale.CANADA, "%.2f", getZj(wmlsbList)) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("原价合计：" + bigDecimal(Moneys.xfzr) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("折扣：" + bigDecimal(Moneys.xfzr-getZj(wmlsbList)) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("应付：" + bigDecimal(getZj(wmlsbList)) + "\n", "", 30, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_________________________________________________________________________________
 //                    woyouService.printTextWithFont("应收现金:￥" + getZj(wmlsbList) + "\n", "", 30, callback);
 //                    woyouService.printTextWithFont("云会员支付:￥"+getZj(wmlsbList)+"\n","",30,callback);
                     for(int i=0;i<listYunFu.size();i++){
-                        woyouService.printTextWithFont("云会员—"+listYunFu.get(i).title+"￥"+listYunFu.get(i).money+"\n","",28,callback);
+                        woyouService.printTextWithFont("云会员—"+listYunFu.get(i).title+"￥"+bigDecimal(listYunFu.get(i).money)+"\n","",28,callback);
                     }
                     woyouService.setAlignment(1, callback);// 对齐方式
                     woyouService.lineWrap(1, callback);
@@ -236,12 +237,12 @@ public class Prints {
                     for (int i = 0; i < wmlsbList.size(); i++) {
                         text[0] = wmlsbList.get(i).getXMMC();
                         text[1] = wmlsbList.get(i).getSL() + "";
-                        text[2] = wmlsbList.get(i).getDJ()*wmlsbList.get(i).getSL() + "";
+                        text[2] = bigDecimal(wmlsbList.get(i).getDJ()*wmlsbList.get(i).getSL()) + "";
                         woyouService.printColumnsText(text, width, align, callback);
                     }
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //______________________________________________________________________________
-                    woyouService.printTextWithFont("消费合计：" + getZj(wmlsbList) + "\n", "", 30, callback);
+                    woyouService.printTextWithFont("消费合计：" + bigDecimal(getZj(wmlsbList)) + "\n", "", 30, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     woyouService.setAlignment(1, callback);
                     woyouService.printTextWithFont("压桌单", "", 30, callback);
@@ -259,5 +260,8 @@ public class Prints {
             zj=zj+w.getDJ()*w.getSL();
         }
         return zj;
+    }
+    public  Float bigDecimal(Float f){
+        return BigDecimal.valueOf(f).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
     }
 }

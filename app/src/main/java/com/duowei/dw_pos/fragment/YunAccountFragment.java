@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.Moneys;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -49,16 +50,19 @@ public class YunAccountFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        mTvZr.setText("￥"+String.format(Locale.CHINA, "%.2f", Moneys.xfzr));
-        mTvZk.setText("￥"+String.format(Locale.CHINA, "%.2f", Moneys.zkjr));
-        mTvYs.setText("￥"+String.format(Locale.CHINA, "%.2f", Moneys.ysjr));
-        mTvYf.setText("￥"+String.format(Locale.CHINA, "%.2f", Moneys.yfjr));
-        mTvWf.setText("￥"+String.format(Locale.CHINA, "%.2f", Moneys.wfjr));
+        mTvZr.setText("￥"+bigDecimal(Moneys.xfzr));
+        mTvZk.setText("￥"+bigDecimal(Moneys.zkjr));
+        mTvYs.setText("￥"+bigDecimal(Moneys.ysjr));
+        mTvYf.setText("￥"+bigDecimal(Moneys.yfjr));
+        mTvWf.setText("￥"+bigDecimal(Moneys.wfjr));
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+    public  Float bigDecimal(Float f){
+        return BigDecimal.valueOf(f).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
     }
 }

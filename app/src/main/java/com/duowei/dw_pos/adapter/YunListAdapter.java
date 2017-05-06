@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.YunFu;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,15 +49,13 @@ public class YunListAdapter extends BaseAdapter{
         TextView fangshi = (TextView) inflate.findViewById(R.id.tv_fangshi);
         TextView jr = (TextView) inflate.findViewById(R.id.tv_jr);
         TextView quan = (TextView) inflate.findViewById(R.id.tv_quan);
-//        if(listyf.get(i).ticket==0){
-//            fangshi.setText("云会员-储值消费");
-//        }else if(listyf.get(i).ticket==1){
-//            fangshi.setText("云会员-积分消费");
-//        }else if(listyf.get(i).ticket==2){
-//        }
+
         fangshi.setText(listyf.get(i).title);
-        jr.setText(listyf.get(i).money+"");
+        jr.setText(bigDecimal(listyf.get(i).money)+"");
         quan.setText(listyf.get(i).sl+"");
         return inflate;
+    }
+    public  Float bigDecimal(Float f){
+        return BigDecimal.valueOf(f).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
     }
 }

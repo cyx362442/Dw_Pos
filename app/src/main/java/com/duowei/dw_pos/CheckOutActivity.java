@@ -45,6 +45,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -204,11 +205,10 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                             list_wmlsb.add(W);
                         }
                         mYingshou = mActualMoney - mYishou;
-                        mTvZonger.setText("￥" + String.format(Locale.CHINA, "%.2f", mTotalMoney));
-                        mTvZekou.setText("￥" + String.format(Locale.CHINA, "%.2f", mTotalMoney - mActualMoney));
-                        mTvYishou.setText("￥" + String.format(Locale.CHINA, "%.2f", mYishou));
-                        mTvDaishou.setText("￥" + String.format(Locale.CHINA, "%.2f", mYingshou));
-
+                        mTvZonger.setText("￥" + bigDecimal(mTotalMoney));
+                        mTvZekou.setText("￥" + bigDecimal(mTotalMoney - mActualMoney));
+                        mTvYishou.setText("￥" + bigDecimal(mYishou));
+                        mTvDaishou.setText("￥" + bigDecimal(mYingshou));
                         mDaishou = mYingshou;
 
                         Moneys.xfzr = mTotalMoney;
@@ -322,8 +322,8 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                         public void onResponse(String response) {
                             if (response.contains("richado")) {
                                 mPrinter.setWoyouService(woyouService);
-                                mPrinter.print_jiezhang(String.format(Locale.CANADA, "%.2f", mYingshou),
-                                        String.format(Locale.CANADA, "%.2f", mYishou), String.format(Locale.CANADA, "%.2f", mZhaoling),"收现");
+                                mPrinter.print_jiezhang(bigDecimal(mYingshou)+"",
+                                        bigDecimal(mYishou)+"", bigDecimal(mZhaoling)+"","收现");
                                 mProgressBar.setVisibility(View.GONE);
                                 finish();
                             }
@@ -337,21 +337,21 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     }
 
     private void inputMoney() {
-        final CheckOutDialog dialog = new CheckOutDialog(this, "现金支付", mYingshou);
+        final CheckOutDialog dialog = new CheckOutDialog(this, "现金支付", bigDecimal(mYingshou));
         dialog.mConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String money = dialog.mEtInput.getText().toString().trim();
                 mYishou = Float.parseFloat(money);
-                if (mYingshou > mYishou) {
+                if (bigDecimal(mYingshou) > mYishou) {
                     Toast.makeText(CheckOutActivity.this, "输入金额不足", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                mTvYishou.setText("￥" + String.format(Locale.CANADA, "%.2f", mYishou));
+                mTvYishou.setText("￥" +bigDecimal(mYingshou));
                 mZhaoling = (mYishou - mYingshou) >= 0 ? mYishou - mYingshou : mYishou - mYingshou;
-                mTvZhaoling.setText("￥" + String.format(Locale.CANADA, "%.2f", mZhaoling));
+                mTvZhaoling.setText("￥" + bigDecimal(mZhaoling));
                 mDaishou = mZhaoling >= 0 ? 0.00f : -mZhaoling;
-                mTvDaishou.setText("￥" + String.format(Locale.CANADA, "%.2f", mDaishou));
+                mTvDaishou.setText("￥" + bigDecimal(mDaishou));
                 Http_cashier();
                 dialog.cancel();
             }
@@ -410,6 +410,10 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                 }
             }
         });
+    }
+
+    public  Float bigDecimal(Float f){
+        return BigDecimal.valueOf(f).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
     }
     //接口回调，dialog确定键监听
     @Override

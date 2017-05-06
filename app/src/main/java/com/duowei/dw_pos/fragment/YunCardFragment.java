@@ -25,6 +25,8 @@ import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.bean.YunFu;
 import com.duowei.dw_pos.dialog.YunFuDialog;
 import com.duowei.dw_pos.event.YunSqlFinish;
+import com.duowei.dw_pos.event.YunSubmit;
+import com.duowei.dw_pos.event.YunSubmitFail;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.tools.Net;
@@ -367,6 +369,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                     return;
                 }
                 mConfirm.setEnabled(false);
+                EventBus.getDefault().post(new YunSubmit());
                 for(int i=0;i<listYunPayFragment.size();i++){
                     YunFu yunFu = listYunPayFragment.get(i);
                     saveSqlData(yunFu);
@@ -507,6 +510,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                 getActivity().finish();
             }else{
                 mConfirm.setEnabled(true);
+                EventBus.getDefault().post(new YunSubmitFail());
                Toast.makeText(getActivity(),"数据提交失败",Toast.LENGTH_SHORT).show();
             }
             super.onPostExecute(result);
