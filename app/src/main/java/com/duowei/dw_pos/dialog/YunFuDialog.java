@@ -105,9 +105,10 @@ public class YunFuDialog implements View.OnClickListener{
                 break;
             case R.id.btn_confirm:
                 String trim = mEtInput.getText().toString().trim();
+                float v = Float.parseFloat(trim);
                 /**储值卡*/
                 if(payStytle==0){
-                    if(Float.parseFloat(trim)>money){
+                    if(bigDecimal(v)>bigDecimal(money)){
                         Toast.makeText(context,"输入金额过大",Toast.LENGTH_SHORT).show();
                     }else{
                         listener.getDialogInput(trim,payStytle);

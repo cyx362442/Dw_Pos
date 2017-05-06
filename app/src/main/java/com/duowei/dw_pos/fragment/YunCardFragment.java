@@ -38,6 +38,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.litepal.crud.DataSupport;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -364,7 +365,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                 if(listYunPayFragment.size()<=0){
                     Toast.makeText(getActivity(),"请选择付款方式",Toast.LENGTH_SHORT).show();
                     return;
-                }else if(Moneys.wfjr>0){
+                }else if(bigDecimal(Moneys.wfjr)>0){
                     Toast.makeText(getActivity(),"金额不足",Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -529,5 +530,8 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
 //        SqlYun.jfbfb=mJfbfb;
         SqlYun.from_user=yunFu.fromUser;
         SqlYun.JZBZ=mDeal_id;
+    }
+    public  Float bigDecimal(Float f){
+        return BigDecimal.valueOf(f).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
     }
 }
