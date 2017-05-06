@@ -211,10 +211,10 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                         mTvDaishou.setText("￥" + bigDecimal(mYingshou));
                         mDaishou = mYingshou;
 
-                        Moneys.xfzr = mTotalMoney;
-                        Moneys.zkjr = mTotalMoney - mActualMoney;
-                        Moneys.ysjr = mYingshou;
-                        Moneys.wfjr = mActualMoney - mYishou;
+                        Moneys.xfzr = bigDecimal(mTotalMoney);
+                        Moneys.zkjr = bigDecimal(mTotalMoney - mActualMoney);
+                        Moneys.ysjr = bigDecimal(mYingshou);
+                        Moneys.wfjr = bigDecimal(mActualMoney - mYishou);
                         mPrinter.setPrintMsg(mWmlsbjb, mWmlsbs);
 
                         mProgressBar.setVisibility(View.GONE);
