@@ -527,7 +527,6 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         SqlYun.CZKYE=yunFu.credit2-Moneys.yfjr;
         SqlYun.HYBH=yunFu.cardsn;
         SqlYun.HYKDJ=yunFu.cardgrade;
-//        SqlYun.jfbfb=mJfbfb;
         SqlYun.from_user=yunFu.fromUser;
         SqlYun.JZBZ=mDeal_id;
     }
