@@ -71,7 +71,7 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         WXFWQDZ wxfwqdz = DataSupport.select("weid", "bmbh").findFirst(WXFWQDZ.class);
         int weid = wxfwqdz.getWeid();
         String bmbh = wxfwqdz.getBMBH();
-        mProgressBar.setVisibility(View.VISIBLE);
+        mProgressBar.bringToFront();
         Post6.getInstance().post_ims_card_coupon_stores(weid, bmbh, mImsCards.getFrom_user());
     }
 
@@ -114,7 +114,6 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
     }
     @Subscribe
     public void yunSubmit(YunSubmit event){
-        Log.e("event=====","云提交……");
         mProgressBar.setVisibility(View.VISIBLE);
     }
     @Subscribe
