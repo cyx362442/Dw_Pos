@@ -63,7 +63,8 @@ public class SqlYun {
     public static float CZKYE;//未付
     public static String HYBH;//卡号
     public static String HYKDJ;//卡等级
-    public static int jfbfb;//获得积分
+    public static int jfbfb_add;//获得积分
+    public static int jfbfb_sub;//积分消费
     public static String from_user;
     public static String JZBZ;
 }

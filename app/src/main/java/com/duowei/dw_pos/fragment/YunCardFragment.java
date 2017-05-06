@@ -390,6 +390,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                         }else{
                             sqlCZXF=sql2+sql3;
                         }
+                        SqlYun.jfbfb_add=mJfbfb;
                         //插入sqlserver
                         sqlXSFKFS1="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"','999999999','云会员-储值消费',"+yunFu.money+",0)|";
                         sqlCZKJYMXXX="INSERT INTO CZKJYMXXX(HYKH,JYSJ,JYLX,CZQJE,KCZJE,SSJE,KYE,KCZXL,SYJH,YHBH,BY3)" +
@@ -407,6 +408,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                         sqlJFXF=sql4+sql5;
                         //插入sqlserver
                         sqlXSFKFS2="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"','999999998','云会员-积分消费',"+yunFu.money+",0)|";
+                        SqlYun.jfbfb_sub=by3;
                     }
                         /**
                          * 各种电子券消费
@@ -520,7 +522,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         SqlYun.CZKYE=yunFu.credit2-Moneys.yfjr;
         SqlYun.HYBH=yunFu.cardsn;
         SqlYun.HYKDJ=yunFu.cardgrade;
-        SqlYun.jfbfb=mJfbfb;
+//        SqlYun.jfbfb=mJfbfb;
         SqlYun.from_user=yunFu.fromUser;
         SqlYun.JZBZ=mDeal_id;
     }
