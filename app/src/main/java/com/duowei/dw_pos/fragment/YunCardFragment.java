@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,7 @@ import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.SqlYun;
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.litepal.crud.DataSupport;
@@ -501,7 +501,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         @Override
         protected void onPostExecute(String result) {
             if (result.contains("richado")) {
-                org.greenrobot.eventbus.EventBus.getDefault().post(new YunSqlFinish(mSqlLocal,mListWmlsb,mWmlsbjb));
+                EventBus.getDefault().post(new YunSqlFinish(mSqlLocal,mListWmlsb,mWmlsbjb,listYunPayFragment));
                 getActivity().finish();
             }else{
                 mConfirm.setEnabled(true);

@@ -232,10 +232,6 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                 mPrinter.print_yudayin();
                 break;
             case R.id.btn_dingdan:
-//                mIntent = new Intent(this, OrdetDetailActivity.class);
-//                mIntent.putExtra("listWmlsb", list_wmlsb);
-//                mIntent.putExtra("wmlsbjb", mWmlsbjb);
-
                 CartList.newInstance(this).clear();
                 mIntent = new Intent(this, CartDetailActivity.class);
                 mIntent.putExtra(ExtraParm.EXTRA_WMDBH, mWmlsbjb.getWMDBH());
@@ -403,7 +399,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                             if (response.contains("richado")) {
                                 //打印结账单
                                 mPrinter.setWoyouService(woyouService);
-                                mPrinter.print_yun(event.mWmlsbjb, event.mListWmlsb);
+                                mPrinter.print_yun(event.mWmlsbjb, event.mListWmlsb,event.listPay);
                                 mProgressBar.setVisibility(View.GONE);
                                 finish();
                             }

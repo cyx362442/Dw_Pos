@@ -9,6 +9,7 @@ import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
+import com.duowei.dw_pos.bean.YunFu;
 import com.duowei.dw_pos.tools.DateTimes;
 import com.duowei.dw_pos.tools.Users;
 
@@ -163,7 +164,7 @@ public class Prints {
     }
 
     //云会员结账
-    public void print_yun(final Wmslbjb_jiezhang wmlsbjb, final List<WMLSB>wmlsbList){
+    public void print_yun(final Wmslbjb_jiezhang wmlsbjb, final List<WMLSB>wmlsbList, final List<YunFu>listYunFu){
         ThreadPoolManager.getInstance().executeTask(new Runnable() {
             @Override
             public void run() {
@@ -196,8 +197,11 @@ public class Prints {
                     woyouService.printTextWithFont("应付：" + String.format(Locale.CANADA, "%.2f", getZj(wmlsbList)) + "\n", "", 30, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_________________________________________________________________________________
-                    woyouService.printTextWithFont("应收现金:￥" + getZj(wmlsbList) + "\n", "", 30, callback);
-                    woyouService.printTextWithFont("云会员支付:￥"+getZj(wmlsbList)+"\n","",30,callback);
+//                    woyouService.printTextWithFont("应收现金:￥" + getZj(wmlsbList) + "\n", "", 30, callback);
+//                    woyouService.printTextWithFont("云会员支付:￥"+getZj(wmlsbList)+"\n","",30,callback);
+                    for(int i=0;i<listYunFu.size();i++){
+                        woyouService.printTextWithFont("云会员—"+listYunFu.get(i).title+"￥"+listYunFu.get(i).money+"\n","",28,callback);
+                    }
                     woyouService.setAlignment(1, callback);// 对齐方式
                     woyouService.lineWrap(1, callback);
                     woyouService.printTextWithFont("谢谢光临！", "", 30, callback);
