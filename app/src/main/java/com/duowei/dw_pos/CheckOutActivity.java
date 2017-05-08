@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -38,8 +37,8 @@ import com.duowei.dw_pos.tools.SqlYun;
 import com.duowei.dw_pos.tools.Users;
 import com.google.gson.Gson;
 
-import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,7 +47,6 @@ import org.litepal.crud.DataSupport;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -109,6 +107,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     private float mDaishou = 0.00f;
 
     private final int YUPAYREQUEST = 100;
+    public final static int RESURTCODE=1000;
 
     private IWoyouService woyouService;
     private ServiceConnection connService = new ServiceConnection() {
@@ -204,17 +203,17 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                             mActualMoney = mActualMoney + W.getDJ() * W.getSL();
                             list_wmlsb.add(W);
                         }
-                        mYingshou = mActualMoney - mYishou;
+                        mYingshou = bigDecimal(bigDecimal(mActualMoney) - bigDecimal(mYishou));
                         mTvZonger.setText("￥" + bigDecimal(mTotalMoney));
-                        mTvZekou.setText("￥" + bigDecimal(mTotalMoney - mActualMoney));
+                        mTvZekou.setText("￥" + bigDecimal(bigDecimal(mTotalMoney) - bigDecimal(mActualMoney)));
                         mTvYishou.setText("￥" + bigDecimal(mYishou));
                         mTvDaishou.setText("￥" + bigDecimal(mYingshou));
                         mDaishou = mYingshou;
 
                         Moneys.xfzr = bigDecimal(mTotalMoney);
-                        Moneys.zkjr = bigDecimal(mTotalMoney - mActualMoney);
+                        Moneys.zkjr = bigDecimal(bigDecimal(mTotalMoney) - bigDecimal(mActualMoney));
                         Moneys.ysjr = bigDecimal(mYingshou);
-                        Moneys.wfjr = bigDecimal(mActualMoney - mYishou);
+                        Moneys.wfjr = bigDecimal(bigDecimal(mActualMoney) - bigDecimal(mYishou));
                         mPrinter.setPrintMsg(mWmlsbjb, mWmlsbs);
 
                         mProgressBar.setVisibility(View.GONE);
@@ -224,9 +223,15 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
         });
     }
 
-    @OnClick({R.id.btn_dayin, R.id.btn_dingdan, R.id.rl_xianjin, R.id.rl_zhifubao, R.id.rl_weixin, R.id.ll_cashier, R.id.rl_yun})
+    @OnClick({R.id.btn_dayin, R.id.btn_dingdan, R.id.rl_xianjin, R.id.rl_zhifubao, R.id.rl_weixin, R.id.ll_cashier, R.id.rl_yun,R.id.ll_change})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.ll_change:
+                Intent intent = new Intent();
+                intent.putExtra("wmdbh",mWmdbh);
+                setResult(RESURTCODE,intent);
+                finish();
+                break;
             case R.id.btn_dayin:
                 mPrinter.setWoyouService(woyouService);
                 mPrinter.print_yudayin();
@@ -277,8 +282,8 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     private boolean canCheck() {
         List<YHJBQK> yhjbqk = DataSupport.select("ZPQX").where("YHBH=?", Users.YHBH).find(YHJBQK.class);
         String zpqx = yhjbqk.get(0).getZPQX();
-        if(!zpqx.equals("1")){
-            mConfirmDialog.show(this,"当前账号没有结账权限，是否切换有结账权限账号登录？");
+        if (!zpqx.equals("1")) {
+            mConfirmDialog.show(this, "当前账号没有结账权限，是否切换有结账权限账号登录？");
             mConfirmDialog.setOnconfirmClick(this);
             return true;
         }
@@ -298,6 +303,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                 Toast.makeText(CheckOutActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
                 mProgressBar.setVisibility(View.GONE);
             }
+
             @Override
             public void onResponse(String s) {
                 try {
@@ -322,8 +328,8 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                         public void onResponse(String response) {
                             if (response.contains("richado")) {
                                 mPrinter.setWoyouService(woyouService);
-                                mPrinter.print_jiezhang(bigDecimal(mYingshou)+"",
-                                        bigDecimal(mYishou)+"", bigDecimal(mZhaoling)+"","收现");
+                                mPrinter.print_jiezhang(bigDecimal(mYingshou) + "",
+                                        bigDecimal(mYishou) + "", bigDecimal(mZhaoling) + "", "收现");
                                 mProgressBar.setVisibility(View.GONE);
                                 finish();
                             }
@@ -347,7 +353,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                     Toast.makeText(CheckOutActivity.this, "输入金额不足", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                mTvYishou.setText("￥" +bigDecimal(mYingshou));
+                mTvYishou.setText("￥" + bigDecimal(mYingshou));
                 mZhaoling = (mYishou - mYingshou) >= 0 ? mYishou - mYingshou : mYishou - mYingshou;
                 mTvZhaoling.setText("￥" + bigDecimal(mZhaoling));
                 mDaishou = mZhaoling >= 0 ? 0.00f : -mZhaoling;
@@ -372,6 +378,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                 Toast.makeText(CheckOutActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
                 mProgressBar.setVisibility(View.GONE);
             }
+
             @Override
             public void onResponse(String response) {
                 try {
@@ -383,7 +390,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                             "CZKYE,BY7,CXYH,JZFSMC,HYJF,ZL,HYBH,HYKDJ)" +
                             "VALUES('" + mWmdbh + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣'," + bigDecimal(Moneys.xfzr) + "," + bigDecimal(Moneys.zkjr) + ",0," + bigDecimal(Moneys.ysjr) + ",0,'" + mWmlsbjb.getZKFS() + "'," +
                             "'" + mWmlsbjb.getJYSJ() + "',GETDATE(),'" + mPad + "','" + mWmlsbjb.getJcfs() + "','" + prk + "','" + mWmlsbjb.getZH() + "',0,0," + Integer.parseInt(mWmlsbjb.getJCRS()) + "," +
-                            "" + SqlYun.CZKYE + ",'','','云会员消费'," + (SqlYun.jfbfb_add-SqlYun.jfbfb_sub) + ","+SqlYun.jfbfb_add+",'" + SqlYun.HYBH + "','" + SqlYun.HYKDJ + "')|";
+                            "" + SqlYun.CZKYE + ",'','','云会员消费'," + (SqlYun.jfbfb_add - SqlYun.jfbfb_sub) + "," + SqlYun.jfbfb_add + ",'" + SqlYun.HYBH + "','" + SqlYun.HYKDJ + "')|";
                     String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
                             "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mWmdbh + "'|";
                     String updateWMLSBJB = "update WMLSBJB set JSJ='" + mPad + "',SFYJZ='1',DJLSH='" + prk + "',YSJE=" + bigDecimal(Moneys.xfzr) + ",JSKSSJ=getdate(),BY8='" + SqlYun.from_user + "',JZBZ='" + SqlYun.JZBZ + "' where WMDBH='" + mWmdbh + "'|";
@@ -394,12 +401,13 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                             Toast.makeText(CheckOutActivity.this, "云会员付款失败", Toast.LENGTH_SHORT).show();
                             mProgressBar.setVisibility(View.GONE);
                         }
+
                         @Override
                         public void onResponse(String response) {
                             if (response.contains("richado")) {
                                 //打印结账单
                                 mPrinter.setWoyouService(woyouService);
-                                mPrinter.print_yun(event.mWmlsbjb, event.mListWmlsb,event.listPay);
+                                mPrinter.print_yun(event.mWmlsbjb, event.mListWmlsb, event.listPay);
                                 mProgressBar.setVisibility(View.GONE);
                                 finish();
                             }
@@ -412,9 +420,10 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
         });
     }
 
-    public  Float bigDecimal(Float f){
+    public Float bigDecimal(Float f) {
         return BigDecimal.valueOf(f).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
     }
+
     //接口回调，dialog确定键监听
     @Override
     public void confirmListener() {

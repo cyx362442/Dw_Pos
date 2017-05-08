@@ -20,18 +20,39 @@
             android:layout_marginRight="5dp"
             android:background="@drawable/shape_check"
             android:orientation="vertical">
-            <TextView
-                android:id="@+id/tv_table"
-                android:layout_width="100dp"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:text="A101"
                 android:layout_weight="1.5"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center"
-                android:background="@drawable/shape_check_table"
-                android:textColor="@color/colorWhite"
-                android:textSize="@dimen/textSize20"/>
+                android:padding="3dp">
+                <TextView
+                    android:id="@+id/tv_table"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:text="A101"
+                    android:gravity="center"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/shape_check_table"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/textSize20"/>
+                    <LinearLayout
+                        android:id="@+id/ll_change"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="5dp"
+                        >
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_swap_horiz_black_36dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="转台"/>
+                    </LinearLayout>
+            </RelativeLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
