@@ -66,7 +66,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRootView.setVisibility(View.GONE);
 
         mCartNumView = (TextView) view.findViewById(R.id.tv_cart_num);
         mCartPriceView = (TextView) view.findViewById(R.id.tv_cart_price);
@@ -101,18 +100,21 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
     @Subscribe
     public void updateUiDate(CartUpdateEvent event) {
-        CartList cartList = CartList.newInstance(getContext());
+        CartInfo cartInfo = CartList.newInstance(getContext()).getCartInfo();
 
-        if (cartList.getSize() > 0) {
-            mRootView.setVisibility(View.VISIBLE);
+        mCartNumView.setText(String.valueOf(cartInfo.getNum()));
+        mCartPriceView.setText(String.valueOf(cartInfo.getPrice()));
 
-            CartInfo cartInfo = cartList.getCartInfo();
-            mCartNumView.setText(String.valueOf(cartInfo.getNum()));
-            mCartPriceView.setText(String.valueOf(cartInfo.getPrice()));
-
-        } else {
-            mRootView.setVisibility(View.GONE);
-        }
+//        if (cartList.getSize() > 0) {
+//            mRootView.setVisibility(View.VISIBLE);
+//
+//            CartInfo cartInfo = cartList.getCartInfo();
+//            mCartNumView.setText(String.valueOf(cartInfo.getNum()));
+//            mCartPriceView.setText(String.valueOf(cartInfo.getPrice()));
+//
+//        } else {
+//            mRootView.setVisibility(View.GONE);
+//        }
     }
 
     @Override

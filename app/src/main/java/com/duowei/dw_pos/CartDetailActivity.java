@@ -1,10 +1,10 @@
 package com.duowei.dw_pos;
 
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -14,26 +14,40 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.duowei.dw_pos.adapter.CartDetailItemAdapter;
+import com.duowei.dw_pos.bean.OrderNo;
+import com.duowei.dw_pos.bean.WMLSB;
+import com.duowei.dw_pos.bean.WMLSBJB;
 import com.duowei.dw_pos.constant.ExtraParm;
+import com.duowei.dw_pos.event.CartAutoSubmit;
 import com.duowei.dw_pos.event.CartMsgDialogEvent;
 import com.duowei.dw_pos.event.CartRemoteUpdateEvent;
 import com.duowei.dw_pos.event.CartUpdateEvent;
 import com.duowei.dw_pos.event.Commit;
-import com.duowei.dw_pos.fragment.LoadingDialogFragment;
 import com.duowei.dw_pos.fragment.MessageDialogFragment;
 import com.duowei.dw_pos.fragment.TasteChoiceDialogFragment;
+import com.duowei.dw_pos.httputils.NetUtils;
 import com.duowei.dw_pos.sunmiprint.Prints;
 import com.duowei.dw_pos.tools.CartList;
-import com.duowei.dw_pos.tools.DateTimeUtils;
+import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.SqlNetHandler;
-import com.duowei.dw_pos.tools.Users;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 import woyou.aidlservice.jiuiv5.IWoyouService;
 
 /**
@@ -42,26 +56,22 @@ import woyou.aidlservice.jiuiv5.IWoyouService;
 
 public class CartDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private Handler mHandler = new Handler();
+
     private TextView mTitleView;
     private ListView mListView;
+
+    /** 加单按钮 */
     private Button mAddButton;
-    private Button mSubmitButton;
+
+    /** 下单按钮 */
+    private Button mSubmit1Button;
 
     private CartDetailItemAdapter mAdapter;
 
     private String mWmdbh;
     /** 加载成功 */
     private boolean mLoadSuccess = false;
-
-    private ProgressDialog mCommitDialog;
-
-    public void closeCommitDialog () {
-        mSubmitButton.setEnabled(true);
-
-        if (mCommitDialog != null && mCommitDialog.isShowing()) {
-            mCommitDialog.dismiss();
-        }
-    }
 
     private Prints mPrinter;
     private IWoyouService woyouService;
@@ -70,11 +80,13 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         public void onServiceDisconnected(ComponentName name) {
             woyouService = null;
         }
+
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             woyouService = IWoyouService.Stub.asInterface(service);
         }
     };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,30 +128,10 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         mTitleView = (TextView) findViewById(R.id.tv_title);
         mListView = (ListView) findViewById(R.id.list);
         mAddButton = (Button) findViewById(R.id.btn_add);
-        mSubmitButton = (Button) findViewById(R.id.btn_submit);
-
-        mSubmitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.setEnabled(false);
-                mCommitDialog = ProgressDialog.show(CartDetailActivity.this, null, "提交中...", true, false);
-
-                if (mWmdbh == null) {
-                    // 第一次提交
-                    String currentDatetime = DateTimeUtils.getCurrentDatetime();
-                    new SqlNetHandler().handleCommit(CartDetailActivity.this, mAdapter.getTotalPrice(), Users.pad + currentDatetime, true);
-                } else {
-                    // 第二次提交
-                    if (mLoadSuccess) {
-                        new SqlNetHandler().handleCommit(CartDetailActivity.this, mAdapter.getTotalPrice(), mWmdbh, false);
-                    } else {
-                        Toast.makeText(CartDetailActivity.this, "从服务器下载数据失败，不能进行提交操作!", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
-
         mAddButton.setOnClickListener(this);
+
+        mSubmit1Button = (Button) findViewById(R.id.btn_submit_1);
+        mSubmit1Button.setOnClickListener(this);
     }
 
     private void loadData() {
@@ -152,19 +144,10 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             // 从结账界面进来
             mAddButton.setVisibility(View.VISIBLE);
 
-            LoadingDialogFragment fragment = new LoadingDialogFragment();
-            fragment.setArguments(getIntent().getExtras());
-            fragment.show(getSupportFragmentManager(), null);
-            fragment.setListener(new LoadingDialogFragment.OnLoadSuccessListener() {
-                @Override
-                public void onLoadSuccess() {
-                    mLoadSuccess = true;
-                    updateData();
-                }
-            });
+            getWmlsbjb(mWmdbh);
 
         } else {
-            updateData();
+            autoSubmitData(null);
         }
     }
 
@@ -173,20 +156,21 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         updateData();
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateRemoteUiDate(CartRemoteUpdateEvent event) {
-        loadData();
+        getWmlsb(CartList.newInstance(this).getOrderNo().getWmdbh());
     }
 
     @Subscribe
-    public void commitSuccess(Commit event){
+    public void commitSuccess(Commit event) {
         //打印
         mPrinter.setWoyouService(woyouService);
         //第一次下单
-        if(event.first){
-            mPrinter.print_commit(event.wmlsbjb,mAdapter.getAllList());
-        }else{//加单
-            mPrinter.print_commit(event.wmlsbjb,event.wmlsbList);
+        if (event.first) {
+            mPrinter.print_commit(event.wmlsbjb, mAdapter.getAllList());
+        } else {
+            //加单
+            mPrinter.print_commit(event.wmlsbjb, event.wmlsbList);
         }
     }
 
@@ -201,10 +185,10 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         }
         mTitleView.setText(title);
 
-        if (mAdapter.getLocalNum() > 0) {
-            mSubmitButton.setEnabled(true);
+        if (mAdapter.hasUnOrder()) {
+            mSubmit1Button.setEnabled(true);
         } else {
-            mSubmitButton.setEnabled(false);
+            mSubmit1Button.setEnabled(false);
         }
     }
 
@@ -223,9 +207,95 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             intent.putExtras(getIntent().getExtras());
             startActivity(intent);
 
+        } else if (id == R.id.btn_submit_1) {
+            // 下单送厨打
+            new SqlNetHandler().handleCommit1(CartDetailActivity.this, CartList.newInstance(this).getOrderNo());
+
         } else if (id == R.id.btn_all_order_remark) {
             TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance();
             fragment.show(getSupportFragmentManager(), null);
+
         }
+    }
+
+    /**
+     * 自动提交本地点单数据
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void autoSubmitData(CartAutoSubmit event) {
+        if (CartList.newInstance(this).getList().size() > 0) {
+            OrderNo orderNo = CartList.newInstance(this).getOrderNo();
+            new SqlNetHandler().handleCommit(CartDetailActivity.this, orderNo);
+        } else {
+            getWmlsb(CartList.newInstance(this).getOrderNo().getWmdbh());
+        }
+    }
+
+    private void getWmlsbjb(final String wmdbh) {
+        String sql = "select * from wmlsbjb where wmdbh = '" + wmdbh + "'|";
+        NetUtils.post6(Net.url, sql, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    Type type = new TypeToken<ArrayList<WMLSBJB>>() {
+                    }.getType();
+                    List<WMLSBJB> wmlsbjbList = new Gson().fromJson(response.body().string(), type);
+                    CartList.sWMLSBJB = wmlsbjbList.get(0);
+                    mLoadSuccess = true;
+
+                    autoSubmitData(null);
+
+                } catch (JsonSyntaxException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void getWmlsb(String wmdbh) {
+        String sql = "select * from wmlsb where wmdbh = '" + wmdbh + "'|";
+        NetUtils.post6(Net.url, sql, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    String result = response.body().string();
+
+                    result = result.replaceAll("&lt;", "<").replaceAll("&gt;", ">");
+                    Type type = new TypeToken<ArrayList<WMLSB>>() {
+                    }.getType();
+                    List<WMLSB> wmlsbList = new Gson().fromJson(result, type);
+                    for (WMLSB e : wmlsbList) {
+                        e.setRemote(1);
+                    }
+                    CartList.sWMLSBList = wmlsbList;
+
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateData();
+                        }
+                    });
+
+                } catch (JsonSyntaxException e) {
+                    e.printStackTrace();
+
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            CartList.sWMLSBList.clear();
+                            updateData();
+                        }
+                    });
+                }
+            }
+        });
     }
 }

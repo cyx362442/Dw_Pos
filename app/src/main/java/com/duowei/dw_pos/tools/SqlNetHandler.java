@@ -1,16 +1,14 @@
 package com.duowei.dw_pos.tools;
 
 import android.content.Context;
-import android.content.Intent;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
-import com.duowei.dw_pos.CartDetailActivity;
-import com.duowei.dw_pos.DinningActivity;
+import com.duowei.dw_pos.bean.OrderNo;
 import com.duowei.dw_pos.bean.Pbdyxxb;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
-import com.duowei.dw_pos.event.Commit;
+import com.duowei.dw_pos.event.CartRemoteUpdateEvent;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 
@@ -31,21 +29,18 @@ public class SqlNetHandler {
      * 提交订单
      *
      * @param context
-     * @param totalMoney 总的价格
-     * @param wmdbh
-     * @param first   true, 第一次提交；false，添加新的点单
+     * @param orderNo 单号
      */
-    public void handleCommit(final Context context, float totalMoney, String wmdbh, final boolean first) {
-        final CartDetailActivity activity = (CartDetailActivity) context;
-
-        CartList cartList = CartList.newInstance(context);
+    public void handleCommit(final Context context, final OrderNo orderNo) {
+        final CartList cartList = CartList.newInstance(context);
         String localSql = "";
 
-        if (first) {//第一次开单
+        if (!orderNo.isCreated()) {
+            // 第一次开单
             // 点单临时表基本信息WMLSBJB
             // 是否已结账
             mWmlsbjb = new WMLSBJB(
-                    wmdbh,
+                    orderNo.getWmdbh(),
                     Users.YHMC,
                     cartList.getOpenInfo().getDeskNo(),
                     "0", // 是否已结账
@@ -57,8 +52,9 @@ public class SqlNetHandler {
                     cartList.getOpenInfo().getRemark()
             );
             localSql += mWmlsbjb.toInsertString();
-        }else{//从服务器上load
-            mWmlsbjb=CartList.sWMLSBJB;
+        } else {
+            //从服务器上load
+            mWmlsbjb = CartList.sWMLSBJB;
         }
 
         // 点单临时表明细信息WMLSB
@@ -66,63 +62,102 @@ public class SqlNetHandler {
         mWmlsbList = cartList.getList();
         for (int i = 0; i < mWmlsbList.size(); i++) {
             WMLSB wmlsb = mWmlsbList.get(i);
-            wmlsb.setWMDBH(wmdbh);
+            wmlsb.setWMDBH(orderNo.getWmdbh());
             wmlsb.setSYYXM(Users.YHMC);
+            wmlsb.setSFYXD("0");  // 是否已下单
             insertWmlsbSqlSet += wmlsb.toInsertString();
         }
         localSql += insertWmlsbSqlSet;
 
         // 总的价格设置
-//        localSql += "update WMLSBJB " +
-//                "set YS = (select sum(XJ) from WMLSB where WMDBH = '" + wmdbh + "') " +
-//                "where wmdbh = '" + wmdbh + "'|";
-        localSql += "update WMLSBJB" +
-                " set YS = " + totalMoney +
-                " where wmdbh = '" + wmdbh + "'|";
+        localSql += "update WMLSBJB " +
+                "set YS = (select sum(XJ) from WMLSB where WMDBH = '" + orderNo.getWmdbh() + "') " +
+                "where wmdbh = '" + orderNo.getWmdbh() + "'|";
+//        localSql += "update WMLSBJB" +
+//                " set YS = " + totalMoney +
+//                " where wmdbh = '" + wmdbh + "'|";
 
-        if (first) {
-            // 平板打印信息表
-            String insertPbdyxxb = Pbdyxxb.toInsertString(
-                    wmdbh,
-                    cartList.getOpenInfo().getDeskNo(),
-                    Users.pad,
-                    cartList.getOpenInfo().getPeopleNum()
-            );
-            localSql += insertPbdyxxb;
-        } else {
-            // 平板打印信息表
-            String insertPbdyxxb = Pbdyxxb.toInsertString(
-                    wmdbh,
-                    CartList.sWMLSBJB.getZH(),
-                    Users.pad,
-                    CartList.sWMLSBJB.getJCRS()
-            );
-            localSql += insertPbdyxxb;
-        }
+//        if (!orderNo.isCreated()) {
+        // 平板打印信息表
+//        String insertPbdyxxb = Pbdyxxb.toInsertString(
+//                orderNo.getWmdbh(),
+//                cartList.getOpenInfo().getDeskNo(),
+//                Users.pad,
+//                cartList.getOpenInfo().getPeopleNum(),
+//                sfyxd
+//        );
+
+//        localSql += insertPbdyxxb;
+//        } else {
+//            // 平板打印信息表
+//            String insertPbdyxxb = Pbdyxxb.toInsertString(
+//                    orderNo.getWmdbh(),
+//                    CartList.sWMLSBJB.getZH(),
+//                    Users.pad,
+//                    CartList.sWMLSBJB.getJCRS(),
+//                    sfyxd
+//            );
+//            localSql += insertPbdyxxb;
+//        }
 
         DownHTTP.postVolley7(Net.url, localSql, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                activity.closeCommitDialog();
-
                 Toast.makeText(context, "网络错误", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onResponse(String response) {
-                activity.closeCommitDialog();
-
                 if (response.contains("richado")) {
                     Toast.makeText(context, "提交成功！", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(context, DinningActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    context.startActivity(intent);
 
-                    if(first){
-                        EventBus.getDefault().post(new Commit(first,mWmlsbjb));
-                    }else{
-                        EventBus.getDefault().post(new Commit(first,mWmlsbjb,mWmlsbList));
-                    }
+                    orderNo.setCreated(true);
+                    cartList.getList().clear(); // 清空本地没提交数据
+                    EventBus.getDefault().post(new CartRemoteUpdateEvent());
+
+//                    if (first) {
+//                        EventBus.getDefault().post(new Commit(first, mWmlsbjb));
+//                    } else {
+//                        EventBus.getDefault().post(new Commit(first, mWmlsbjb, mWmlsbList));
+//                    }
+                } else {
+                    Toast.makeText(context, "提交失败！", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    /**
+     * 下单送厨打
+     *
+     * @param context
+     * @param orderNo
+     */
+    public void handleCommit1(final Context context, OrderNo orderNo) {
+        String sql = "";
+
+        String insertPbdyxxb = Pbdyxxb.toInsertString(
+                orderNo.getWmdbh(),
+                CartList.sWMLSBJB.getZH(),
+                Users.pad,
+                CartList.sWMLSBJB.getJCRS(),
+                "1"
+        );
+        sql += insertPbdyxxb;
+
+        DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context, "网络错误", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(String response) {
+                if (response.contains("richado")) {
+                    Toast.makeText(context, "提交成功！", Toast.LENGTH_SHORT).show();
+
+                    EventBus.getDefault().post(new CartRemoteUpdateEvent());
+
                 } else {
                     Toast.makeText(context, "提交失败！", Toast.LENGTH_LONG).show();
                 }

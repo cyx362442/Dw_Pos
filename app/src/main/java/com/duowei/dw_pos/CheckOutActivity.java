@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.Moneys;
+import com.duowei.dw_pos.bean.OrderNo;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.bean.YHJBQK;
@@ -145,6 +146,8 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
         mWmdbh = getIntent().getStringExtra("WMDBH");
         mPrinter = Prints.getPrinter();
         mPrinter.bindPrintService(this, connService);
+
+        CartList.newInstance(this).setOrderNo(new OrderNo(mWmdbh, true));
     }
 
     @Override
