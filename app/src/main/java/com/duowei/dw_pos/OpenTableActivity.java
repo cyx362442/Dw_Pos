@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,9 +13,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.duowei.dw_pos.bean.OpenInfo;
+import com.duowei.dw_pos.bean.OrderNo;
 import com.duowei.dw_pos.dialog.CustomerDialog;
 import com.duowei.dw_pos.event.CustomerStytle;
 import com.duowei.dw_pos.tools.CartList;
+import com.duowei.dw_pos.tools.DateTimeUtils;
+import com.duowei.dw_pos.tools.Users;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -98,12 +100,16 @@ public class OpenTableActivity extends AppCompatActivity {
                     Toast.makeText(this, "请输入就餐人数", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                CartList.newInstance(this).setOpenInfo(new OpenInfo(
+
+                CartList cartList = CartList.newInstance(this);
+                cartList.setOpenInfo(new OpenInfo(
                         csmc,
                         customerStytle,
                         persons,
                         mEditText3.getText().toString()
                 ));
+
+                cartList.setOrderNo(new OrderNo(Users.pad + DateTimeUtils.getCurrentDatetime(), false));
 
                 Intent intent = new Intent(this, CashierDeskActivity.class);
                 startActivity(intent);

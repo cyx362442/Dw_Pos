@@ -7,6 +7,12 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="linearLayout_setting">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -129,5 +135,10 @@
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">#fff</item>
         <item name="android:background">@drawable/btn_ok</item>
+    </style>
+
+    <style name="SubmitButtonStyle">
+        <item name="android:background">@drawable/btn_submit</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Widget.Button.Borderless.Colored</item>
     </style>
 </resources>

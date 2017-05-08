@@ -11,6 +11,7 @@ import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.MZSZJBXX;
 import com.duowei.dw_pos.bean.MZSZMXXX;
 import com.duowei.dw_pos.bean.OpenInfo;
+import com.duowei.dw_pos.bean.OrderNo;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
 import com.duowei.dw_pos.event.AddPriceEvent;
@@ -38,8 +39,8 @@ public class CartList {
     private static final String TAG = "CartList";
 
     public static WMLSBJB sWMLSBJB;
-    public static List<WMLSB> sWMLSBList = new ArrayList<>();
-    private static List<WMLSB> mRemoveRemoteList = new ArrayList<>();
+    public static List<WMLSB> sWMLSBList = new ArrayList<>(); // 远程
+    private static List<WMLSB> mRemoveRemoteList = new ArrayList<>(); // 远程删除临时保存
 
     public String sql = "";
 
@@ -49,14 +50,16 @@ public class CartList {
 
     private static CartList mInstance;
 
-    private ArrayList<WMLSB> mList;
+    private ArrayList<WMLSB> mList = new ArrayList<>();
+    ;
 
     private OpenInfo mOpenInfo;
 
     private Context mContext;
 
+    private OrderNo mOrderNo;
+
     private CartList(Context context) {
-        mList = new ArrayList<>();
         mContext = context;
     }
 
@@ -66,6 +69,22 @@ public class CartList {
         }
 
         return mInstance;
+    }
+
+    /**
+     * @return 单号
+     */
+    public OrderNo getOrderNo() {
+        return mOrderNo;
+    }
+
+    /**
+     * 设置单号
+     *
+     * @param orderNo 单号
+     */
+    public void setOrderNo(OrderNo orderNo) {
+        mOrderNo = orderNo;
     }
 
     public ArrayList<WMLSB> getList() {
@@ -92,18 +111,21 @@ public class CartList {
 
         for (int i = 0; i < mList.size(); i++) {
             WMLSB wmlsb = mList.get(i);
-//            num += wmlsb.getSL();
             price += wmlsb.getDJ() * wmlsb.getSL();
 
             for (int j = 0; j < wmlsb.getSubWMLSBList().size(); j++) {
                 WMLSB subWmlsb1 = wmlsb.getSubWMLSBList().get(j);
-//                num += subWmlsb1.getSL();
                 num += wmlsb.getSubWMLSBList().size();
                 price += subWmlsb1.getDJ() * subWmlsb1.getSL();
             }
         }
 
-//        return new CartInfo(mList.size() + num, Float.valueOf(String.format(Locale.CHINA, "%.2f", price)));
+        for (int i = 0; i < sWMLSBList.size(); i++) {
+            WMLSB wmlsb = sWMLSBList.get(i);
+            price += wmlsb.getDJ() * wmlsb.getSL();
+        }
+        num += sWMLSBList.size();
+
         return new CartInfo(mList.size() + num, BigDecimal.valueOf(price).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue());
     }
 
@@ -334,7 +356,7 @@ public class CartList {
                 // 子项
                 WMLSB w = mList.get(i);
                 if (w.getTCBH().equals(wmlsb.getTCBH()) && !w.getBY15().equals("A")) {
-                    w.setSL(num);
+                    w.setSL(num * w.getDWSL());
                 }
             }
 
@@ -369,7 +391,7 @@ public class CartList {
      * 处理 单品 促销单明细信息CXDMXXX
      */
     private float processCxdmxxx(JYXMSZ jyxmsz) {
-        float xsjgzhj=jyxmsz.getXSJG();
+        float xsjgzhj = jyxmsz.getXSJG();
         hasCXDMXXX = false;
 
         CXDMXXX cxdmxxx = DataSupport.where("xmbh = ?", jyxmsz.getXMBH()).findFirst(CXDMXXX.class);
@@ -393,7 +415,7 @@ public class CartList {
                             if (!TextUtils.isEmpty(bz) && "1".equals(bz)) {
                                 // 赠送
 //                                jyxmsz.setXSJG(0);
-                                xsjgzhj=0;
+                                xsjgzhj = 0;
                                 Log.d(TAG, "processCxdmxxx: " + jyxmsz.getXMMC() + "赠送");
                                 hasCXDMXXX = true;
                             } else {
@@ -507,10 +529,9 @@ public class CartList {
             for (int i = 0; i < sWMLSBList.size(); i++) {
                 if ("赠送".equals(wmlsb.getBY13()) || "加价促销".equals(wmlsb.getBY13())) {
                     mRemoveRemoteSql += "update wmlsb " +
-                            "set sl = sl - 1 " +
+                            "set sl = sl - dwsl " +
                             "where xh = " + wmlsb.getXH() + "|";
 
-                    wmlsb.setSL(1);
                     mRemoveRemoteList.add(wmlsb);
                     break;
                 }
@@ -518,10 +539,9 @@ public class CartList {
                 WMLSB remote = sWMLSBList.get(i);
                 if (wmlsb == remote || wmlsb.getBy5().equals(remote.getZSSJ())) {
                     mRemoveRemoteSql += "update wmlsb " +
-                            "set sl = sl - 1 " +
+                            "set sl = sl - dwsl " +
                             "where wmdbh = '" + remote.getWMDBH() + "' and xh = " + remote.getXH() + "|";
 
-                    wmlsb.setSL(1);
                     mRemoveRemoteList.add(remote);
                 }
             }
@@ -530,10 +550,9 @@ public class CartList {
             if (!TextUtils.isEmpty(wmlsb.getBY21())) {
                 String by21 = wmlsb.getBY21().substring(2);
                 mRemoveRemoteSql += "update wmlsb " +
-                        "set sl = sl - 1 " +
+                        "set sl = sl - dwsl " +
                         "where xh = " + by21 + "|";
 
-                wmlsb.setSL(1);
                 mRemoveRemoteList.add(wmlsb);
             }
 
@@ -547,12 +566,6 @@ public class CartList {
                             "where wmdbh = '" + remote.getWMDBH() +
                             "' and tcbh = '" + remote.getTCBH() + "'" +
                             " and xh = " + remote.getXH() + "|";
-//
-                    if (remote.getSL() > remote.getDWSL()) {
-                        remote.setSL(remote.getDWSL());
-                    } else {
-                        remote.setSL(remote.getSL());
-                    }
                     mRemoveRemoteList.add(remote);
                 }
             }

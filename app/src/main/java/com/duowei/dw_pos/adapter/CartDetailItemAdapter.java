@@ -138,10 +138,8 @@ public class CartDetailItemAdapter extends BaseAdapter {
         holder.recycler_view_taste.setAdapter(null);
         holder.btn_edit.setVisibility(View.GONE);
 
-
         final WMLSB item = getItem(position);
 
-//        holder.tv_no.setText(String.valueOf(position + 1));
         holder.tv_no.setText(null);
 
         // 金额
@@ -157,7 +155,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
             if ("A".equals(item.getBY15())) {
                 // 主项
 //                holder.tv_no.setText(String.valueOf(mIndex++));
-                if (item.index == -1 ) {
+                if (item.index == -1) {
                     item.index = mIndex++;
                 }
                 holder.tv_no.setText(String.valueOf(item.index));
@@ -177,7 +175,12 @@ public class CartDetailItemAdapter extends BaseAdapter {
                         fragment.setOnOkBtnClickListener(new InputNumDialogFragment.OnOkBtnClickListener() {
                             @Override
                             public void onOkBtnClick(float inputValue) {
-                                CartList.newInstance(mActivity).modifyNum(item, inputValue);
+                                if (item.getRemote() == 1) {
+                                    item.setSL2(inputValue);
+
+                                } else {
+                                    CartList.newInstance(mActivity).modifyNum(item, inputValue);
+                                }
                             }
                         });
                     }
@@ -196,10 +199,10 @@ public class CartDetailItemAdapter extends BaseAdapter {
         } else {
             // 单品
 //            holder.tv_no.setText(String.valueOf(mIndex++));
-            if (item.index == -1 ) {
+            if (item.index == -1) {
                 item.index = mIndex++;
             }
-             holder.tv_no.setText(String.valueOf(item.index));
+            holder.tv_no.setText(String.valueOf(item.index));
 
             holder.tv_name.setText(item.getXMMC());
 
@@ -224,7 +227,12 @@ public class CartDetailItemAdapter extends BaseAdapter {
                         fragment.setOnOkBtnClickListener(new InputNumDialogFragment.OnOkBtnClickListener() {
                             @Override
                             public void onOkBtnClick(float inputValue) {
-                                CartList.newInstance(mActivity).modifyNum(item, inputValue);
+                                if (item.getRemote() == 1) {
+                                    item.setSL2(inputValue);
+
+                                } else {
+                                    CartList.newInstance(mActivity).modifyNum(item, inputValue);
+                                }
                             }
                         });
                     }
@@ -238,30 +246,46 @@ public class CartDetailItemAdapter extends BaseAdapter {
             setTasteShow(holder.recycler_view_taste, item.getPZ());
         }
 
+        // - 按钮
         holder.iv_remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CartList.newInstance(v.getContext()).remove(item);
+                if (item.getRemote() == 1) {
+                    if (item.getDWSL() > 0) {
+                        item.setSL(item.getSL() - item.getDWSL());
+                    } else {
+                        item.setSL(item.getSL() - 1);
+                    }
+
+                } else {
+                    CartList.newInstance(v.getContext()).remove(item);
+                }
             }
         });
 
+        // + 按钮
         holder.iv_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CartList.newInstance(v.getContext()).add(item);
+                if (item.getRemote() == 1) {
+                    if (item.getDWSL() > 0) {
+                        item.setSL(item.getSL() + item.getDWSL());
+                    } else {
+                        item.setSL(item.getSL() + 1);
+                    }
+
+                } else {
+                    CartList.newInstance(v.getContext()).add(item);
+                }
             }
         });
 
-        // 远程处理
-        if (item.getRemote() == 1) {
+        // 远程已下单处理
+        if ("1".equals(item.getSFYXD())) {
             holder.tv_name.setTextColor(Color.RED);
             holder.btn_taste.setVisibility(View.GONE);
             holder.iv_add.setEnabled(false);
             holder.btn_edit.setVisibility(View.GONE);
-
-            if ("加价促销".equals(item.getBY13())) {
-                holder.iv_remove.setEnabled(false);
-            }
 
             holder.iv_remove.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -288,6 +312,17 @@ public class CartDetailItemAdapter extends BaseAdapter {
                     }
                 }
             });
+
+        } else {
+            // 未下单
+        }
+
+        if ("加价促销".equals(item.getBY13())) {
+            holder.iv_remove.setEnabled(false);
+            holder.iv_add.setEnabled(false);
+
+        } else if ("赠送".equals(item.getBY13())) {
+            holder.iv_add.setEnabled(false);
         }
 
         return convertView;
@@ -296,17 +331,15 @@ public class CartDetailItemAdapter extends BaseAdapter {
     /**
      * @return 本地未下单数量
      */
-    public float getLocalNum() {
-        float num = 0;
+    public float getTotalNum() {
+        BigDecimal num = BigDecimal.valueOf(0);
 
         for (int i = 0; i < mAllList.size(); i++) {
             WMLSB w = mAllList.get(i);
-            if (w.getRemote() == 0) {
-                num += w.getSL();
-            }
+            num = num.add(new BigDecimal(w.getSL()));
         }
 
-        return num;
+        return num.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
     }
 
     /**
@@ -320,8 +353,24 @@ public class CartDetailItemAdapter extends BaseAdapter {
             total += w.getSL() * w.getDJ();
         }
 
-//        return Float.valueOf(String.format(Locale.CHINA, "%.2f", total));
         return BigDecimal.valueOf(total).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
+    }
+
+    /**
+     * @return true, 有未下单数据
+     */
+    public boolean hasUnOrder() {
+        boolean result = false;
+
+        for (int i = 0; i < mAllList.size(); i++) {
+            WMLSB w = mAllList.get(i);
+            if (!"1".equals(w.getSFYXD())) {
+                result = true;
+                break;
+            }
+        }
+
+        return result;
     }
 
     private void setTasteShow(RecyclerView recyclerView, String pz) {

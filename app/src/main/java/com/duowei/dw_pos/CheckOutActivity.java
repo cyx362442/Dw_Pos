@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,6 +19,7 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.Moneys;
+import com.duowei.dw_pos.bean.OrderNo;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.bean.YHJBQK;
@@ -38,8 +38,8 @@ import com.duowei.dw_pos.tools.SqlYun;
 import com.duowei.dw_pos.tools.Users;
 import com.google.gson.Gson;
 
-import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -145,6 +145,8 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
         mWmdbh = getIntent().getStringExtra("WMDBH");
         mPrinter = Prints.getPrinter();
         mPrinter.bindPrintService(this, connService);
+
+        CartList.newInstance(this).setOrderNo(new OrderNo(mWmdbh, true));
     }
 
     @Override

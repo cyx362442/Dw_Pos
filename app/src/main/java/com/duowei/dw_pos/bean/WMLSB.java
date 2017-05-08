@@ -2,12 +2,23 @@ package com.duowei.dw_pos.bean;
 
 import android.text.TextUtils;
 
+import com.duowei.dw_pos.event.CartRemoteUpdateEvent;
+import com.duowei.dw_pos.httputils.NetUtils;
+import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.DateTimeUtils;
+import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.Users;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 /**
  * Created by Administrator on 2017-03-24.
@@ -74,6 +85,14 @@ public class WMLSB implements Serializable {
     private float DWSL;
 
     private int remote = 0;
+
+    /**
+     * 远程 数量 修改（套餐子项使用）
+     * 1:增加 -1：减少 0：不变
+     */
+    private int addOrRemove = 0;
+
+    private float weight = 1;
 
     /** 买赠 加价 使用字段 */
     private List<WMLSB> mSubWMLSBList = new ArrayList<>();
@@ -151,7 +170,25 @@ public class WMLSB implements Serializable {
     }
 
     public void setSL(float SL) {
+        float prevSl = this.SL;
         this.SL = SL;
+        if (SL > prevSl) {
+            addOrRemove = 1;
+        } else if (SL < prevSl) {
+            addOrRemove = -1;
+        } else {
+            addOrRemove = 0;
+        }
+
+        updateRemoteSl(false);
+    }
+
+    /**
+     * 修改数量倍数
+     */
+    public void setSL2(float weight) {
+        this.weight = weight;
+        updateRemoteSl(true);
     }
 
     public float getDJ() {
@@ -178,6 +215,7 @@ public class WMLSB implements Serializable {
 
     public void setPZ(String PZ) {
         this.PZ = PZ;
+        updateRemotePz();
     }
 
     public String getTCBH() {
@@ -425,7 +463,7 @@ public class WMLSB implements Serializable {
         }
 
         String mainSql = "INSERT INTO WMLSB (WMDBH,           XMBH,           XMMC,           TM,           DW,          SL,         DJ,                           XJ,          PZ,                TCBH,             SFYXD, XSZT, FTJE,        YSJG,           SFZS,              SYYXM,      SQRXM, ZSSJ,            DWSL,           sfxs,      by1,            by2,            by3,        by4,   by5,      SJC,  BY6,  BY7,  BY8,  BY9,  BY10, BY11,         TCXMBH,             BY12,               BY13, PBJSJM, PBXH, BY14,     BY15,       BY16,        BY17,                 BY18,     BY19, BY20, BY21, BY22, BY23, BY24, BY25) " +
-                "               VALUES ('" + WMDBH + "', '" + XMBH + "', '" + XMMC + "', '" + TM + "', '" + DW + "', " + SL + ", " + DJ + ", " + getDJ() * getSL() + ", '" + getPZ() + "', '" + getTCBH() + "', '" + SFYXD + "', '', null, " + YSJG + ", '" + getSFZS() + "', '" + SYYXM + "', null, " + getZSSJ() + ", " + DWSL + ", '" + sfxs + "', null, '" + by2 + "', " + getBY3() + ", null, GETDATE(), null, null, null, null, null, null, null, '" + getTCXMBH() + "', '"+ getBY12() +"', '" + getBY13() + "', null, null, null, '" + getBY15() + "', null, '" + getBY17() + "', '" + getBY18() + "', null, null, '" + getBY21() + "', null, null, null, null)|";
+                "               VALUES ('" + WMDBH + "', '" + XMBH + "', '" + XMMC + "', '" + TM + "', '" + DW + "', " + SL + ", " + DJ + ", " + getDJ() * getSL() + ", '" + getPZ() + "', '" + getTCBH() + "', '" + SFYXD + "', '', null, " + YSJG + ", '" + getSFZS() + "', '" + SYYXM + "', null, " + getZSSJ() + ", " + DWSL + ", '" + sfxs + "', null, '" + by2 + "', " + getBY3() + ", null, GETDATE(), null, null, null, null, null, null, null, '" + getTCXMBH() + "', '" + getBY12() + "', '" + getBY13() + "', null, null, null, '" + getBY15() + "', null, '" + getBY17() + "', '" + getBY18() + "', null, null, '" + getBY21() + "', null, null, null, null)|";
 
         if (mSubWMLSBList.size() > 0) {
             // 有加价促销项
@@ -468,5 +506,161 @@ public class WMLSB implements Serializable {
                 "                                                                               where wmdbh = '" + wmdbh + "') a " +
                 "where wmdbh = '" + wmdbh + "' and isnull(by21, '') <> '' and isnull(wmlsb.by18, '') <> '' and " +
                 "      replace(replace(by21, '1-', ''), '2-', '') = a.by18|";
+    }
+
+    // ------------------------------------------------
+    // ------   远程未下单打印数据修改  -----------------
+    // ------------------------------------------------
+
+    /**
+     * 更新数量
+     *
+     * @param isWeight 倍数
+     */
+    private void updateRemoteSl(boolean isWeight) {
+        if (getRemote() == 1) {
+            String sql = "";
+
+            if (isWeight) {
+                // 倍数
+                sql += "update wmlsb set sl = " + weight + " where xh = " + XH + "|";
+                if (!TextUtils.isEmpty(TCBH)) {
+                    // 套餐子项数量修改
+                    if (DWSL <= 0) {
+                        DWSL = 1;
+                    }
+                    sql += "update wmlsb set sl = " + (weight * DWSL) + " where tcbh = '" + TCBH + "' and BY15 != 'A' and BY15 != ''|";
+
+                } else {
+                    // 单品
+                    sql += handleSingle(sql, isWeight);
+                }
+
+            } else {
+                sql += "update wmlsb set sl = " + SL + " where xh = " + XH + "|";
+                if (!TextUtils.isEmpty(TCBH)) {
+                    // 套餐子项数量修改
+                    if (addOrRemove == 1) {
+                        sql += "update wmlsb set sl = sl + isnull(DWSL, 1) where tcbh = '" + TCBH + "' and BY15 != 'A' and BY15 != ''|";
+
+                    } else if (addOrRemove == -1) {
+                        sql += "update wmlsb set sl = sl - isnull(DWSL, 1) where tcbh = '" + TCBH + "' and BY15 != 'A' and BY15 != ''|";
+
+                    }
+
+                } else {
+                    // 单品
+                    sql += handleSingle(sql, isWeight);
+                }
+            }
+
+            sql += "delete from wmlsb where sl <= 0 and wmdbh = '" + WMDBH + "'|";
+            sql += "update wmlsb set xj = sl * dj where wmdbh = '" + WMDBH + "'|";
+            sql += "update WMLSBJB set YS = (select sum(XJ) from WMLSB where WMDBH = '" + WMDBH + "') where wmdbh = '" + WMDBH + "'|";
+            updateRemoteSql(sql);
+        }
+    }
+
+    /**
+     * 处理单品优惠
+     *
+     * @param sql
+     * @param isWeight
+     */
+    private String handleSingle(String sql, boolean isWeight) {
+        List<WMLSB> wmlsbList = CartList.sWMLSBList;
+        if (isWeight) {
+            // 数量修改
+            if (!TextUtils.isEmpty(getBY21())) {
+                // 加价促销
+                String xh = getBY21().substring(2, getBY21().length());
+                sql += "update wmlsb" +
+                        " set sl = isnull(DWSL, 1) * " + weight +
+                        " where xh = " + xh + "|";
+
+                return sql;
+            }
+
+            // 赠送处理
+            if (wmlsbList != null) {
+                for (int i = 0; i < wmlsbList.size(); i++) {
+                    WMLSB w = wmlsbList.get(i);
+                    if (!XH.equals(w.getXH()) && by5.equals(w.getBy5())) {
+                        sql += "update wmlsb" +
+                                " set sl = sl - isnull(DWSL, 1)" +
+                                " where xh = " + w.getXH() + "|";
+                        break;
+                    }
+                }
+            }
+
+        } else {
+            float dwsl = 0;
+            if (getDWSL() <= 0) {
+                setDWSL(1);
+            }
+            if (addOrRemove == 1) {
+                dwsl = getDWSL();
+            } else if (addOrRemove == -1) {
+                dwsl = -getDWSL();
+            }
+
+
+            if (!TextUtils.isEmpty(getBY21())) {
+                // 加价促销
+                String xh = getBY21().substring(2, getBY21().length());
+                sql += "update wmlsb" +
+                        " set sl = sl + " + dwsl +
+                        " where xh = " + xh + "|";
+
+                return sql;
+            }
+
+            // 赠送处理
+            if (wmlsbList != null) {
+                for (int i = 0; i < wmlsbList.size(); i++) {
+                    WMLSB w = wmlsbList.get(i);
+                    if (!XH.equals(w.getXH()) && by5.equals(w.getBy5())) {
+
+                        if (addOrRemove == 1) {
+                            sql += "update wmlsb" +
+                                    " set sl = sl + isnull(DWSL, 1)" +
+                                    " where xh = " + w.getXH() + "|";
+
+                        } else if (addOrRemove == -1) {
+                            sql += "update wmlsb" +
+                                    " set sl = sl - isnull(DWSL, 1)" +
+                                    " where xh = " + w.getXH() + "|";
+                        }
+
+                        return sql;
+                    }
+                }
+            }
+        }
+        return sql;
+    }
+
+    private void updateRemotePz() {
+        if (getRemote() == 1 && !"1".equals(getSFYXD())) {
+            String sql = "update wmlsb set pz = '" + PZ + "' where xh = " + XH + "|";
+            updateRemoteSql(sql);
+        }
+    }
+
+    private void updateRemoteSql(String sql) {
+        NetUtils.post7(Net.url, sql, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
+                if (result.contains("richado")) {
+                    EventBus.getDefault().post(new CartRemoteUpdateEvent());
+                }
+            }
+        });
     }
 }

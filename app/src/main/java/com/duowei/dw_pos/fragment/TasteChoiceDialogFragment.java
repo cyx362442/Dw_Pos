@@ -24,6 +24,7 @@ import com.duowei.dw_pos.bean.DMKWDYDP;
 import com.duowei.dw_pos.bean.DMPZSD;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.WMLSB;
+import com.duowei.dw_pos.event.CartAutoSubmit;
 import com.duowei.dw_pos.event.CartUpdateEvent;
 import com.duowei.dw_pos.tools.CartList;
 
@@ -268,14 +269,11 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
         }
 
         if (mMode == 1) {
-            List<WMLSB> wmlsbList = CartList.newInstance(mContext).getList();
+            List<WMLSB> wmlsbList = CartList.sWMLSBList;
             for (int i = 0; i < wmlsbList.size(); i++) {
                 WMLSB wmlsb = wmlsbList.get(i);
-                wmlsb.setPZ("" + wmlsb.getPZ() + sb.toString());
-
-                for (int j = 0; j < wmlsb.getSubWMLSBList().size(); j++) {
-                    WMLSB subWmlsb1 = wmlsb.getSubWMLSBList().get(j);
-                    subWmlsb1.setPZ("" + subWmlsb1.getPZ() + sb.toString());
+                if (!"1".equals(wmlsb.getSFYXD())) {
+                    wmlsb.setPZ("" + wmlsb.getPZ() + sb.toString());
                 }
             }
 
@@ -292,6 +290,7 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
                     JYXMSZ jyxmsz = DataSupport.where("xmbh = ?", xmbh).findFirst(JYXMSZ.class);
                     if (jyxmsz != null) {
                         CartList.newInstance(mContext).add(jyxmsz);
+                        EventBus.getDefault().post(new CartAutoSubmit());
                     }
                 }
             }
