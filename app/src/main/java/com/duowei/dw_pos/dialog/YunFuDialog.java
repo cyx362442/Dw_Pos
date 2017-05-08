@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.duowei.dw_pos.R;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 
 /**
@@ -90,7 +91,7 @@ public class YunFuDialog implements View.OnClickListener{
         mContents.setText(content);
         mTitle.setFocusableInTouchMode(true);
         if(title.equals("储值卡消费")){
-            mEtInput.setText(String.format(Locale.CANADA, "%.2f", money));
+            mEtInput.setText(bigDecimal(money)+"");
         }else if(title.equals("电子券消费")){
             mEtInput.setText((int)money+"");
         }
@@ -104,9 +105,10 @@ public class YunFuDialog implements View.OnClickListener{
                 break;
             case R.id.btn_confirm:
                 String trim = mEtInput.getText().toString().trim();
+                float v = Float.parseFloat(trim);
                 /**储值卡*/
                 if(payStytle==0){
-                    if(Float.parseFloat(trim)>money){
+                    if(bigDecimal(v)>bigDecimal(money)){
                         Toast.makeText(context,"输入金额过大",Toast.LENGTH_SHORT).show();
                     }else{
                         listener.getDialogInput(trim,payStytle);
@@ -121,5 +123,8 @@ public class YunFuDialog implements View.OnClickListener{
                 }
                 break;
         }
+    }
+    public  Float bigDecimal(Float f){
+        return BigDecimal.valueOf(f).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
     }
 }

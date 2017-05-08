@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.WMLSB;
+import com.duowei.dw_pos.event.ChangeTable;
 import com.duowei.dw_pos.event.OrderUpdateEvent;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.Net;
@@ -40,5 +41,20 @@ public class Post7 {
             }
         });
         return result;
+    }
+    /**转台*/
+    public void ChangeTable(String table,String wmdbh){
+        String sql="update wmlsbjb set zh='"+table+"' where WMDBH='"+wmdbh+"'|";
+        DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+            @Override
+            public void onResponse(String response) {
+                if(response.contains("richado")){
+                    EventBus.getDefault().post(new ChangeTable());
+                }
+            }
+        });
     }
 }

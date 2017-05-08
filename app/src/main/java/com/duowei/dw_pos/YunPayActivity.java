@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,6 +17,8 @@ import com.duowei.dw_pos.bean.WXFWQDZ;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.bean.YunFu;
 import com.duowei.dw_pos.event.ImsCardCouponStores;
+import com.duowei.dw_pos.event.YunSubmit;
+import com.duowei.dw_pos.event.YunSubmitFail;
 import com.duowei.dw_pos.fragment.YunAccountFragment;
 import com.duowei.dw_pos.fragment.YunCardFragment;
 import com.duowei.dw_pos.fragment.YunPayFragment;
@@ -34,7 +35,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class YunPayActivity extends AppCompatActivity implements YunCardFragment.GvClickListener {
 
@@ -71,7 +71,7 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         WXFWQDZ wxfwqdz = DataSupport.select("weid", "bmbh").findFirst(WXFWQDZ.class);
         int weid = wxfwqdz.getWeid();
         String bmbh = wxfwqdz.getBMBH();
-        mProgressBar.setVisibility(View.VISIBLE);
+        mProgressBar.bringToFront();
         Post6.getInstance().post_ims_card_coupon_stores(weid, bmbh, mImsCards.getFrom_user());
     }
 
@@ -97,7 +97,6 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
     @Subscribe
     public void getImsCards(ImsCardCouponStores event) {
         String respone = event.reslut;
-        Log.e("respone====",respone);
         if (!respone.equals("error")) {
             mYunList.clear();
             addImsCardData();
@@ -113,7 +112,14 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         }
         mProgressBar.setVisibility(View.GONE);
     }
-
+    @Subscribe
+    public void yunSubmit(YunSubmit event){
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+    @Subscribe
+    public void yunSubmitFail(YunSubmitFail event){
+        mProgressBar.setVisibility(View.GONE);
+    }
     private void toYunAccountFragment() {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();

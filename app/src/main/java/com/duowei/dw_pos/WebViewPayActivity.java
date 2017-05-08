@@ -42,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
+import java.math.BigDecimal;
 import java.util.Random;
 
 import butterknife.BindView;
@@ -137,7 +138,7 @@ public class WebViewPayActivity extends AppCompatActivity {
                 mID = DateTimes.getTime() + number;
                 chaUrl = "http://pay.wxdw.top/aipay/f2fpay/query.php?out_trade_no=" + mID + "&appid=" + mPid;
                 ysturl = "http://%s/aipay/f2fpay/qrpay.php?appid=%s&out_trade_no=%s&subject=%s&store_id=%s&total_amount=%s";
-                ysturl = String.format(ysturl, mFwqdz, mPid, mID, mBy1 + mBy2, mBy1, Moneys.wfjr);
+                ysturl = String.format(ysturl, mFwqdz, mPid, mID, mBy1 + mBy2, mBy1, bigDecimal(Moneys.wfjr));
                 startWebView("支付宝");
             }
         }else if(mPayStytle.equals("微信")){
@@ -158,13 +159,13 @@ public class WebViewPayActivity extends AppCompatActivity {
                 //支付过的wmdbh不会显示图片
                 chaUrl=String .format(chaUrl,"yst","pay",mID,mBy3);
                 ysturl = "http://%s/yst/pay/native_dynamic_qrcode.php?weid=%s&orderid=%s&money=%s&name=%s";
-                ysturl = String.format(ysturl,mFwqdz,mBy3,mID, Moneys.wfjr,mBy1+mBy2);
+                ysturl = String.format(ysturl,mFwqdz,mBy3,mID,bigDecimal(Moneys.wfjr),mBy1+mBy2);
             }else
             {
                 //如果是服务商接口调用这个
                 chaUrl=String .format(chaUrl,"bs","wxzf",mID,mBy3);
                 ysturl =  "http://%s/dl/sys/demo/native_dynamic_qrcode.php?weid=%s&orderid=%s&money=%s&name=%s";
-                ysturl = String.format(ysturl,mFwqdz,mBy3,mID,Moneys.wfjr,mBy1+mBy2);
+                ysturl = String.format(ysturl,mFwqdz,mBy3,mID,bigDecimal(Moneys.wfjr),mBy1+mBy2);
             }
             startWebView("微信");
         }
@@ -274,11 +275,11 @@ public class WebViewPayActivity extends AppCompatActivity {
         String url = "";
         String insertXSFKFS = "insert into XSFKFS(XSDH,BM,NR,FKJE,DYQZS) values ('" + mItem.getWMDBH() + "','" + mBm + "','" + nr + "'," + mItem.getYS() + ",0)|";
         String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS,DDSJ,JYSJ,BZ,JZFSBM,BMMC,WMBS,ZH,KHBH,QKJE,JCRS,CZKYE,BY7,CXYH)" +
-                "VALUES('" + mItem.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣','" + Moneys.xfzr + "','" + Moneys.zkjr + "',0,'" + mItem.getYS() + "',0,'" + mItem.getZKFS() + "'," +
+                "VALUES('" + mItem.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣','" + bigDecimal(Moneys.xfzr) + "','" + bigDecimal(Moneys.zkjr) + "',0,'" + mItem.getYS() + "',0,'" + mItem.getZKFS() + "'," +
                 "'" + mItem.getJYSJ() + "',GETDATE(),'"+mPad+"','" + mItem.getJcfs() + "','','" + prk + "','" + mItem.getZH() + "',0,0,'" + mItem.getJCRS() + "',0,'','" + mID + "')|";
         String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
                 "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mItem.getWMDBH() + "'|";
-        String updateWMLSBJB = "update WMLSBJB set JSJ='"+mPad+"',SFYJZ='1',DJLSH='" + prk + "',BY13='" + mID + "',BY16='" + ZFBID + "',YSJE='" + Moneys.xfzr + "',JSKSSJ=getdate() where WMDBH='" + mItem.getWMDBH() + "'|";
+        String updateWMLSBJB = "update WMLSBJB set JSJ='"+mPad+"',SFYJZ='1',DJLSH='" + prk + "',BY13='" + mID + "',BY16='" + ZFBID + "',YSJE='" + bigDecimal(Moneys.xfzr) + "',JSKSSJ=getdate() where WMDBH='" + mItem.getWMDBH() + "'|";
         url = insertXSFKFS + insertXSJBXX + insertXSMXXX + updateWMLSBJB;
         Http_local(payStytle, url);
     }
@@ -336,6 +337,9 @@ public class WebViewPayActivity extends AppCompatActivity {
         }else if(flag==true){
             CloseActivity.finishActivity();
         }
+    }
+    public  Float bigDecimal(Float f){
+        return BigDecimal.valueOf(f).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
     }
     @Override
     protected void onDestroy() {

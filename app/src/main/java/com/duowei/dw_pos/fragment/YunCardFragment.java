@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,16 +25,20 @@ import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.bean.YunFu;
 import com.duowei.dw_pos.dialog.YunFuDialog;
 import com.duowei.dw_pos.event.YunSqlFinish;
+import com.duowei.dw_pos.event.YunSubmit;
+import com.duowei.dw_pos.event.YunSubmitFail;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.SqlYun;
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.litepal.crud.DataSupport;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -362,11 +365,12 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                 if(listYunPayFragment.size()<=0){
                     Toast.makeText(getActivity(),"请选择付款方式",Toast.LENGTH_SHORT).show();
                     return;
-                }else if(Moneys.wfjr>0){
+                }else if(bigDecimal(Moneys.wfjr)>0){
                     Toast.makeText(getActivity(),"金额不足",Toast.LENGTH_SHORT).show();
                     return;
                 }
                 mConfirm.setEnabled(false);
+                EventBus.getDefault().post(new YunSubmit());
                 for(int i=0;i<listYunPayFragment.size();i++){
                     YunFu yunFu = listYunPayFragment.get(i);
                     saveSqlData(yunFu);
@@ -390,6 +394,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                         }else{
                             sqlCZXF=sql2+sql3;
                         }
+                        SqlYun.jfbfb_add=mJfbfb;
                         //插入sqlserver
                         sqlXSFKFS1="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"','999999999','云会员-储值消费',"+yunFu.money+",0)|";
                         sqlCZKJYMXXX="INSERT INTO CZKJYMXXX(HYKH,JYSJ,JYLX,CZQJE,KCZJE,SSJE,KYE,KCZXL,SYJH,YHBH,BY3)" +
@@ -407,6 +412,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                         sqlJFXF=sql4+sql5;
                         //插入sqlserver
                         sqlXSFKFS2="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"','999999998','云会员-积分消费',"+yunFu.money+",0)|";
+                        SqlYun.jfbfb_sub=by3;
                     }
                         /**
                          * 各种电子券消费
@@ -501,10 +507,11 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         @Override
         protected void onPostExecute(String result) {
             if (result.contains("richado")) {
-                org.greenrobot.eventbus.EventBus.getDefault().post(new YunSqlFinish(mSqlLocal,mListWmlsb,mWmlsbjb));
+                EventBus.getDefault().post(new YunSqlFinish(mSqlLocal,mListWmlsb,mWmlsbjb,listYunPayFragment));
                 getActivity().finish();
             }else{
                 mConfirm.setEnabled(true);
+                EventBus.getDefault().post(new YunSubmitFail());
                Toast.makeText(getActivity(),"数据提交失败",Toast.LENGTH_SHORT).show();
             }
             super.onPostExecute(result);
@@ -520,8 +527,10 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         SqlYun.CZKYE=yunFu.credit2-Moneys.yfjr;
         SqlYun.HYBH=yunFu.cardsn;
         SqlYun.HYKDJ=yunFu.cardgrade;
-        SqlYun.jfbfb=mJfbfb;
         SqlYun.from_user=yunFu.fromUser;
         SqlYun.JZBZ=mDeal_id;
+    }
+    public  Float bigDecimal(Float f){
+        return BigDecimal.valueOf(f).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
     }
 }

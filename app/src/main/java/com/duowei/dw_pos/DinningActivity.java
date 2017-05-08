@@ -21,8 +21,10 @@ import com.android.volley.VolleyError;
 import com.duowei.dw_pos.adapter.MyGridAdapter;
 import com.duowei.dw_pos.bean.JYCSSZ;
 import com.duowei.dw_pos.bean.TableUse;
+import com.duowei.dw_pos.event.ChangeTable;
 import com.duowei.dw_pos.event.FinishEvent;
 import com.duowei.dw_pos.httputils.DownHTTP;
+import com.duowei.dw_pos.httputils.Post7;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.tools.Users;
 import com.google.gson.Gson;
@@ -53,6 +55,9 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     private Handler mHandler;
     private Runnable mRun;
     private String mCsbh;
+    private final int REQUESTCODE=100;
+//    private int changeCode=0;
+    private String mWmdbh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +80,12 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         mGv.setOnItemClickListener(this);
     }
 
-    @Subscribe
-    public void finishActivity(FinishEvent event){
-        Log.e("event=====","关闭……");
-        finish();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+       if(requestCode==REQUESTCODE&&resultCode==CheckOutActivity.RESURTCODE){
+           mWmdbh = data.getStringExtra("wmdbh");
+       }
     }
 
     @Override
@@ -106,6 +113,15 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         },5000);
     }
 
+    @Subscribe
+    public void finishActivity(FinishEvent event){
+        finish();
+    }
+    @Subscribe
+    public void changeTable(ChangeTable event){
+        Http_TalbeUse();
+        mWmdbh=null;
+    }
     private void brushTable() {
         DownHTTP.postVolley6(mUrl, sqlUse, new VolleyResultListener() {
             @Override
@@ -194,19 +210,27 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
             @Override
             public void onResponse(String response) {
                 if(response.equals("]")){//餐桌未占用
-                    mIntent = new Intent(DinningActivity.this, OpenTableActivity.class);
-                    mIntent.putExtra("csmc",csmc);
-                    startActivity(mIntent);
+                    if(mWmdbh!=null){//转台
+                        Post7.getInstance().ChangeTable(csmc+",",mWmdbh);
+                    }else{
+                        mIntent = new Intent(DinningActivity.this, OpenTableActivity.class);
+                        mIntent.putExtra("csmc",csmc);
+                        startActivity(mIntent);
+                    }
                 }else{//餐桌己被占用，获取相关信息
-                    try {
-                        JSONArray jsonArray = new JSONArray(response);
-                        JSONObject jsonObject = jsonArray.getJSONObject(0);
-                        String wmdbh = jsonObject.getString("WMDBH");//单据编号
-                        Intent intent = new Intent(DinningActivity.this, CheckOutActivity.class);
-                        intent.putExtra("WMDBH",wmdbh);
-                        startActivity(intent);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    if(mWmdbh!=null){//转台
+                        Toast.makeText(DinningActivity.this,"此餐桌己被占用，请选择其它餐桌",Toast.LENGTH_SHORT).show();
+                    }else{
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+                            String wmdbh = jsonObject.getString("WMDBH");//单据编号
+                            Intent intent = new Intent(DinningActivity.this, CheckOutActivity.class);
+                            intent.putExtra("WMDBH",wmdbh);
+                            startActivityForResult(intent,REQUESTCODE);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -237,6 +261,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         if(mHandler!=null){
             mHandler.removeCallbacks(mRun);
         }
+       mWmdbh=null;
     }
 
     @Override
