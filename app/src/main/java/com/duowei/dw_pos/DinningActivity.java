@@ -117,6 +117,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     public void finishActivity(FinishEvent event){
         finish();
     }
+    /**转台后刷新*/
     @Subscribe
     public void changeTable(ChangeTable event){
         Http_TalbeUse();
