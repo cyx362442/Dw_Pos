@@ -3,6 +3,7 @@ package com.duowei.dw_pos.tools;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -43,12 +44,17 @@ public class AnimUtils {
         this.PX = PX;
     }
 
-    public void doAnim(FrameLayout animation_viewGroup, ImageView image, Drawable drawable, int[] start_location){
+    public void doAnim(final FrameLayout animation_viewGroup, ImageView image, Drawable drawable, int[] start_location){
         if(!isClean){
             setAnim(animation_viewGroup,image,drawable,start_location);
         }else{
             try{
-                animation_viewGroup.removeAllViews();
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        animation_viewGroup.removeAllViews();
+                    }
+                });
                 isClean = false;
                 setAnim(animation_viewGroup,image,drawable,start_location);
             }catch(Exception e){
