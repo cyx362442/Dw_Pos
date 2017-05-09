@@ -2,6 +2,7 @@ package com.duowei.dw_pos;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -14,18 +15,26 @@ import android.widget.Toast;
 
 import com.duowei.dw_pos.bean.OpenInfo;
 import com.duowei.dw_pos.bean.OrderNo;
+import com.duowei.dw_pos.bean.WMLSBJB;
 import com.duowei.dw_pos.dialog.CustomerDialog;
 import com.duowei.dw_pos.event.CustomerStytle;
+import com.duowei.dw_pos.httputils.NetUtils;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.DateTimeUtils;
+import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.Users;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.IOException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class OpenTableActivity extends AppCompatActivity {
 
@@ -47,6 +56,8 @@ public class OpenTableActivity extends AppCompatActivity {
     @BindView(R.id.llcustomer)
     LinearLayout mLlcustomer;
     private String customerStytle="";
+
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +122,8 @@ public class OpenTableActivity extends AppCompatActivity {
 
                 cartList.setOrderNo(new OrderNo(Users.pad + DateTimeUtils.getCurrentDatetime(), false));
 
+                httpCreateWmlsbjb();
+
                 Intent intent = new Intent(this, CashierDeskActivity.class);
                 startActivity(intent);
                 finish();
@@ -120,5 +133,42 @@ public class OpenTableActivity extends AppCompatActivity {
 
     @OnClick(R.id.llcustomer)
     public void onViewClicked() {
+    }
+
+    private void httpCreateWmlsbjb() {
+        OpenInfo openInfo = CartList.newInstance(this).getOpenInfo();
+        OrderNo orderNo = CartList.newInstance(this).getOrderNo();
+
+        final WMLSBJB wmlsbjb = new WMLSBJB(
+                orderNo.getWmdbh(),
+                Users.YHMC,
+                openInfo.getDeskNo(),
+                "0", // 是否已结账
+                Users.pad,
+                openInfo.getPeopleNum(),
+                0,
+                "1",
+                openInfo.getPeopleType(),
+                openInfo.getRemark()
+        );
+
+        NetUtils.post7(Net.url, wmlsbjb.toInsertString(), new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
+                if (result.equals("]")) {
+                    return;
+                }
+
+                if (result.contains("richado")) {
+                    CartList.sWMLSBJB = wmlsbjb;
+                }
+            }
+        });
     }
 }

@@ -23,6 +23,7 @@ import com.duowei.dw_pos.tools.CartList;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * 购物车
@@ -98,7 +99,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         getActivity().registerReceiver(mBroadcastReceiver, myIntentFilter);
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateUiDate(CartUpdateEvent event) {
         CartInfo cartInfo = CartList.newInstance(getContext()).getCartInfo();
 

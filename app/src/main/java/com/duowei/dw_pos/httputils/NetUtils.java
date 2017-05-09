@@ -56,12 +56,10 @@ public class NetUtils {
             mClient.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
-                    // nothing
                 }
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
-                    // nothing
                 }
             });
         }

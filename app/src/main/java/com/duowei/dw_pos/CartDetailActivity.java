@@ -190,6 +190,10 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         } else {
             mSubmit1Button.setEnabled(false);
         }
+
+        if (CartList.sWMLSBJB == null) {
+            getWmlsbjb(CartList.newInstance(this).getOrderNo().getWmdbh());
+        }
     }
 
     @Subscribe
@@ -209,7 +213,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
 
         } else if (id == R.id.btn_submit_1) {
             // 下单送厨打
-            new SqlNetHandler().handleCommit1(CartDetailActivity.this, CartList.newInstance(this).getOrderNo());
+            new SqlNetHandler().handleCommit1(mHandler, CartDetailActivity.this, CartList.newInstance(this).getOrderNo());
 
         } else if (id == R.id.btn_all_order_remark) {
             TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance();
@@ -225,10 +229,11 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     public void autoSubmitData(CartAutoSubmit event) {
         if (CartList.newInstance(this).getList().size() > 0) {
             OrderNo orderNo = CartList.newInstance(this).getOrderNo();
-            new SqlNetHandler().handleCommit(CartDetailActivity.this, orderNo);
+            new SqlNetHandler().handleCommit(mHandler, CartDetailActivity.this, orderNo);
         } else {
             getWmlsb(CartList.newInstance(this).getOrderNo().getWmdbh());
         }
+
     }
 
     private void getWmlsbjb(final String wmdbh) {

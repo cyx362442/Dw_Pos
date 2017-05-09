@@ -169,6 +169,10 @@ public class WMLSB implements Serializable {
         return SL;
     }
 
+    public void setLocalSL(float SL) {
+        this.SL = SL;
+    }
+
     public void setSL(float SL) {
         float prevSl = this.SL;
         this.SL = SL;
