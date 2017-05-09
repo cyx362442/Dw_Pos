@@ -1,12 +1,9 @@
 package com.duowei.dw_pos.tools;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.duowei.dw_pos.application.MyApplication;
 import com.duowei.dw_pos.bean.AddTcsdItem;
 import com.duowei.dw_pos.bean.CXDMXXX;
 import com.duowei.dw_pos.bean.CartInfo;
@@ -112,13 +109,24 @@ public class CartList {
         int num = 0;
         float price = 0;
 
+        for (int i = 0; i < mList.size(); i++) {
+            WMLSB wmlsb = mList.get(i);
+            price += wmlsb.getDJ() * wmlsb.getSL();
+
+            for (int j = 0; j < wmlsb.getSubWMLSBList().size(); j++) {
+                WMLSB subWmlsb1 = wmlsb.getSubWMLSBList().get(j);
+                num += wmlsb.getSubWMLSBList().size();
+                price += subWmlsb1.getDJ() * subWmlsb1.getSL();
+            }
+        }
+
         for (int i = 0; i < sWMLSBList.size(); i++) {
             WMLSB wmlsb = sWMLSBList.get(i);
             price += wmlsb.getDJ() * wmlsb.getSL();
         }
         num += sWMLSBList.size();
 
-        return new CartInfo(num, BigDecimal.valueOf(price).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue());
+        return new CartInfo(mList.size() + num, BigDecimal.valueOf(price).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue());
     }
 
 
@@ -171,8 +179,6 @@ public class CartList {
             EventBus.getDefault().post(new CartUpdateEvent());
         }
 
-        new SqlNetHandler().handleCommit(new Handler(Looper.getMainLooper()), MyApplication.getContext(), getOrderNo());
-
         return wmlsb;
     }
 
@@ -220,8 +226,6 @@ public class CartList {
             }
             EventBus.getDefault().post(new CartUpdateEvent());
         }
-
-        new SqlNetHandler().handleCommit(new Handler(Looper.getMainLooper()), MyApplication.getContext(), getOrderNo());
     }
 
     /**
@@ -498,6 +502,7 @@ public class CartList {
                     subWmlsb.setBY13("赠送");
                     subWmlsb.setSFZS("1");
                     subWmlsb.setBY17("7");
+                    subWmlsb.setBy5(wmlsb.getBy5());
                     wmlsb.getSubWMLSBList().clear();
                     wmlsb.getSubWMLSBList().add(subWmlsb);
                     EventBus.getDefault().post(new CartUpdateEvent());
@@ -523,52 +528,54 @@ public class CartList {
             // 单品
 
             for (int i = 0; i < sWMLSBList.size(); i++) {
-                WMLSB remote = sWMLSBList.get(i);
-
-//                if ("赠送".equals(wmlsb.getBY13()) || "加价促销".equals(wmlsb.getBY13())) {
-//                    mRemoveRemoteSql += "update wmlsb " +
-//                            "set sl = sl - dwsl " +
-//                            "where xh = " + wmlsb.getXH() + "|";
-//
-//                    if (wmlsb.getDWSL() > 0) {
-//                        wmlsb.setLocalSL(wmlsb.getDWSL());
-//                    } else {
-//                        wmlsb.setLocalSL(1);
-//                    }
-//                    mRemoveRemoteList.add(wmlsb);
-//                    break;
-//                }
-
-                if (wmlsb == remote) {
+                if ("赠送".equals(wmlsb.getBY13())) {
                     mRemoveRemoteSql += "update wmlsb " +
-                            "set sl = sl - isnull(DWSL, 1) " +
-                            "where wmdbh = '" + remote.getWMDBH() + "' and xh = " + remote.getXH() + "|";
+                            "set sl = sl - dwsl " +
+                            "where xh = " + wmlsb.getXH() + "|";
 
                     if (wmlsb.getDWSL() > 0) {
                         wmlsb.setLocalSL(wmlsb.getDWSL());
                     } else {
                         wmlsb.setLocalSL(1);
                     }
-                    mRemoveRemoteList.add(remote);
-
+                    mRemoveRemoteList.add(wmlsb);
                     break;
+                }
+
+                WMLSB remote = sWMLSBList.get(i);
+                if (wmlsb == remote || wmlsb.getBy5().equals(remote.getZSSJ())) {
+                    mRemoveRemoteSql += "update wmlsb " +
+                            "set sl = sl - isnull(DWSL, 1) " +
+                            "where wmdbh = '" + remote.getWMDBH() + "' and xh = " + remote.getXH() + "|";
+
+                    if (remote.getDWSL() > 0) {
+                        remote.setLocalSL(remote.getDWSL());
+                    } else {
+                        remote.setLocalSL(1);
+                    }
+                    mRemoveRemoteList.add(remote);
                 }
             }
 
-            // 当前是否有加价促销的子项
-//            if (!TextUtils.isEmpty(wmlsb.getBY21())) {
-//                String by21 = wmlsb.getBY21().substring(2);
-//                mRemoveRemoteSql += "update wmlsb " +
-//                        "set sl = sl - dwsl " +
-//                        "where xh = " + by21 + "|";
-//
-//                if (wmlsb.getDWSL() > 0) {
-//                    wmlsb.setLocalSL(wmlsb.getDWSL());
-//                } else {
-//                    wmlsb.setLocalSL(1);
-//                }
-//                mRemoveRemoteList.add(wmlsb);
-//            }
+//             当前是否有加价促销的子项
+            if (!TextUtils.isEmpty(wmlsb.getBY21())) {
+                String by21 = wmlsb.getBY21().substring(2);
+                mRemoveRemoteSql += "update wmlsb " +
+                        "set sl = sl - dwsl " +
+                        "where xh = " + by21 + "|";
+
+                for (int i = 0; i < sWMLSBList.size(); i++) {
+                    WMLSB remote = sWMLSBList.get(i);
+                    if (by21.equals(remote.getXH())) {
+                        if (remote.getDWSL() > 0) {
+                            remote.setLocalSL(wmlsb.getDWSL());
+                        } else {
+                            remote.setLocalSL(1);
+                        }
+                        mRemoveRemoteList.add(remote);
+                    }
+                }
+            }
 
         } else {
             // 套餐

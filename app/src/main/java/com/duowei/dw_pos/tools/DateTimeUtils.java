@@ -52,4 +52,13 @@ public class DateTimeUtils {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
         return sdf.format(Calendar.getInstance().getTime());
     }
+
+    /**
+     * @return yyyy-MM-dd HH:mm:ss.sss
+     */
+    public static String getCurrentDatetime2() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss", Locale.CHINA);
+        return sdf.format(Calendar.getInstance().getTime());
+    }
+
 }

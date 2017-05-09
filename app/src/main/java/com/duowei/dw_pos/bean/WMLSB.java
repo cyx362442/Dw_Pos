@@ -71,7 +71,7 @@ public class WMLSB implements Serializable {
     private String SYYXM;
     private String sfxs;
     private String by2;
-    private String by5;
+    private String by5 = "";
     private String BY12 = "";
     private String BY13;
     private String SFZS;
@@ -281,9 +281,6 @@ public class WMLSB implements Serializable {
     }
 
     public String getBy5() {
-        if (TextUtils.isEmpty(by5)) {
-            return "";
-        }
         return by5;
     }
 
@@ -413,6 +410,8 @@ public class WMLSB implements Serializable {
         if (!TextUtils.isEmpty(jyxmsz.getBY3())) {
             setBY12(jyxmsz.getBY3());
         }
+
+        this.by5 = "'" + DateTimeUtils.getCurrentDatetime2() + "'";
     }
 
     /**
@@ -442,6 +441,8 @@ public class WMLSB implements Serializable {
         this.SL = tcsd.SL;
 
         this.SFYXD = "0";
+
+        this.by5 = "GETDATE()";
     }
 
 
@@ -461,13 +462,13 @@ public class WMLSB implements Serializable {
         }
 
         if ("赠送".equals(getBY13())) {
-            setZSSJ("GETDATE()");
+            setZSSJ(getBy5());
         } else {
             setZSSJ(null);
         }
 
         String mainSql = "INSERT INTO WMLSB (WMDBH,           XMBH,           XMMC,           TM,           DW,          SL,         DJ,                           XJ,          PZ,                TCBH,             SFYXD, XSZT, FTJE,        YSJG,           SFZS,              SYYXM,      SQRXM, ZSSJ,            DWSL,           sfxs,      by1,            by2,            by3,        by4,   by5,      SJC,  BY6,  BY7,  BY8,  BY9,  BY10, BY11,         TCXMBH,             BY12,               BY13, PBJSJM, PBXH, BY14,     BY15,       BY16,        BY17,                 BY18,     BY19, BY20, BY21, BY22, BY23, BY24, BY25) " +
-                "               VALUES ('" + WMDBH + "', '" + XMBH + "', '" + XMMC + "', '" + TM + "', '" + DW + "', " + SL + ", " + DJ + ", " + getDJ() * getSL() + ", '" + getPZ() + "', '" + getTCBH() + "', '" + SFYXD + "', '', null, " + YSJG + ", '" + getSFZS() + "', '" + SYYXM + "', null, " + getZSSJ() + ", " + DWSL + ", '" + sfxs + "', null, '" + by2 + "', " + getBY3() + ", null, GETDATE(), null, null, null, null, null, null, null, '" + getTCXMBH() + "', '" + getBY12() + "', '" + getBY13() + "', null, null, null, '" + getBY15() + "', null, '" + getBY17() + "', '" + getBY18() + "', null, null, '" + getBY21() + "', null, null, null, null)|";
+                "               VALUES ('" + WMDBH + "', '" + XMBH + "', '" + XMMC + "', '" + TM + "', '" + DW + "', " + SL + ", " + DJ + ", " + getDJ() * getSL() + ", '" + getPZ() + "', '" + getTCBH() + "', '" + SFYXD + "', '', null, " + YSJG + ", '" + getSFZS() + "', '" + SYYXM + "', null, " + getZSSJ() + ", " + DWSL + ", '" + sfxs + "', null, '" + by2 + "', " + getBY3() + ", null, " + getBy5() + ", null, null, null, null, null, null, null, '" + getTCXMBH() + "', '" + getBY12() + "', '" + getBY13() + "', null, null, null, '" + getBY15() + "', null, '" + getBY17() + "', '" + getBY18() + "', null, null, '" + getBY21() + "', null, null, null, null)|";
 
         if (mSubWMLSBList.size() > 0) {
             // 有加价促销项
@@ -589,7 +590,7 @@ public class WMLSB implements Serializable {
             if (wmlsbList != null) {
                 for (int i = 0; i < wmlsbList.size(); i++) {
                     WMLSB w = wmlsbList.get(i);
-                    if (!XH.equals(w.getXH()) && by5.equals(w.getBy5())) {
+                    if (!XH.equals(w.getXH()) && by5.equals(w.getBy5()) && "赠送".equals(w.getBY13())) {
                         sql += "update wmlsb" +
                                 " set sl = sl - isnull(DWSL, 1)" +
                                 " where xh = " + w.getXH() + "|";
@@ -624,7 +625,7 @@ public class WMLSB implements Serializable {
             if (wmlsbList != null) {
                 for (int i = 0; i < wmlsbList.size(); i++) {
                     WMLSB w = wmlsbList.get(i);
-                    if (!XH.equals(w.getXH()) && by5.equals(w.getBy5())) {
+                    if (!XH.equals(w.getXH()) && by5.equals(w.getBy5()) && "赠送".equals(w.getBY13())) {
 
                         if (addOrRemove == 1) {
                             sql += "update wmlsb" +

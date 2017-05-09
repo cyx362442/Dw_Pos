@@ -180,8 +180,6 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                 public void onClick(View v) {
                     EventBus.getDefault().post(new ClearSearchEvent());
 
-//                    Toast.makeText(mContext, "进入套餐子项", Toast.LENGTH_SHORT).show();
-
                     Intent intent = new Intent(mContext, ComboActivity.class);
                     intent.putExtra("xmbh", item.getXMBH());
                     mContext.startActivity(intent);

@@ -10,17 +10,13 @@ import com.duowei.dw_pos.bean.OrderNo;
 import com.duowei.dw_pos.bean.Pbdyxxb;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
-import com.duowei.dw_pos.event.CartUpdateEvent;
+import com.duowei.dw_pos.event.CartRemoteUpdateEvent;
 import com.duowei.dw_pos.event.Commit;
 import com.duowei.dw_pos.httputils.NetUtils;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +77,8 @@ public class SqlNetHandler {
 
                             orderNo.setCreated(true);
                             cartList.getList().clear(); // 清空本地没提交数据
-                            getWmlsb(handler, orderNo.getWmdbh());
+                            EventBus.getDefault().post(new CartRemoteUpdateEvent());
+//                            getWmlsb(handler, orderNo.getWmdbh());
 
                         } else {
                             Toast.makeText(context, "提交失败！", Toast.LENGTH_LONG).show();
@@ -149,38 +146,5 @@ public class SqlNetHandler {
             }
         });
 
-    }
-
-    private void getWmlsb(Handler handler, String wmdbh) {
-        String sql = "select * from wmlsb where wmdbh = '" + wmdbh + "'|";
-        NetUtils.post6(Net.url, sql, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try {
-                    String result = response.body().string();
-
-                    result = result.replaceAll("&lt;", "<").replaceAll("&gt;", ">");
-                    Type type = new TypeToken<ArrayList<WMLSB>>() {
-                    }.getType();
-                    List<WMLSB> wmlsbList = new Gson().fromJson(result, type);
-                    for (WMLSB e : wmlsbList) {
-                        e.setRemote(1);
-                    }
-
-                    CartList.sWMLSBList = wmlsbList;
-                    EventBus.getDefault().post(new CartUpdateEvent());
-
-                } catch (JsonSyntaxException e) {
-                    e.printStackTrace();
-
-                    CartList.sWMLSBList.clear();
-                    EventBus.getDefault().post(new CartUpdateEvent());
-                }
-            }
-        });
     }
 }

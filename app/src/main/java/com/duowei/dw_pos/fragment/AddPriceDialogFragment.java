@@ -101,6 +101,11 @@ public class AddPriceDialogFragment extends AppCompatDialogFragment {
                 wmlsb.setBY13("加价促销");
                 sWMLSB.getSubWMLSBList().add(wmlsb);
                 EventBus.getDefault().post(new CartUpdateEvent());
+
+//                CartList.newInstance(mContext).getList().add(wmlsb);
+//                new SqlNetHandler().handleCommit(new Handler(Looper.getMainLooper()),
+//                        MyApplication.getContext(),
+//                        CartList.newInstance(mContext).getOrderNo());
             }
         }
     };
