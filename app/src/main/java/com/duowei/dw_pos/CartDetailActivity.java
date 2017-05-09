@@ -122,8 +122,8 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
                 finish();
             }
         });
-
         findViewById(R.id.btn_all_order_remark).setOnClickListener(this);
+        findViewById(R.id.btn_back_main).setOnClickListener(this);
 
         mTitleView = (TextView) findViewById(R.id.tv_title);
         mListView = (ListView) findViewById(R.id.list);
@@ -206,7 +206,12 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         int id = v.getId();
 
-        if (id == R.id.btn_add) {
+        if (id == R.id.btn_back_main) {
+            Intent intent = new Intent(this, DinningActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+
+        } else if (id == R.id.btn_add) {
             Intent intent = new Intent(this, CashierDeskActivity.class);
             intent.putExtras(getIntent().getExtras());
             startActivity(intent);
