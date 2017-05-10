@@ -326,7 +326,6 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                             Toast.makeText(CheckOutActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
                             mProgressBar.setVisibility(View.GONE);
                         }
-
                         @Override
                         public void onResponse(String response) {
                             if (response.contains("richado")) {

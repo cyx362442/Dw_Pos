@@ -1,13 +1,15 @@
 package com.duowei.dw_pos.httputils;
 
 
+
 import android.util.Log;
 
 import com.android.volley.VolleyError;
 import com.duowei.dw_pos.event.ImsCardCouponStores;
 import com.duowei.dw_pos.event.ImsCardMembers;
 import com.duowei.dw_pos.tools.Net;
-import com.google.common.eventbus.EventBus;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by Administrator on 2017-03-30.
@@ -27,14 +29,17 @@ public class Post6 {
                 "CAST(FROM_UNIXTIME(a.createtime,'%Y-%m-%d')as datetime)createtime \n" +
                 "from ims_card_members a,ims_fans b  \n" +
                 "where a.weid=b.weid and a.from_user=b.from_user and b.mobile='"+account+"' and b.occupation='"+password+"'  AND a.weid="+mWeid+" AND b.weid="+mWeid+"|";
+        Log.e("yunURl====",Net.yunUrl);
+        Log.e("sql====",sql);
         DownHTTP.postVolley6(Net.yunUrl, sql, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                org.greenrobot.eventbus.EventBus.getDefault().post(new ImsCardMembers("error"));
+                EventBus.getDefault().post(new ImsCardMembers("error"));
             }
             @Override
             public void onResponse(String response) {
-                org.greenrobot.eventbus.EventBus.getDefault().post(new ImsCardMembers(response));
+                Log.e("resopnse====",response);
+                EventBus.getDefault().post(new ImsCardMembers(response));
             }
         });
     }

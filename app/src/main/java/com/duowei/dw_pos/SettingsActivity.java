@@ -3,12 +3,16 @@ package com.duowei.dw_pos;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,7 +25,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener {
 
     @BindView(R.id.et_ip)
     EditText mEtIp;
@@ -68,6 +72,16 @@ public class SettingsActivity extends AppCompatActivity {
         }else{
             mCheckbox.setChecked(false);
         }
+        RadioGroup rg = (RadioGroup) findViewById(R.id.radioGroup);
+        RadioButton rb1 = (RadioButton) findViewById(R.id.rb1);
+        RadioButton rb2 = (RadioButton) findViewById(R.id.rb2);
+        String orderstytle = mSp.getString("orderstytle", getResources().getString(R.string.order_stytle_zhongxican));
+        if(orderstytle.equals(getResources().getString(R.string.order_stytle_zhongxican))){
+            rb1.setChecked(true);
+        }else if(orderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))){
+            rb2.setChecked(true);
+        }
+        rg.setOnCheckedChangeListener(this);
     }
 
     @OnClick({R.id.rl_autoStart, R.id.btn_load, R.id.btn_back})
@@ -113,5 +127,13 @@ public class SettingsActivity extends AppCompatActivity {
                 finish();
                 break;
         }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
+        int radioButtonId = radioGroup.getCheckedRadioButtonId();
+        RadioButton rb = (RadioButton)findViewById(radioButtonId);
+        mEdit.putString("orderstytle",rb.getText().toString());
+        mEdit.commit();
     }
 }

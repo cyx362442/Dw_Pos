@@ -94,8 +94,8 @@ public class DataLoad {
             }
             @Override
             public void onResponse(final String response) {
-                Log.e("respone==",response);
                 if(response.equals("]")){
+                    DataSupport.deleteAll(JYCSSZ.class);
                     Http_DMJYXMSSLB();
                 }else{
                     new Thread(new Runnable() {

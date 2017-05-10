@@ -57,6 +57,37 @@
             android:hint="如：P1"
             />
     </LinearLayout>
+    <LinearLayout
+        style="@style/linearLayout_setting">
+        <TextView
+            style="@style/textview_setting"
+            android:text="请选择点餐模式"/>
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/rb1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/colorWhite"
+                android:text="@string/order_stytle_zhongxican"/>
+            <RadioButton
+                android:id="@+id/rb2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/colorWhite"
+                android:text="@string/order_stytle_kuaican"/>
+        </RadioGroup>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#000000"></View>
     <RelativeLayout
         android:id="@+id/rl_autoStart"
         android:layout_width="match_parent"
@@ -83,7 +114,6 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"/>
     </RelativeLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +21,7 @@ import com.duowei.dw_pos.summiscan.ScanActivity;
 import com.duowei.dw_pos.tools.Net;
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.litepal.crud.DataSupport;
 
@@ -91,7 +91,7 @@ public class YunLandActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        org.greenrobot.eventbus.EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override

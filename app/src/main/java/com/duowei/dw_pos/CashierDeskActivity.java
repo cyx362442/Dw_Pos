@@ -1,6 +1,5 @@
 package com.duowei.dw_pos;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -18,24 +17,18 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.android.volley.VolleyError;
 import com.duowei.dw_pos.adapter.LeftAdapter;
 import com.duowei.dw_pos.adapter.RightAdapter;
 import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.JYXMSZ;
-import com.duowei.dw_pos.bean.TBSJ;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.event.AddPriceEvent;
 import com.duowei.dw_pos.event.ClearSearchEvent;
 import com.duowei.dw_pos.fragment.AddPriceDialogFragment;
 import com.duowei.dw_pos.fragment.CartFragment;
 import com.duowei.dw_pos.httputils.CheckVersion;
-import com.duowei.dw_pos.httputils.DownHTTP;
-import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.tools.AnimUtils;
-import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.view.ToggleButton;
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
