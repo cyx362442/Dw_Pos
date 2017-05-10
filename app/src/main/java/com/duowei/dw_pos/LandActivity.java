@@ -30,6 +30,7 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
     private EditText mEtPassword;
     private Intent mIntent;
     private TextView mVersion;
+    private String mOrderstytle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +40,13 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
         SQLiteStudioService.instance().start(this);
         mSp = getSharedPreferences("user", Context.MODE_PRIVATE);
         mEdit = mSp.edit();
-
         initUI();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mOrderstytle = mSp.getString("orderstytle", getResources().getString(R.string.order_stytle_zhongxican));
     }
 
     private void initUI() {
@@ -75,7 +81,11 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                     Users.YHBH=account;
                     Users.YHMC=yhmc.get(0).YHMC;
                     Users.TDQX=yhmc.get(0).TDQX;
-                    mIntent = new Intent(this, DinningActivity.class);
+                    if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_zhongxican))){
+                        mIntent = new Intent(this, DinningActivity.class);
+                    }else if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))){
+                        mIntent = new Intent(this, CashierDeskActivity.class);
+                    }
                     startActivity(mIntent);
                 }else{
                     Toast.makeText(this,"密码错误",Toast.LENGTH_SHORT).show();
