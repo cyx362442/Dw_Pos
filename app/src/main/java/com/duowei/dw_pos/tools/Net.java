@@ -6,4 +6,5 @@ package com.duowei.dw_pos.tools;
 
 public class Net {
     public static String url;
+    public static String yunUrl;
 }

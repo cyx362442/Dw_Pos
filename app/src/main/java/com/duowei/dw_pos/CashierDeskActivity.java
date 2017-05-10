@@ -3,6 +3,7 @@ package com.duowei.dw_pos;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -21,12 +22,16 @@ import com.duowei.dw_pos.adapter.RightAdapter;
 import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
+import com.duowei.dw_pos.event.AddPriceEvent;
+import com.duowei.dw_pos.event.ClearSearchEvent;
+import com.duowei.dw_pos.fragment.AddPriceDialogFragment;
 import com.duowei.dw_pos.fragment.CartFragment;
+import com.duowei.dw_pos.httputils.CheckVersion;
 import com.duowei.dw_pos.tools.AnimUtils;
-import com.duowei.dw_pos.tools.CartList;
-import com.duowei.dw_pos.tools.DateTimeUtils;
 import com.duowei.dw_pos.view.ToggleButton;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
@@ -58,6 +63,13 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
 
     private CartFragment mCartFragment;
 
+    private Handler mHandler = new Handler();
+
+    /**
+     * 1 单品 2 套餐
+     */
+    private int mFlag = 1;
+
     private TextWatcher mTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -78,23 +90,57 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         SQLiteStudioService.instance().start(this);
         setContentView(R.layout.activity_cashier_desk);
-        mRightJyxmszAllList = getJyxmszAllList();
-        mRightTcmcAllList = getTcmcAllList();
 
         initViews();
+        loadAllData();
         initData();
-        clearEditText();
-        // 清空购物车
-        CartList.newInstance().clear();
+        clearEditText(null);
+        //检查单品信息是否有更新
+        CheckVersion.instance().checkJYXMSZ();
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
 
-
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
     protected void onDestroy() {
         SQLiteStudioService.instance().stop();
         super.onDestroy();
+    }
+    @Subscribe
+    public void checkJycxmsz(){
+        mRightJyxmszAllList = getJyxmszAllList();
+        mRightAdapter.setAllList(mRightJyxmszAllList);
+    }
+
+    private void loadAllData() {
+        new Thread() {
+            @Override
+            public void run() {
+                mRightJyxmszAllList = getJyxmszAllList();
+                mRightTcmcAllList = getTcmcAllList();
+
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mFlag == 1) {
+                            mRightAdapter.setAllList(mRightJyxmszAllList);
+                        } else {
+                            mRightAdapter.setAllList(mRightTcmcAllList);
+                        }
+                    }
+                });
+            }
+        }.start();
     }
 
     private void initViews() {
@@ -129,6 +175,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         });
 
         mCartFragment = new CartFragment();
+        mCartFragment.setArguments(getIntent().getExtras());
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, mCartFragment)
                 .commit();
@@ -153,34 +200,40 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         });
 
         setupData();
-
     }
 
     /**
      * 设置单品数据
      */
     private void setupData() {
+        mFlag = 1;
+
         mLeftAdapter.setList(getDmjyxmsslbList());
         mLeftListView.setItemChecked(0, true);
         mLeftListView.smoothScrollToPosition(0);
 
         int checkedPosition = mLeftListView.getCheckedItemPosition();
         if (checkedPosition != ListView.INVALID_POSITION) {
-            mRightAdapter.setList(getJyxmszList(((DMJYXMSSLB) mLeftAdapter.getItem(checkedPosition)).getLBBM()), mRightJyxmszAllList);
+            mRightAdapter.setList(getJyxmszList(((DMJYXMSSLB) mLeftAdapter.getItem(checkedPosition)).getLBBM()));
+            mRightAdapter.setAllList(mRightJyxmszAllList);
         }
+
     }
 
     /**
      * 设置套餐数据
      */
     private void setupData2() {
+        mFlag = 2;
+
         mLeftAdapter.setList(getTcmc1List());
         mLeftListView.setItemChecked(0, true);
         mLeftListView.smoothScrollToPosition(0);
 
         int checkedPosition = mLeftListView.getCheckedItemPosition();
         if (checkedPosition != ListView.INVALID_POSITION) {
-            mRightAdapter.setList(getTcmc2List(((String) mLeftAdapter.getItem(checkedPosition))), mRightTcmcAllList);
+            mRightAdapter.setList(getTcmc2List(((String) mLeftAdapter.getItem(checkedPosition))));
+            mRightAdapter.setAllList(mRightTcmcAllList);
         }
     }
 
@@ -196,27 +249,27 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
 
         } else if (id == R.id.btn_toggle) {
             mToggleButton.toggle();
-            clearEditText();
+            clearEditText(null);
         }
     }
 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        clearEditText();
+        clearEditText(null);
         Object object = mLeftAdapter.getItem(position);
 
         if (object instanceof DMJYXMSSLB) {
             // 单品项点击
             DMJYXMSSLB item = (DMJYXMSSLB) object;
-            Log.d(TAG, "onItemClick: before " + DateTimeUtils.getCurrentDatetime());
-            mRightAdapter.setList(getJyxmszList(item.getLBBM()), mRightJyxmszAllList);
-            Log.d(TAG, "onItemClick: after " + DateTimeUtils.getCurrentDatetime());
+            mRightAdapter.setList(getJyxmszList(item.getLBBM()));
+            mRightAdapter.setAllList(mRightJyxmszAllList);
 
         } else if (object instanceof String) {
             // 套餐项 点击
             String item = (String) object;
-            mRightAdapter.setList(getTcmc2List(item), mRightTcmcAllList);
+            mRightAdapter.setList(getTcmc2List(item));
+            mRightAdapter.setAllList(mRightTcmcAllList);
         }
     }
 
@@ -224,7 +277,10 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
      * @return 单品分类 列表
      */
     private List<DMJYXMSSLB> getDmjyxmsslbList() {
-        return DataSupport.where("sfty != ? and lbbm != ?", "1", "RICH").order("xl").find(DMJYXMSSLB.class);
+        Log.d(TAG, "getDmjyxmsslbList: start");
+        List<DMJYXMSSLB> list = DataSupport.where("sfty != ? and lbbm != ?", "1", "RICH").order("xl").find(DMJYXMSSLB.class);
+        Log.d(TAG, "getDmjyxmsslbList: end");
+        return list;
     }
 
     /**
@@ -247,7 +303,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
      * @return 总的单品信息 列表
      */
     private List<JYXMSZ> getJyxmszAllList() {
-        return DataSupport.findAll(JYXMSZ.class);
+        return DataSupport.where("SFTC != ?", "1").find(JYXMSZ.class);
     }
 
     /**
@@ -281,17 +337,19 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         return DataSupport.findAll(TCMC.class);
     }
 
-    private void clearEditText() {
-        mEditText.removeTextChangedListener(mTextWatcher);
-        mEditText.setText(null);
-        mEditText.addTextChangedListener(mTextWatcher);
+    @Subscribe
+    public void clearEditText(ClearSearchEvent event) {
+        if (event == null) {
+            mEditText.removeTextChangedListener(mTextWatcher);
+            mEditText.setText(null);
+            mEditText.addTextChangedListener(mTextWatcher);
+        } else {
+            mEditText.setText(null);
+        }
     }
 
     /**
-     * @param
-     * @return void
-     * @throws
-     * @Description: 创建动画层
+     * 创建动画层
      */
     private FrameLayout createAnimLayout() {
         ViewGroup rootView = (ViewGroup) this.getWindow().getDecorView();
@@ -301,5 +359,16 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         animLayout.setBackgroundResource(android.R.color.transparent);
         rootView.addView(animLayout);
         return animLayout;
+    }
+
+    /**
+     * 显示加价促销窗口
+     *
+     * @param event
+     */
+    @Subscribe
+    public void addPrice(AddPriceEvent event) {
+        AddPriceDialogFragment fragment = new AddPriceDialogFragment();
+        fragment.show(getSupportFragmentManager(), null);
     }
 }

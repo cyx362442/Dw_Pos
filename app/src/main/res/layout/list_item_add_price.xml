@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.duowei.dw_pos.view.CheckableLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="?attr/listPreferredItemPaddingLeft"
+    android:paddingStart="?attr/listPreferredItemPaddingLeft"
+    android:paddingRight="?attr/listPreferredItemPaddingRight"
+    android:paddingEnd="?attr/listPreferredItemPaddingRight"
+    android:minHeight="?attr/listPreferredItemHeightSmall"
+    android:textAppearance="?attr/textAppearanceListItem"
+    android:gravity="center_vertical">
+
+    <CheckedTextView
+        android:id="@+id/left"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:drawableLeft="?android:attr/listChoiceIndicatorSingle"
+        android:gravity="center_vertical"
+        android:text="名称"
+        android:duplicateParentState="true"/>
+
+    <TextView
+        android:id="@+id/right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:text="价格"/>
+
+</com.duowei.dw_pos.view.CheckableLinearLayout>

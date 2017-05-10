@@ -7,11 +7,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.duowei.dw_pos.R;
+
+import java.util.Locale;
 
 /**
  * Created by Administrator on 2017-03-25.
@@ -20,15 +21,28 @@ import com.duowei.dw_pos.R;
 public class CheckOutDialog implements View.OnClickListener {
     Context context;
     String title;
+    float money;
     private AlertDialog mDialog;
     public EditText mEtInput;
     public Button mConfirm;
     private Button mCancel;
     private final LinearLayout mLayout;
     public TextView mTitle;
-    public CheckOutDialog(Context context, String title) {
+
+    public OnconfirmClick listener;
+
+    public interface OnconfirmClick{
+        void getDialogInput(String money);
+    }
+
+    public void setOnconfirmClick(OnconfirmClick listener){
+        this.listener=listener;
+    }
+
+    public CheckOutDialog(Context context, String title,float money) {
         this.context = context;
         this.title = title;
+        this.money=money;
         mDialog = new AlertDialog.Builder(context).create();
         //必须先setView，否则在dialog\popuwindow中无法自动弹出软健盘
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -36,8 +50,6 @@ public class CheckOutDialog implements View.OnClickListener {
         mDialog.setView(mLayout);
         mDialog.show();
         WindowManager.LayoutParams params = mDialog.getWindow().getAttributes();
-        params.width = 550;
-        params.height = 400 ;
         mDialog.getWindow().setAttributes(params);
         initWidget();
     }
@@ -51,8 +63,11 @@ public class CheckOutDialog implements View.OnClickListener {
         mEtInput=(EditText)mLayout.findViewById(R.id.et_input);
         mConfirm=(Button)mLayout.findViewById(R.id.btn_confirm);
         mCancel=(Button)mLayout.findViewById(R.id.btn_cancel);
+        mConfirm.setOnClickListener(this);
         mCancel.setOnClickListener(this);
         mTitle.setText(title);
+        mTitle.setFocusableInTouchMode(true);
+        mEtInput.setText(money+"");
     }
 
     @Override
@@ -60,6 +75,9 @@ public class CheckOutDialog implements View.OnClickListener {
        switch (view.getId()){
            case R.id.btn_cancel:
                mDialog.dismiss();
+               break;
+           case R.id.btn_confirm:
+               listener.getDialogInput(mEtInput.getText().toString().trim());
                break;
        }
     }

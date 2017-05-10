@@ -1,10 +1,13 @@
 package com.duowei.dw_pos;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -25,12 +28,13 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.PaySet;
-import com.duowei.dw_pos.bean.WMLSBJB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
+import com.duowei.dw_pos.tools.CloseActivity;
 import com.duowei.dw_pos.tools.DateTimes;
 import com.duowei.dw_pos.tools.Net;
+import com.duowei.dw_pos.sunmiprint.Prints;
 import com.duowei.dw_pos.tools.Users;
 
 import org.json.JSONArray;
@@ -38,11 +42,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
+import java.math.BigDecimal;
 import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import woyou.aidlservice.jiuiv5.IWoyouService;
 
 public class WebViewPayActivity extends AppCompatActivity {
 
@@ -81,12 +87,24 @@ public class WebViewPayActivity extends AppCompatActivity {
     private String mID;
     private Wmslbjb_jiezhang mItem;
     private String mPad;
-
+    private Prints mPrinter;
+    private IWoyouService woyouService;
+    private ServiceConnection connService = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            woyouService = null;
+        }
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            woyouService = IWoyouService.Stub.asInterface(service);
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view_pay);
         ButterKnife.bind(this);
+        CloseActivity.addAcitity(this);
         mDrawable2 = (AnimationDrawable) mImgLoad.getDrawable();
         SharedPreferences user = getSharedPreferences("user", Context.MODE_PRIVATE);
         mPad = user.getString("pad", "");
@@ -101,6 +119,8 @@ public class WebViewPayActivity extends AppCompatActivity {
         mBy7 = payset.BY7;
         mPayStytle = getIntent().getStringExtra("from");
         mItem = (Wmslbjb_jiezhang) getIntent().getSerializableExtra("WMLSBJB");
+        mPrinter = Prints.getPrinter();
+        mPrinter.bindPrintService(this,connService);
     }
 
     @Override
@@ -118,7 +138,7 @@ public class WebViewPayActivity extends AppCompatActivity {
                 mID = DateTimes.getTime() + number;
                 chaUrl = "http://pay.wxdw.top/aipay/f2fpay/query.php?out_trade_no=" + mID + "&appid=" + mPid;
                 ysturl = "http://%s/aipay/f2fpay/qrpay.php?appid=%s&out_trade_no=%s&subject=%s&store_id=%s&total_amount=%s";
-                ysturl = String.format(ysturl, mFwqdz, mPid, mID, mBy1 + mBy2, mBy1, Moneys.wfjr);
+                ysturl = String.format(ysturl, mFwqdz, mPid, mID, mBy1 + mBy2, mBy1, bigDecimal(Moneys.wfjr));
                 startWebView("支付宝");
             }
         }else if(mPayStytle.equals("微信")){
@@ -139,13 +159,13 @@ public class WebViewPayActivity extends AppCompatActivity {
                 //支付过的wmdbh不会显示图片
                 chaUrl=String .format(chaUrl,"yst","pay",mID,mBy3);
                 ysturl = "http://%s/yst/pay/native_dynamic_qrcode.php?weid=%s&orderid=%s&money=%s&name=%s";
-                ysturl = String.format(ysturl,mFwqdz,mBy3,mID, Moneys.wfjr,mBy1+mBy2);
+                ysturl = String.format(ysturl,mFwqdz,mBy3,mID,bigDecimal(Moneys.wfjr),mBy1+mBy2);
             }else
             {
                 //如果是服务商接口调用这个
                 chaUrl=String .format(chaUrl,"bs","wxzf",mID,mBy3);
                 ysturl =  "http://%s/dl/sys/demo/native_dynamic_qrcode.php?weid=%s&orderid=%s&money=%s&name=%s";
-                ysturl = String.format(ysturl,mFwqdz,mBy3,mID,Moneys.wfjr,mBy1+mBy2);
+                ysturl = String.format(ysturl,mFwqdz,mBy3,mID,bigDecimal(Moneys.wfjr),mBy1+mBy2);
             }
             startWebView("微信");
         }
@@ -153,8 +173,7 @@ public class WebViewPayActivity extends AppCompatActivity {
 
     @OnClick(R.id.img_return)
     public void onViewClicked() {
-        flag=true;
-        finish();
+        PayExit();
     }
 
     private int getNumber() {
@@ -207,9 +226,8 @@ public class WebViewPayActivity extends AppCompatActivity {
 
     private synchronized void getHtmlResult(final String payStytle) {
         String result = DownHTTP.getResult(chaUrl);
-        Log.e("result====",result);
         if(result.contains("支付成功") || result.contains("SUCCESS")){
-            flag = true;
+
             if (payStytle.equals("支付宝")) {
                     ZFBID = result.substring(result.indexOf("*") + 1, result.length());
                 }
@@ -254,15 +272,14 @@ public class WebViewPayActivity extends AppCompatActivity {
     }
 
     private void Http_jiezhang(int prk, final String payStytle) {
-//        float zkje = totalMoney - discountMoney;
         String url = "";
         String insertXSFKFS = "insert into XSFKFS(XSDH,BM,NR,FKJE,DYQZS) values ('" + mItem.getWMDBH() + "','" + mBm + "','" + nr + "'," + mItem.getYS() + ",0)|";
         String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS,DDSJ,JYSJ,BZ,JZFSBM,BMMC,WMBS,ZH,KHBH,QKJE,JCRS,CZKYE,BY7,CXYH)" +
-                "VALUES('" + mItem.getWMDBH() + "','" + mItem.getYHBH() + "','" + Users.YHMC + "','无折扣','" + Moneys.xfzr + "','" + Moneys.zkjr + "',0,'" + mItem.getYS() + "',0,'无'," +
+                "VALUES('" + mItem.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣','" + bigDecimal(Moneys.xfzr) + "','" + bigDecimal(Moneys.zkjr) + "',0,'" + mItem.getYS() + "',0,'" + mItem.getZKFS() + "'," +
                 "'" + mItem.getJYSJ() + "',GETDATE(),'"+mPad+"','" + mItem.getJcfs() + "','','" + prk + "','" + mItem.getZH() + "',0,0,'" + mItem.getJCRS() + "',0,'','" + mID + "')|";
         String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
                 "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mItem.getWMDBH() + "'|";
-        String updateWMLSBJB = "update WMLSBJB set JSJ='"+mPad+"',SFYJZ='1',DJLSH='" + prk + "',BY13='" + mID + "',BY16='" + ZFBID + "',YSJE='" + Moneys.xfzr + "',JSKSSJ=getdate() where WMDBH='" + mItem.getWMDBH() + "'|";
+        String updateWMLSBJB = "update WMLSBJB set JSJ='"+mPad+"',SFYJZ='1',DJLSH='" + prk + "',BY13='" + mID + "',BY16='" + ZFBID + "',YSJE='" + bigDecimal(Moneys.xfzr) + "',JSKSSJ=getdate() where WMDBH='" + mItem.getWMDBH() + "'|";
         url = insertXSFKFS + insertXSJBXX + insertXSMXXX + updateWMLSBJB;
         Http_local(payStytle, url);
     }
@@ -274,15 +291,18 @@ public class WebViewPayActivity extends AppCompatActivity {
             }
             @Override
             public void onResponse(String s) {
-                Log.e("jiezhang===", s);
                 if (s.contains("richado")) {
                     mWebview.setVisibility(View.GONE);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            flag = true;
                             mDrawable2.start();
                             mLlReturn.setVisibility(View.VISIBLE);
                             mTvReturn.setText("恭喜你," + payStytle + "收款成功!");
+
+                            mPrinter.setWoyouService(woyouService);
+                            mPrinter.print_jiezhang(mItem.getYS(),mItem.getYS(),"0.00",payStytle);
                         }
                     });
                 }
@@ -293,25 +313,37 @@ public class WebViewPayActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0){
-            if(flag==false){
-                final AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                        .setTitle("提示")
-                        .setMessage("付款未成功是否退出？")
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                flag = true;
-                                finish();
-                            }
-                        })
-                        .setNegativeButton("取消", null);
-                builder.create();
-                builder.show();
-            }else if(flag==true){
-                finish();
-            }
+            PayExit();
             return true;
         }
         return false;
+    }
+
+    private void PayExit() {
+        if(flag==false){
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                    .setTitle("提示")
+                    .setMessage("付款未成功是否退出？")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            flag = true;
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("取消", null);
+            builder.create();
+            builder.show();
+        }else if(flag==true){
+            CloseActivity.finishActivity();
+        }
+    }
+    public  Float bigDecimal(Float f){
+        return BigDecimal.valueOf(f).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(connService);
     }
 }

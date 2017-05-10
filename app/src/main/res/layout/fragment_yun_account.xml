@@ -1,0 +1,129 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="@drawable/shape_cancel"
+             tools:context="com.duowei.dw_pos.fragment.YunAccountFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+       >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="结账情况"
+               />
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorGray"></View>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginRight="5dp">
+
+                <LinearLayout
+                    style="@style/linearLayout_yunhuiyuan">
+
+                    <TextView
+                        style="@style/textViewYunhuiyuan"
+                        android:text="消费总额："/>
+
+                    <TextView
+                        android:id="@+id/tv_zr"
+                        android:textSize="15dp"
+                        style="@style/textViewYunhuiyuan"/>
+                </LinearLayout>
+                <LinearLayout
+                    style="@style/linearLayout_yunhuiyuan">
+
+                    <TextView
+                        style="@style/textViewYunhuiyuan"
+                        android:text="折扣金额："/>
+
+                    <TextView
+                        android:id="@+id/tv_zk"
+                        android:textSize="15dp"
+                        style="@style/textViewYunhuiyuan"/>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="2dp"
+                android:layout_marginRight="5dp">
+                <LinearLayout
+                    style="@style/linearLayout_yunhuiyuan">
+
+                    <TextView
+                        style="@style/textViewYunhuiyuan"
+                        android:text="应收金额："/>
+
+                    <TextView
+                        android:id="@+id/tv_ys"
+                        android:textSize="15dp"
+                        style="@style/textViewYunhuiyuan"/>
+                </LinearLayout>
+                <LinearLayout
+                    style="@style/linearLayout_yunhuiyuan">
+
+                    <TextView
+                        style="@style/textViewYunhuiyuan"
+                        android:text="己付金额："/>
+
+                    <TextView
+                        android:id="@+id/tv_yf"
+                        android:textSize="15dp"
+                        style="@style/textViewYunhuiyuan"/>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="2dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="2dp">
+                <LinearLayout
+                    style="@style/linearLayout_yunhuiyuan">
+
+                    <TextView
+                        style="@style/textViewYunhuiyuan"
+                        android:text="未付金额："/>
+
+                    <TextView
+                        android:id="@+id/tv_wf"
+                        android:textSize="15dp"
+                        style="@style/textViewYunhuiyuan"/>
+                </LinearLayout>
+                <LinearLayout
+                    style="@style/linearLayout_yunhuiyuan"
+                    android:visibility="invisible">
+
+                    <TextView
+                        style="@style/textViewYunhuiyuan"
+                        android:text="己付金额："/>
+
+                    <TextView
+                        android:textSize="15dp"
+                        style="@style/textViewYunhuiyuan"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</FrameLayout>

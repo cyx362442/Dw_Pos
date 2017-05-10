@@ -1,5 +1,8 @@
 package com.duowei.dw_pos.bean;
 
+import android.text.TextUtils;
+import android.util.Log;
+
 /**
  * Created by Administrator on 2017-03-24.
  */
@@ -40,7 +43,7 @@ public class WMLSBJB{
     private String JSKSSJ;
     private String BY6;
     private String SFFS;
-    private String BY12;
+    private String BY12 = "";
 
     public String getWMDBH() {
         return WMDBH;
@@ -199,7 +202,6 @@ public class WMLSBJB{
         this.jcfs = jcfs;
         this.by1=by1;
     }
-
     /**
      * 例子:
      * INSERT INTO GSCYDB.dbo.WMLSBJB (WMDBH, XTBZ, YHBH, ZH, YS, JYSJ, SFYJZ, YSJE, HYKH, JSJ, QBDB, JCRS, ZK, ZR, BCWNJS, SS, HYKDJ, ZKFS, jcfs, by1, by2, by3, by4, by5, JZBZ, JSKSSJ, JSJSSJ, DJLSH, BY6, BY7, BY8, BY9, BY10, BY11, SFFS, BY12, BY13, BY14, BY15, BY16, BY17, BY18, BY19, BY20)

@@ -41,6 +41,8 @@ public class ComboActivity extends AppCompatActivity {
     private TCSD mMainTcsd;
     private LinkedHashMap<String, List<TCSD>> mSubTcsdMap;
 
+    private float mTotalMainPrice;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +70,12 @@ public class ComboActivity extends AppCompatActivity {
     private void initData() {
         Intent intent = getIntent();
         if (intent != null) {
-            mXmbh = intent.getExtras().getString("xmbh", "");
-//            mXmbh = "ZT779"; // 测试
+            Bundle args = intent.getExtras();
+            if (args != null) {
+                mXmbh = args.getString("xmbh", "");
+            } else {
+                mXmbh = "ZT931"; // 测试
+            }
         }
 
         if (TextUtils.isEmpty(mXmbh)) {
@@ -81,13 +87,14 @@ public class ComboActivity extends AppCompatActivity {
         if (oneTcsdList.size() == 1) {
             mMainTcsd = oneTcsdList.get(0);
             mComboNameView.setText(mMainTcsd.getXMMC1());
-            mComboMoneyView.setText("¥" + mMainTcsd.getDJ());
+            mTotalMainPrice = mMainTcsd.getDJ();
+            mComboMoneyView.setText("¥" + mTotalMainPrice);
         } else {
             Toast.makeText(this, "oneTcsdList.size() != 1", Toast.LENGTH_SHORT).show();
         }
 
 
-        Cursor cursor = DataSupport.findBySQL("select distinct tm from tcsd where xmbh = '" + mXmbh + "' and tm != 'A'");
+        Cursor cursor = DataSupport.findBySQL("select distinct tm from tcsd where xmbh = '" + mXmbh + "' and tm != 'A' order by tm");
         List<String> tmList = new ArrayList<>();
         while (cursor.moveToNext()) {
             tmList.add(cursor.getString(cursor.getColumnIndex("tm")));
@@ -100,6 +107,10 @@ public class ComboActivity extends AppCompatActivity {
 
         ComboAdapter adapter = new ComboAdapter(this, mSubTcsdMap, mOkButton);
         mListView.setAdapter(adapter);
+    }
+
+    public void setTotalPrice(float totalSubPrice) {
+        mComboMoneyView.setText("¥" + (mTotalMainPrice + totalSubPrice));
     }
 
     private View.OnClickListener mOkButtonClickLinstener = new View.OnClickListener() {
@@ -126,7 +137,7 @@ public class ComboActivity extends AppCompatActivity {
                         }
                     }
 
-                    CartList.newInstance().add(addTcsdItemArrayList);
+                    CartList.newInstance(ComboActivity.this).add(addTcsdItemArrayList);
 
                     finish();
                 } else {

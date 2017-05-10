@@ -17,4 +17,11 @@ public class SZLB extends DataSupport {
     public String getSZMC() {
         return SZMC;
     }
+
+    public SZLB() {
+    }
+
+    public SZLB(String SZBM) {
+        this.SZBM = SZBM;
+    }
 }

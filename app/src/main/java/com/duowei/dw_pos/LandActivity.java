@@ -3,23 +3,19 @@ package com.duowei.dw_pos;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.YHJBQK;
-import com.duowei.dw_pos.httputils.DownHTTP;
-import com.duowei.dw_pos.httputils.VolleyResultListener;
-import com.duowei.dw_pos.tools.DataLoad;
 import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.Users;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-
 
 import org.litepal.crud.DataSupport;
 
@@ -27,16 +23,14 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
-
 public class LandActivity extends AppCompatActivity implements View.OnClickListener {
-
     private SharedPreferences.Editor mEdit;
     private SharedPreferences mSp;
-    private EditText mIp;
-    private EditText mPort;
-    private EditText mPad;
     private EditText mEtAccount;
     private EditText mEtPassword;
+    private Intent mIntent;
+    private TextView mVersion;
+    private String mOrderstytle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,54 +38,33 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_land);
         ButterKnife.bind(this);
         SQLiteStudioService.instance().start(this);
-
         mSp = getSharedPreferences("user", Context.MODE_PRIVATE);
         mEdit = mSp.edit();
-        setSimdingMenu();
         initUI();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mOrderstytle = mSp.getString("orderstytle", getResources().getString(R.string.order_stytle_zhongxican));
     }
 
     private void initUI() {
         mEtAccount = (EditText) findViewById(R.id.et_account);
         mEtPassword = (EditText) findViewById(R.id.et_password);
-        mIp = (EditText) findViewById(R.id.et_ip);
-        mPort = (EditText) findViewById(R.id.et_port);
-        mPad = (EditText) findViewById(R.id.et_pad);
-        findViewById(R.id.btn_load).setOnClickListener(this);
+        mVersion = (TextView) findViewById(R.id.tv_version);
+        findViewById(R.id.tv_setting).setOnClickListener(this);
         findViewById(R.id.btn_land).setOnClickListener(this);
         findViewById(R.id.btn_exit).setOnClickListener(this);
-
-
-        mIp.setText(mSp.getString("ip",""));
-        mPort.setText(mSp.getString("port",""));
-        mPad.setText(mSp.getString("pad",""));
+        mVersion.setText(getVersionName());
     }
-
-    private void setSimdingMenu() {
-        SlidingMenu menu = new SlidingMenu(this);
-        menu.setMode(SlidingMenu.LEFT);
-        // 设置触摸屏幕的模式
-        menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-        menu.setShadowWidthRes(R.dimen.shadow_width);
-        menu.setShadowDrawable(R.color.colorGray);
-        // 设置滑动菜单视图的宽度
-        menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
-        // 设置渐入渐出效果的值
-        menu.setFadeDegree(0.35f);
-        /**
-         * SLIDING_WINDOW will include the Title/ActionBar in the content
-         * section of the SlidingMenu, while SLIDING_CONTENT does not.
-         */
-        menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-        //为侧滑菜单设置布局
-        menu.setMenu(R.layout.layout_left_menu);
-    }
-
     @Override
     public void onClick(View view) {
-        String ip=mIp.getText().toString().trim();
-        String port=mPort.getText().toString().trim();
         switch (view.getId()){
+            case R.id.tv_setting:
+                mIntent=new Intent(this,SettingsActivity.class);
+                startActivity(mIntent);
+                break;
             case R.id.btn_land:
                 String account = mEtAccount.getText().toString().trim();
                 String password = mEtPassword.getText().toString().trim();
@@ -99,35 +72,39 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                 if(yhjbqk.size()<=0){
                     Toast.makeText(this,"账号不存在",Toast.LENGTH_SHORT).show();
                 }else if(yhjbqk.get(0).getYHMM().equals(password)){
-                    saveData(ip, port);
                     Users.YHBH=account;
-                    List<YHJBQK> yhmc = DataSupport.select("YHMC").where("YHBH=?", account).find(YHJBQK.class);
+                    Users.pad=mSp.getString("pad","");
+                    String ip = mSp.getString("ip", "");
+                    String port = mSp.getString("port", "");
+                    Net.url="http://"+ip+":"+port+"/server/ServerSvlt?";
+                    List<YHJBQK> yhmc = DataSupport.where("YHBH=?", account).find(YHJBQK.class);
+                    Users.YHBH=account;
                     Users.YHMC=yhmc.get(0).YHMC;
-                    Intent intent = new Intent(this, DinningActivity.class);
-                    startActivity(intent);
+                    Users.TDQX=yhmc.get(0).TDQX;
+                    if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_zhongxican))){
+                        mIntent = new Intent(this, DinningActivity.class);
+                    }else if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))){
+                        mIntent = new Intent(this, CashierDeskActivity.class);
+                    }
+                    startActivity(mIntent);
                 }else{
                     Toast.makeText(this,"密码错误",Toast.LENGTH_SHORT).show();
                 }
-                break;
-            case R.id.btn_load:
-//                Net.url="http://"+ip+":"+port+"/server/ServerSvlt?";
-                DataLoad dataLoad = new DataLoad(this);
-                dataLoad.startLoad();
-                saveData(ip, port);
                 break;
             case R.id.btn_exit:
                 finish();
                 break;
         }
     }
-
-    private void saveData(String ip, String port) {
-        Net.url="http://"+ip+":"+port+"/server/ServerSvlt?";
-        mEdit.putString("ip",ip);
-        mEdit.putString("port",port);
-        mEdit.putString("pad",mPad.getText().toString().trim());
-        mEdit.putString("url", Net.url);
-        mEdit.commit();
+    private String getVersionName() {
+        String versionName="版本号：1.0";
+        try {
+            PackageInfo info = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
+            versionName = "版本号："+info.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return versionName;
     }
 
     @Override

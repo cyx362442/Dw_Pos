@@ -1,6 +1,5 @@
 package com.duowei.dw_pos.adapter;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
@@ -15,14 +14,23 @@ import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.duowei.dw_pos.CashierDeskActivity;
 import com.duowei.dw_pos.ComboActivity;
 import com.duowei.dw_pos.R;
+import com.duowei.dw_pos.bean.DMKWDYDP;
 import com.duowei.dw_pos.bean.JYXMSZ;
+import com.duowei.dw_pos.bean.Jgsz;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.bean.TCSD;
+import com.duowei.dw_pos.bean.WMLSB;
+import com.duowei.dw_pos.event.ClearSearchEvent;
+import com.duowei.dw_pos.fragment.InputNumDialogFragment;
+import com.duowei.dw_pos.fragment.TasteChoiceDialogFragment;
 import com.duowei.dw_pos.tools.CartList;
 
+import org.greenrobot.eventbus.EventBus;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
@@ -35,27 +43,23 @@ import java.util.List;
 public class RightAdapter extends BaseAdapter implements Filterable {
     private static HolderClickListener mHolderClickListener;
 
-    private Context mContext;
-    private List mList;
+    private CashierDeskActivity mContext;
+    private List mList = new ArrayList();
 
     private CartList mCartList;
 
     private final Object mLock = new Object();
-    private List mOriginalValues;
+    private List mOriginalValues = new ArrayList();
     private ArrayFilter mFilter;
 
-    private List mAllList;
-    private List mAllOriginalValues;
+    private List mAllList = new ArrayList();
+    private List mAllOriginalValues = new ArrayList();
 
     private boolean isAll = false;
 
-    public RightAdapter(Context context) {
+    public RightAdapter(CashierDeskActivity context) {
         mContext = context;
-
-        mAllList = new ArrayList();
-        mList = new ArrayList();
-
-        mCartList = CartList.newInstance();
+        mCartList = CartList.newInstance(mContext);
     }
 
     @Override
@@ -90,7 +94,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
             holder.tv_name = (TextView) convertView.findViewById(R.id.tv_name);
             holder.tv_money = (TextView) convertView.findViewById(R.id.tv_money);
             holder.btn_add = (ImageButton) convertView.findViewById(R.id.btn_add);
-            holder.ll_view=(LinearLayout)convertView.findViewById(R.id.temp);
+            holder.ll_view = (LinearLayout) convertView.findViewById(R.id.temp);
 
             convertView.setTag(holder);
         } else {
@@ -99,15 +103,25 @@ public class RightAdapter extends BaseAdapter implements Filterable {
 
         Object object = getItem(position);
         if (object instanceof JYXMSZ) {
-            // 单品信息
+            // 单品
             final JYXMSZ item = (JYXMSZ) object;
             holder.tv_name.setText(item.getXMMC());
-            holder.tv_money.setText(String.valueOf("¥" + item.getXSJG()));
+            if (item.getGQ().equals("1")) {
+                holder.tv_money.setText("停售");
+            } else {
+                holder.tv_money.setText(String.valueOf("¥" + item.getXSJG()));
+            }
 
             holder.btn_add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mCartList.add(item);
+                    if (item.getGQ().equals("1")) {
+                        Toast.makeText(mContext, "该单品己停售", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    EventBus.getDefault().post(new ClearSearchEvent());
+                    final WMLSB wmlsb = mCartList.add(item);
 
                     if (mHolderClickListener != null) {
                         int[] start_location = new int[2];
@@ -117,10 +131,54 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                         Drawable drawable = holder.btn_add.getDrawable();//复制一个新的商品图标
                         mHolderClickListener.onHolderClick(drawable, start_location);
                     }
+
+
+                    final JYXMSZ jyxmsz = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).findFirst(JYXMSZ.class);
+
+                    // 称重处理
+                    boolean hasWeight = false;
+                    Jgsz jgsz = DataSupport.findFirst(Jgsz.class);
+                    if (jgsz != null && "1".equals(jgsz.by52) && "1".equals(jyxmsz.getBY3())) {
+                        hasWeight = true;
+
+                        InputNumDialogFragment fragment = new InputNumDialogFragment();
+                        fragment.show(mContext.getSupportFragmentManager(), null);
+                        fragment.setOnOkBtnClickListener(new InputNumDialogFragment.OnOkBtnClickListener() {
+                            @Override
+                            public void onOkBtnClick(float inputValue) {
+                                CartList.newInstance(mContext).modifyNum(wmlsb, inputValue);
+
+                                // 必选口味处理
+                                if ("1".equals(jyxmsz.getSFYHQ())) {
+
+                                    List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
+
+                                    if (tasteList != null) {
+                                        // 有选中必须口味框，都弹出口味选择
+                                        TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb);
+                                        fragment.show(mContext.getSupportFragmentManager(), null);
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    // 必选口味处理(有称重是，就不处理必选口味了)
+                    if (!hasWeight && "1".equals(jyxmsz.getSFYHQ())) {
+
+                        List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
+
+                        if (tasteList != null) {
+                            // 有选中必须口味框，都弹出口味选择
+                            TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb);
+                            fragment.show(mContext.getSupportFragmentManager(), null);
+                        }
+                    }
                 }
             });
 
         } else if (object instanceof TCMC) {
+            // 套餐
             final TCMC item = (TCMC) object;
             holder.tv_name.setText(item.getXMMC());
 
@@ -132,7 +190,8 @@ public class RightAdapter extends BaseAdapter implements Filterable {
             holder.btn_add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Toast.makeText(mContext, "进入套餐子项", Toast.LENGTH_SHORT).show();
+                    EventBus.getDefault().post(new ClearSearchEvent());
+
                     Intent intent = new Intent(mContext, ComboActivity.class);
                     intent.putExtra("xmbh", item.getXMBH());
                     mContext.startActivity(intent);
@@ -143,25 +202,23 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         return convertView;
     }
 
-    public void setList(List list, List allList) {
+    public void setList(List list) {
         isAll = false;
-
         mList = list;
-        mAllList = allList;
 
         notifyDataSetChanged();
 
-        if (mOriginalValues == null) {
-            mOriginalValues = new ArrayList();
-        }
         mOriginalValues.clear();
         mOriginalValues.addAll(mList);
+    }
 
-        if (mAllOriginalValues == null) {
-            mAllOriginalValues = new ArrayList();
+    public void setAllList(List allList) {
+        mAllList = allList;
+
+        if (allList != null) {
+            mAllOriginalValues.clear();
+            mAllOriginalValues.addAll(allList);
         }
-        mAllOriginalValues.clear();
-        mAllOriginalValues.addAll(allList);
     }
 
     @Override
@@ -172,7 +229,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         return mFilter;
     }
 
-    private  class ViewHolder {
+    private class ViewHolder {
         TextView tv_name;
         TextView tv_money;
         ImageButton btn_add;
@@ -183,6 +240,10 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
+
+            if (mAllList == null) {
+                return results;
+            }
 
             if (TextUtils.isEmpty(constraint)) {
                 isAll = false;
@@ -196,7 +257,6 @@ public class RightAdapter extends BaseAdapter implements Filterable {
 
             } else {
                 isAll = true;
-
 
                 String prefixString = constraint.toString().toUpperCase();
 
@@ -219,7 +279,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                         }
                     } else if (object instanceof TCMC) {
                         TCMC item = (TCMC) object;
-                        if (item.getXMMC().startsWith(prefixString) || item.getPY().contains(prefixString)) {
+                        if (item.getXMMC().contains(prefixString) || item.getPY().contains(prefixString)) {
                             newValues.add(item);
                         }
                     }
@@ -235,6 +295,10 @@ public class RightAdapter extends BaseAdapter implements Filterable {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
+            if (results.values == null) {
+                return;
+            }
+
             if (isAll) {
                 mAllList = (List) results.values;
             } else {
@@ -249,11 +313,12 @@ public class RightAdapter extends BaseAdapter implements Filterable {
             }
         }
     }
+
     public static void setOnSetHolderClickListener(HolderClickListener holderClickListener) {
         mHolderClickListener = holderClickListener;
     }
+
     public interface HolderClickListener {
         void onHolderClick(Drawable drawable, int[] start_location);
     }
-
 }

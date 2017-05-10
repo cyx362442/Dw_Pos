@@ -1,1 +1,1 @@
-include ':app', ':SlidingMenulibrary'
+include ':app'

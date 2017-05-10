@@ -7,14 +7,12 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.duowei.dw_pos.CartDetailActivity;
@@ -25,6 +23,7 @@ import com.duowei.dw_pos.tools.CartList;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * 购物车
@@ -55,7 +54,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: ");
         EventBus.getDefault().register(this);
     }
 
@@ -69,13 +67,13 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRootView.setVisibility(View.GONE);
 
         mCartNumView = (TextView) view.findViewById(R.id.tv_cart_num);
         mCartPriceView = (TextView) view.findViewById(R.id.tv_cart_price);
         mCartIconLayout = (FrameLayout) view.findViewById(R.id.fl_cart);
 
         view.findViewById(R.id.btn_commit).setOnClickListener(this);
+        mCartIconLayout.setOnClickListener(this);
 
         //注册广播
         registerBoradcastReceiver();
@@ -84,20 +82,12 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart: ");
-        
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop: ");
+        updateUiDate(null);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
         EventBus.getDefault().unregister(this);
         getActivity().unregisterReceiver(mBroadcastReceiver);
     }
@@ -109,30 +99,36 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         getActivity().registerReceiver(mBroadcastReceiver, myIntentFilter);
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateUiDate(CartUpdateEvent event) {
-        CartList cartList = CartList.newInstance();
+        CartInfo cartInfo = CartList.newInstance(getContext()).getCartInfo();
 
-        if (cartList.getSize() > 0) {
-            mRootView.setVisibility(View.VISIBLE);
+        mCartNumView.setText(String.valueOf(cartInfo.getNum()));
+        mCartPriceView.setText(String.valueOf(cartInfo.getPrice()));
 
-            CartInfo cartInfo = cartList.getCartInfo();
-            mCartNumView.setText(String.valueOf(cartInfo.getNum()));
-            mCartPriceView.setText(String.valueOf(cartInfo.getPrice()));
-
-        } else {
-            mRootView.setVisibility(View.GONE);
-        }
+//        if (cartList.getSize() > 0) {
+//            mRootView.setVisibility(View.VISIBLE);
+//
+//            CartInfo cartInfo = cartList.getCartInfo();
+//            mCartNumView.setText(String.valueOf(cartInfo.getNum()));
+//            mCartPriceView.setText(String.valueOf(cartInfo.getPrice()));
+//
+//        } else {
+//            mRootView.setVisibility(View.GONE);
+//        }
     }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
 
-        if (id == R.id.btn_commit) {
-//            Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getContext(), CartDetailActivity.class);
-            getContext().startActivity(intent);
+        if (id == R.id.btn_commit || id == R.id.fl_cart) {
+            if (getArguments() == null) {
+                Intent intent = new Intent(getContext(), CartDetailActivity.class);
+                getContext().startActivity(intent);
+            } else {
+                getActivity().finish();
+            }
         }
     }
 }
