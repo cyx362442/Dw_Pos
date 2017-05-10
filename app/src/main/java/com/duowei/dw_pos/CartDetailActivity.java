@@ -1,8 +1,10 @@
 package com.duowei.dw_pos;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -10,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -86,6 +89,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             woyouService = IWoyouService.Stub.asInterface(service);
         }
     };
+    private String mOrderstytle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -94,6 +98,8 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         initViews();
         mPrinter = Prints.getPrinter();
         mPrinter.bindPrintService(this, connService);
+        SharedPreferences sp = getSharedPreferences("user", Context.MODE_PRIVATE);
+        mOrderstytle = sp.getString("orderstytle", getResources().getString(R.string.order_stytle_zhongxican));
     }
 
     @Override
@@ -147,7 +153,13 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             getWmlsbjb(mWmdbh);
 
         } else {
-            autoSubmitData(null);
+            //中西餐版
+            if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_zhongxican))){
+                autoSubmitData(null);
+                //快餐版
+            }else if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))){
+                mAdapter.addLocalList(CartList.newInstance(this).getList());
+            }
         }
     }
 
@@ -191,7 +203,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             mSubmit1Button.setEnabled(false);
         }
 
-        if (CartList.sWMLSBJB == null) {
+        if (CartList.sWMLSBJB == null&&mOrderstytle.equals(getResources().getString(R.string.order_stytle_zhongxican))) {
             getWmlsbjb(CartList.newInstance(this).getOrderNo().getWmdbh());
         }
     }
@@ -238,7 +250,6 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         } else {
             getWmlsb(CartList.newInstance(this).getOrderNo().getWmdbh());
         }
-
     }
 
     private void getWmlsbjb(final String wmdbh) {
