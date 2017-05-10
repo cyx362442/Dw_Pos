@@ -133,7 +133,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                     }
 
 
-                    JYXMSZ jyxmsz = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).findFirst(JYXMSZ.class);
+                    final JYXMSZ jyxmsz = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).findFirst(JYXMSZ.class);
 
                     // 称重处理
                     boolean hasWeight = false;
@@ -147,6 +147,18 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                             @Override
                             public void onOkBtnClick(float inputValue) {
                                 CartList.newInstance(mContext).modifyNum(wmlsb, inputValue);
+
+                                // 必选口味处理
+                                if ("1".equals(jyxmsz.getSFYHQ())) {
+
+                                    List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
+
+                                    if (tasteList != null) {
+                                        // 有选中必须口味框，都弹出口味选择
+                                        TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb);
+                                        fragment.show(mContext.getSupportFragmentManager(), null);
+                                    }
+                                }
                             }
                         });
                     }
