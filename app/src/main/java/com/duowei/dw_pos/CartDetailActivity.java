@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -90,6 +91,8 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         }
     };
     private String mOrderstytle;
+    private LinearLayout mLlCommit;
+    private Button mBCheck;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -131,6 +134,8 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.btn_all_order_remark).setOnClickListener(this);
         findViewById(R.id.btn_back_main).setOnClickListener(this);
 
+        mLlCommit = (LinearLayout) findViewById(R.id.linearLayout);
+        mBCheck = (Button) findViewById(R.id.btn_check);
         mTitleView = (TextView) findViewById(R.id.tv_title);
         mListView = (ListView) findViewById(R.id.list);
         mAddButton = (Button) findViewById(R.id.btn_add);
@@ -155,9 +160,13 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         } else {
             //中西餐版
             if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_zhongxican))){
+                mBCheck.setVisibility(View.GONE);
+                mLlCommit.setVisibility(View.VISIBLE);
                 autoSubmitData(null);
                 //快餐版
             }else if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))){
+                mLlCommit.setVisibility(View.GONE);
+                mBCheck.setVisibility(View.VISIBLE);
                 mAdapter.addLocalList(CartList.newInstance(this).getList());
             }
         }
@@ -202,7 +211,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         } else {
             mSubmit1Button.setEnabled(false);
         }
-
+        //中西餐
         if (CartList.sWMLSBJB == null&&mOrderstytle.equals(getResources().getString(R.string.order_stytle_zhongxican))) {
             getWmlsbjb(CartList.newInstance(this).getOrderNo().getWmdbh());
         }
