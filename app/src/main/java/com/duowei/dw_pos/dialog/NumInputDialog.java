@@ -39,7 +39,7 @@ public class NumInputDialog implements View.OnClickListener {
         mDialog = new AlertDialog.Builder(context).create();
         //必须先setView，否则在dialog\popuwindow中无法自动弹出软健盘
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mLayout = (LinearLayout) inflater.inflate(R.layout.dialog_item, null);
+        mLayout = (LinearLayout) inflater.inflate(R.layout.dialog_quick_item, null);
         mDialog.setView(mLayout);
         mDialog.show();
         WindowManager.LayoutParams params = mDialog.getWindow().getAttributes();

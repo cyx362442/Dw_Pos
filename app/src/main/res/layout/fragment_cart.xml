@@ -89,6 +89,7 @@
             android:layout_marginLeft="50dp"
             android:textSize="@dimen/textSize20"
             android:textColor="@color/blue"
+            android:visibility="gone"
             android:text="1，"/>
     </LinearLayout>
 </RelativeLayout>

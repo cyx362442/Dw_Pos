@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.duowei.dw_pos.bean.YHJBQK;
+import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.Users;
 
@@ -110,6 +111,7 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         SQLiteStudioService.instance().stop();
+        CartList.newInstance(this).getList().clear();
         super.onDestroy();
     }
 }

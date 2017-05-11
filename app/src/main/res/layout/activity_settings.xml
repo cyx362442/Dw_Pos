@@ -61,7 +61,7 @@
         style="@style/linearLayout_setting">
         <TextView
             style="@style/textview_setting"
-            android:text="请选择点餐模式"/>
+            android:text="点餐模式"/>
         <RadioGroup
             android:id="@+id/radioGroup"
             android:layout_width="match_parent"

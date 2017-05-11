@@ -60,7 +60,7 @@
             <EditText
                 android:id="@+id/et_password"
                 style="@style/editText_openTable"
-                android:inputType="textPassword"
+                android:inputType="numberPassword"
                 android:layout_height="50dp"/>
         </LinearLayout>
     </LinearLayout>

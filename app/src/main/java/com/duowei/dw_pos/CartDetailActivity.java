@@ -177,6 +177,11 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
                 mLlCommit.setVisibility(View.GONE);
                 mBCheck.setVisibility(View.VISIBLE);
                 mAdapter.addLocalList(CartList.newInstance(this).getList());
+                String title = "订餐详情";
+                if (mAdapter.getTotalPrice() > 0) {
+                    title += " ¥" + mAdapter.getTotalPrice();
+                }
+                mTitleView.setText(title);
             }
         }
     }

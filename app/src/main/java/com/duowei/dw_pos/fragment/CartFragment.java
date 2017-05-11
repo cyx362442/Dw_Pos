@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -68,11 +69,16 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        SharedPreferences sp = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE);
+        String orderstytle = sp.getString("orderstytle", getResources().getString(R.string.order_stytle_zhongxican));
 
         mCartNumView = (TextView) view.findViewById(R.id.tv_cart_num);
         mCartPriceView = (TextView) view.findViewById(R.id.tv_cart_price);
         mCartIconLayout = (FrameLayout) view.findViewById(R.id.fl_cart);
         mTabNum = (TextView) view.findViewById(R.id.tv_tabNum);
+        if(orderstytle.equals(getActivity().getString(R.string.order_stytle_kuaican))){
+            mTabNum.setVisibility(View.VISIBLE);
+        }
 
         view.findViewById(R.id.btn_commit).setOnClickListener(this);
         mCartIconLayout.setOnClickListener(this);
