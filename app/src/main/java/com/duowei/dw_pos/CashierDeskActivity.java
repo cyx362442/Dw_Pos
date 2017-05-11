@@ -23,12 +23,14 @@ import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.event.AddPriceEvent;
+import com.duowei.dw_pos.event.CheckSuccess;
 import com.duowei.dw_pos.event.ClearSearchEvent;
 import com.duowei.dw_pos.event.FinishEvent;
 import com.duowei.dw_pos.fragment.AddPriceDialogFragment;
 import com.duowei.dw_pos.fragment.CartFragment;
 import com.duowei.dw_pos.httputils.CheckVersion;
 import com.duowei.dw_pos.tools.AnimUtils;
+import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.view.ToggleButton;
 
 import org.greenrobot.eventbus.EventBus;
@@ -106,6 +108,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onStart() {
         super.onStart();
+        mCartFragment.setTabNum(CashierDeskActivity.tabNum+"，");
     }
 
     @Override
@@ -123,6 +126,13 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
     public void checkJycxmsz(){
         mRightJyxmszAllList = getJyxmszAllList();
         mRightAdapter.setAllList(mRightJyxmszAllList);
+    }
+
+    //结账成功
+    @Subscribe
+    public void checkSuccess(CheckSuccess event){
+        CashierDeskActivity.tabNum++;
+        mCartFragment.setTabNum(tabNum+"，");
     }
 
     @Subscribe

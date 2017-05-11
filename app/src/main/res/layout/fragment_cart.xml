@@ -81,5 +81,14 @@
             android:text="¥10.00"
             android:textSize="18sp"
             android:textColor="@android:color/white"/>
+        <TextView
+            android:id="@+id/tv_tabNum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginLeft="50dp"
+            android:textSize="@dimen/textSize20"
+            android:textColor="@color/blue"
+            android:text="1，"/>
     </LinearLayout>
 </RelativeLayout>

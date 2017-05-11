@@ -50,6 +50,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             }
         }
     };
+    private TextView mTabNum;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,6 +72,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         mCartNumView = (TextView) view.findViewById(R.id.tv_cart_num);
         mCartPriceView = (TextView) view.findViewById(R.id.tv_cart_price);
         mCartIconLayout = (FrameLayout) view.findViewById(R.id.fl_cart);
+        mTabNum = (TextView) view.findViewById(R.id.tv_tabNum);
 
         view.findViewById(R.id.btn_commit).setOnClickListener(this);
         mCartIconLayout.setOnClickListener(this);
@@ -90,6 +92,10 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         getActivity().unregisterReceiver(mBroadcastReceiver);
+    }
+
+    public void setTabNum(String num){
+        mTabNum.setText(num);
     }
 
     public void registerBoradcastReceiver() {

@@ -218,7 +218,6 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     //结账成功
     @Subscribe
     public void checkSuccess(CheckSuccess event){
-        CashierDeskActivity.tabNum++;
         CartList.newInstance(this).getList().clear();
         finish();
     }
