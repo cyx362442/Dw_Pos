@@ -33,6 +33,7 @@ import com.duowei.dw_pos.event.CartRemoteUpdateEvent;
 import com.duowei.dw_pos.event.CartUpdateEvent;
 import com.duowei.dw_pos.event.CheckSuccess;
 import com.duowei.dw_pos.event.Commit;
+import com.duowei.dw_pos.event.FinishEvent;
 import com.duowei.dw_pos.fragment.MessageDialogFragment;
 import com.duowei.dw_pos.fragment.TasteChoiceDialogFragment;
 import com.duowei.dw_pos.httputils.NetUtils;
@@ -105,6 +106,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_detail);
+        EventBus.getDefault().register(this);
         initViews();
         mPrinter = Prints.getPrinter();
         mPrinter.bindPrintService(this, connService);
@@ -115,7 +117,6 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
         loadData();
     }
 
@@ -219,6 +220,11 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     public void checkSuccess(CheckSuccess event){
         CashierDeskActivity.tabNum++;
         CartList.newInstance(this).getList().clear();
+        finish();
+    }
+
+    @Subscribe
+    public void finishEvent(FinishEvent event){
         finish();
     }
 
