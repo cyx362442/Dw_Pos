@@ -28,6 +28,7 @@ import com.duowei.dw_pos.fragment.AddPriceDialogFragment;
 import com.duowei.dw_pos.fragment.CartFragment;
 import com.duowei.dw_pos.httputils.CheckVersion;
 import com.duowei.dw_pos.tools.AnimUtils;
+import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.view.ToggleButton;
 
 import org.greenrobot.eventbus.EventBus;

@@ -20,22 +20,27 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.duowei.dw_pos.adapter.CartDetailItemAdapter;
+import com.duowei.dw_pos.bean.OpenInfo;
 import com.duowei.dw_pos.bean.OrderNo;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
 import com.duowei.dw_pos.constant.ExtraParm;
+import com.duowei.dw_pos.dialog.CheckOutDialog;
 import com.duowei.dw_pos.event.CartAutoSubmit;
 import com.duowei.dw_pos.event.CartMsgDialogEvent;
 import com.duowei.dw_pos.event.CartRemoteUpdateEvent;
 import com.duowei.dw_pos.event.CartUpdateEvent;
+import com.duowei.dw_pos.event.CheckSuccess;
 import com.duowei.dw_pos.event.Commit;
 import com.duowei.dw_pos.fragment.MessageDialogFragment;
 import com.duowei.dw_pos.fragment.TasteChoiceDialogFragment;
 import com.duowei.dw_pos.httputils.NetUtils;
 import com.duowei.dw_pos.sunmiprint.Prints;
 import com.duowei.dw_pos.tools.CartList;
+import com.duowei.dw_pos.tools.DateTimeUtils;
 import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.SqlNetHandler;
+import com.duowei.dw_pos.tools.Users;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -58,7 +63,7 @@ import woyou.aidlservice.jiuiv5.IWoyouService;
  * 订单详情
  */
 
-public class CartDetailActivity extends AppCompatActivity implements View.OnClickListener {
+public class CartDetailActivity extends AppCompatActivity implements View.OnClickListener, CheckOutDialog.OnconfirmClick {
 
     private Handler mHandler = new Handler();
 
@@ -93,6 +98,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     private String mOrderstytle;
     private LinearLayout mLlCommit;
     private Button mBCheck;
+    private CheckOutDialog mDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,12 +121,12 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         unbindService(connService);
     }
 
@@ -136,6 +142,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
 
         mLlCommit = (LinearLayout) findViewById(R.id.linearLayout);
         mBCheck = (Button) findViewById(R.id.btn_check);
+        mBCheck.setOnClickListener(this);
         mTitleView = (TextView) findViewById(R.id.tv_title);
         mListView = (ListView) findViewById(R.id.list);
         mAddButton = (Button) findViewById(R.id.btn_add);
@@ -179,11 +186,23 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateRemoteUiDate(CartRemoteUpdateEvent event) {
-        getWmlsb(CartList.newInstance(this).getOrderNo().getWmdbh());
+        //中西餐
+        if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_zhongxican))){
+            getWmlsb(CartList.newInstance(this).getOrderNo().getWmdbh());
+        }
+        //快餐
+        else if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))){
+            OrderNo orderNo = CartList.newInstance(CartDetailActivity.this).getOrderNo();
+            new SqlNetHandler().handleCommit1(mHandler, CartDetailActivity.this, orderNo);
+            mDialog.cancel();
+        }
     }
 
     @Subscribe
     public void commitSuccess(Commit event) {
+        if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))){
+            return;
+        }
         //打印
         mPrinter.setWoyouService(woyouService);
         //第一次下单
@@ -193,6 +212,12 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             //加单
             mPrinter.print_commit(event.wmlsbjb, event.wmlsbList);
         }
+    }
+    //结账成功
+    @Subscribe
+    public void checkSuccess(CheckSuccess event){
+        CartList.newInstance(this).getList().clear();
+        finish();
     }
 
     private void updateData() {
@@ -245,6 +270,9 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance();
             fragment.show(getSupportFragmentManager(), null);
 
+        }else if(id==R.id.btn_check){
+            mDialog = new CheckOutDialog(this, "请输入餐牌号", 0);
+            mDialog.setOnconfirmClick(this);
         }
     }
 
@@ -324,6 +352,56 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
                             updateData();
                         }
                     });
+                }
+            }
+        });
+    }
+    //快餐模式，获取餐牌号,生成定单，送厨打
+    @Override
+    public void getDialogInput(String money) {
+        CartList cartList = CartList.newInstance(this);
+        cartList.setOpenInfo(new OpenInfo(
+                money,
+               "",
+               "1",
+                ""
+        ));
+        cartList.setOrderNo(new OrderNo(Users.pad + DateTimeUtils.getCurrentDatetime(), false));
+        httpCreateWmlsbjb();
+    }
+    private void httpCreateWmlsbjb() {
+        OpenInfo openInfo = CartList.newInstance(this).getOpenInfo();
+        OrderNo orderNo = CartList.newInstance(this).getOrderNo();
+
+        final WMLSBJB wmlsbjb = new WMLSBJB(
+                orderNo.getWmdbh(),
+                Users.YHMC,
+                openInfo.getDeskNo(),
+                "0", // 是否已结账
+                Users.pad,
+                openInfo.getPeopleNum(),
+                0,
+                "1",
+                openInfo.getPeopleType(),
+                openInfo.getRemark()
+        );
+        NetUtils.post7(Net.url, wmlsbjb.toInsertString(), new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
+                if (result.equals("]")) {
+                    return;
+                }
+                if (result.contains("richado")) {
+                    CartList.sWMLSBJB = wmlsbjb;
+                    if(CartList.newInstance(CartDetailActivity.this).getList().size() > 0){
+                        OrderNo orderNo = CartList.newInstance(CartDetailActivity.this).getOrderNo();
+                        new SqlNetHandler().handleCommit(mHandler, CartDetailActivity.this, orderNo);
+                    }
                 }
             }
         });

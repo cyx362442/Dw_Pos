@@ -29,6 +29,7 @@ import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.PaySet;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
+import com.duowei.dw_pos.event.CheckSuccess;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.tools.CloseActivity;
@@ -37,6 +38,7 @@ import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.sunmiprint.Prints;
 import com.duowei.dw_pos.tools.Users;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -303,6 +305,7 @@ public class WebViewPayActivity extends AppCompatActivity {
 
                             mPrinter.setWoyouService(woyouService);
                             mPrinter.print_jiezhang(mItem.getYS(),mItem.getYS(),"0.00",payStytle);
+                            EventBus.getDefault().post(new CheckSuccess());
                         }
                     });
                 }

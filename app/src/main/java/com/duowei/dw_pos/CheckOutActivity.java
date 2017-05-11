@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -26,6 +27,7 @@ import com.duowei.dw_pos.bean.YHJBQK;
 import com.duowei.dw_pos.constant.ExtraParm;
 import com.duowei.dw_pos.dialog.CheckOutDialog;
 import com.duowei.dw_pos.dialog.ConfirmDialog;
+import com.duowei.dw_pos.event.CheckSuccess;
 import com.duowei.dw_pos.event.FinishEvent;
 import com.duowei.dw_pos.event.YunSqlFinish;
 import com.duowei.dw_pos.httputils.DownHTTP;
@@ -99,6 +101,10 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     ImageView mImgyun;
     @BindView(R.id.progressBar)
     ProgressBar mProgressBar;
+    @BindView(R.id.ll_change)
+    LinearLayout mLlChange;
+    @BindView(R.id.linearLayout)
+    LinearLayout mLinearLayout;
     private ArrayList<WMLSB> list_wmlsb = new ArrayList<>();
     private float mTotalMoney = 0;//总额(原始价格总额)
     private float mActualMoney = 0;//实际金额
@@ -108,7 +114,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     private float mDaishou = 0.00f;
 
     private final int YUPAYREQUEST = 100;
-    public final static int RESURTCODE=1000;
+    public final static int RESURTCODE = 1000;
 
     private IWoyouService woyouService;
     private ServiceConnection connService = new ServiceConnection() {
@@ -130,6 +136,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     private String mPad;
     private Prints mPrinter;
     private ConfirmDialog mConfirmDialog;
+    private String mOrderstytle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +149,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
         CloseActivity.addAcitity(this);
         SharedPreferences user = getSharedPreferences("user", Context.MODE_PRIVATE);
         mPad = user.getString("pad", "");
+        mOrderstytle = user.getString("orderstytle", getResources().getString(R.string.order_stytle_zhongxican));
 
         mWmdbh = getIntent().getStringExtra("WMDBH");
         mPrinter = Prints.getPrinter();
@@ -154,6 +162,15 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     protected void onResume() {
         super.onResume();
         mTvUser.setText(Users.YHMC);
+        //中西餐
+        if (mOrderstytle.equals(getResources().getString(R.string.order_stytle_zhongxican))) {
+            mLlChange.setVisibility(View.VISIBLE);
+            mLinearLayout.setVisibility(View.VISIBLE);
+            //快餐
+        } else {
+            mLlChange.setVisibility(View.INVISIBLE);
+            mLinearLayout.setVisibility(View.INVISIBLE);
+        }
         Http_initData();
     }
 
@@ -226,13 +243,13 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
         });
     }
 
-    @OnClick({R.id.btn_dayin, R.id.btn_dingdan, R.id.rl_xianjin, R.id.rl_zhifubao, R.id.rl_weixin, R.id.ll_cashier, R.id.rl_yun,R.id.ll_change})
+    @OnClick({R.id.btn_dayin, R.id.btn_dingdan, R.id.rl_xianjin, R.id.rl_zhifubao, R.id.rl_weixin, R.id.ll_cashier, R.id.rl_yun, R.id.ll_change})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_change:
                 Intent intent = new Intent();
-                intent.putExtra("wmdbh",mWmdbh);
-                setResult(RESURTCODE,intent);
+                intent.putExtra("wmdbh", mWmdbh);
+                setResult(RESURTCODE, intent);
                 finish();
                 break;
             case R.id.btn_dayin:
@@ -326,6 +343,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                             Toast.makeText(CheckOutActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
                             mProgressBar.setVisibility(View.GONE);
                         }
+
                         @Override
                         public void onResponse(String response) {
                             if (response.contains("richado")) {
@@ -333,6 +351,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                                 mPrinter.print_jiezhang(bigDecimal(mYingshou) + "",
                                         bigDecimal(mYishou) + "", bigDecimal(mZhaoling) + "", "收现");
                                 mProgressBar.setVisibility(View.GONE);
+                                EventBus.getDefault().post(new CheckSuccess());
                                 finish();
                             }
                         }
@@ -411,6 +430,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                                 mPrinter.setWoyouService(woyouService);
                                 mPrinter.print_yun(event.mWmlsbjb, event.mListWmlsb, event.listPay);
                                 mProgressBar.setVisibility(View.GONE);
+                                EventBus.getDefault().post(new CheckSuccess());
                                 finish();
                             }
                         }

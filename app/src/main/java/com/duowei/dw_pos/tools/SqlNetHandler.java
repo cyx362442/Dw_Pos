@@ -2,10 +2,13 @@ package com.duowei.dw_pos.tools;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.widget.Toast;
 
+import com.duowei.dw_pos.CheckOutActivity;
 import com.duowei.dw_pos.DinningActivity;
+import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.OrderNo;
 import com.duowei.dw_pos.bean.Pbdyxxb;
 import com.duowei.dw_pos.bean.WMLSB;
@@ -40,6 +43,9 @@ public class SqlNetHandler {
      * @param orderNo 单号
      */
     public void handleCommit(final Handler handler, final Context context, final OrderNo orderNo) {
+        SharedPreferences sp = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+        final String orderstytle = sp.getString("orderstytle", context.getResources().getString(R.string.order_stytle_zhongxican));
+
         final CartList cartList = CartList.newInstance(context);
         String localSql = "";
 
@@ -67,7 +73,7 @@ public class SqlNetHandler {
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(final Call call, Response response) throws IOException {
                 final String result = response.body().string();
                 handler.post(new Runnable() {
                     @Override
@@ -76,7 +82,9 @@ public class SqlNetHandler {
                             Toast.makeText(context, "提交成功！", Toast.LENGTH_SHORT).show();
 
                             orderNo.setCreated(true);
-                            cartList.getList().clear(); // 清空本地没提交数据
+                            if(orderstytle.equals(context.getResources().getString(R.string.order_stytle_zhongxican))){
+                                 cartList.getList().clear(); // 清空本地没提交数据
+                            }
                             EventBus.getDefault().post(new CartRemoteUpdateEvent());
 //                            getWmlsb(handler, orderNo.getWmdbh());
 
@@ -96,6 +104,9 @@ public class SqlNetHandler {
      * @param orderNo
      */
     public void handleCommit1(final Handler handler, final Context context, OrderNo orderNo) {
+        SharedPreferences sp = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+        final String orderstytle = sp.getString("orderstytle", context.getResources().getString(R.string.order_stytle_zhongxican));
+
         List<WMLSB> allWmlsbList = CartList.sWMLSBList;
         final List<WMLSB> wmlsbList = new ArrayList<>();
         for (int i = 0; i < allWmlsbList.size(); i++) {
@@ -133,10 +144,17 @@ public class SqlNetHandler {
                             Toast.makeText(context, "提交成功！", Toast.LENGTH_SHORT).show();
 
                             EventBus.getDefault().post(new Commit(false, CartList.sWMLSBJB, wmlsbList));
-
-                            Intent intent = new Intent(context, DinningActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            context.startActivity(intent);
+                            //中西餐
+                            if(orderstytle.equals(context.getResources().getString(R.string.order_stytle_zhongxican))){
+                                Intent intent = new Intent(context, DinningActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                context.startActivity(intent);
+                                //快餐
+                            }else if(orderstytle.equals(context.getResources().getString(R.string.order_stytle_kuaican))){
+                                Intent intent = new Intent(context, CheckOutActivity.class);
+                                intent.putExtra("WMDBH",CartList.newInstance(context).getOrderNo().getWmdbh());
+                                context.startActivity(intent);
+                            }
 
                         } else {
                             Toast.makeText(context, "提交失败！", Toast.LENGTH_LONG).show();
