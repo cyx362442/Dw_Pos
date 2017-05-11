@@ -66,6 +66,8 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
 
     private Handler mHandler = new Handler();
 
+    public static int tabNum=1;
+
     /**
      * 1 单品 2 套餐
      */

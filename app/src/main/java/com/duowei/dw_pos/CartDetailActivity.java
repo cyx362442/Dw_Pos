@@ -26,6 +26,7 @@ import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
 import com.duowei.dw_pos.constant.ExtraParm;
 import com.duowei.dw_pos.dialog.CheckOutDialog;
+import com.duowei.dw_pos.dialog.NumInputDialog;
 import com.duowei.dw_pos.event.CartAutoSubmit;
 import com.duowei.dw_pos.event.CartMsgDialogEvent;
 import com.duowei.dw_pos.event.CartRemoteUpdateEvent;
@@ -98,7 +99,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     private String mOrderstytle;
     private LinearLayout mLlCommit;
     private Button mBCheck;
-    private CheckOutDialog mDialog;
+    private NumInputDialog mDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -216,6 +217,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     //结账成功
     @Subscribe
     public void checkSuccess(CheckSuccess event){
+        CashierDeskActivity.tabNum++;
         CartList.newInstance(this).getList().clear();
         finish();
     }
@@ -271,7 +273,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             fragment.show(getSupportFragmentManager(), null);
 
         }else if(id==R.id.btn_check){
-            mDialog = new CheckOutDialog(this, "请输入餐牌号", 0);
+            mDialog=new NumInputDialog(this,"请输入餐牌号","号码：",CashierDeskActivity.tabNum);
             mDialog.setOnconfirmClick(this);
         }
     }
@@ -358,10 +360,11 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     }
     //快餐模式，获取餐牌号,生成定单，送厨打
     @Override
-    public void getDialogInput(String money) {
+    public void getDialogInput(String tabNum) {
+        CashierDeskActivity.tabNum=Integer.parseInt(tabNum);
         CartList cartList = CartList.newInstance(this);
         cartList.setOpenInfo(new OpenInfo(
-                money,
+                tabNum,
                "",
                "1",
                 ""
