@@ -65,7 +65,7 @@ import woyou.aidlservice.jiuiv5.IWoyouService;
  * 订单详情
  */
 
-public class CartDetailActivity extends AppCompatActivity implements View.OnClickListener, CheckOutDialog.OnconfirmClick {
+public class CartDetailActivity extends AppCompatActivity implements View.OnClickListener, NumInputDialog.OnconfirmClick {
 
     private Handler mHandler = new Handler();
 
@@ -283,7 +283,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             fragment.show(getSupportFragmentManager(), null);
 
         }else if(id==R.id.btn_check){
-            mDialog=new NumInputDialog(this,"请输入餐牌号","号码：",CashierDeskActivity.tabNum);
+            mDialog=new NumInputDialog(this,CashierDeskActivity.tabNum);
             mDialog.setOnconfirmClick(this);
         }
     }
@@ -368,20 +368,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             }
         });
     }
-    //快餐模式，获取餐牌号,生成定单，送厨打
-    @Override
-    public void getDialogInput(String tabNum) {
-        CashierDeskActivity.tabNum=Integer.parseInt(tabNum);
-        CartList cartList = CartList.newInstance(this);
-        cartList.setOpenInfo(new OpenInfo(
-                tabNum,
-               "",
-               "1",
-                ""
-        ));
-        cartList.setOrderNo(new OrderNo(Users.pad + DateTimeUtils.getCurrentDatetime(), false));
-        httpCreateWmlsbjb();
-    }
+
     private void httpCreateWmlsbjb() {
         OpenInfo openInfo = CartList.newInstance(this).getOpenInfo();
         OrderNo orderNo = CartList.newInstance(this).getOrderNo();
@@ -418,5 +405,19 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
                 }
             }
         });
+    }
+    /**快餐模式，获取餐牌号,生成定单，送厨打*/
+    @Override
+    public void getDialogInput(String tableNum, String orderStytle) {
+        CashierDeskActivity.tabNum=Integer.parseInt(tableNum);
+        CartList cartList = CartList.newInstance(this);
+        cartList.setOpenInfo(new OpenInfo(
+                tableNum,
+                "",
+                "1",
+                orderStytle
+        ));
+        cartList.setOrderNo(new OrderNo(Users.pad + DateTimeUtils.getCurrentDatetime(), false));
+        httpCreateWmlsbjb();
     }
 }
