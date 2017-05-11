@@ -1,11 +1,15 @@
 package com.duowei.dw_pos.dialog;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -18,7 +22,7 @@ import com.duowei.dw_pos.R;
  * Created by Administrator on 2017-05-11.
  */
 
-public class NumInputDialog implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+public class NumInputDialog implements View.OnClickListener, RadioGroup.OnCheckedChangeListener{
     Context context;
     private AlertDialog mDialog;
     public EditText mEtInput;
@@ -31,8 +35,6 @@ public class NumInputDialog implements View.OnClickListener, RadioGroup.OnChecke
     private RadioButton mRb1;
     private RadioButton mRb2;
     private RadioButton mRb3;
-
-
     public interface OnconfirmClick{
         void getDialogInput(String tableNum,String orderStytle);
     }
