@@ -113,20 +113,21 @@ public class CartList {
             WMLSB wmlsb = mList.get(i);
             price += wmlsb.getDJ() * wmlsb.getSL();
 
+            num += wmlsb.getSL();
             for (int j = 0; j < wmlsb.getSubWMLSBList().size(); j++) {
                 WMLSB subWmlsb1 = wmlsb.getSubWMLSBList().get(j);
-                num += wmlsb.getSubWMLSBList().size();
+                num += subWmlsb1.getSL();
                 price += subWmlsb1.getDJ() * subWmlsb1.getSL();
             }
         }
 
         for (int i = 0; i < sWMLSBList.size(); i++) {
             WMLSB wmlsb = sWMLSBList.get(i);
+            num += wmlsb.getSL();
             price += wmlsb.getDJ() * wmlsb.getSL();
         }
-        num += sWMLSBList.size();
 
-        return new CartInfo(mList.size() + num, BigDecimal.valueOf(price).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue());
+        return new CartInfo(num, BigDecimal.valueOf(price).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue());
     }
 
 
@@ -490,6 +491,8 @@ public class CartList {
         List<MZSZMXXX> mzszmxxxList = DataSupport.where("bm = ?", bm).find(MZSZMXXX.class);
         if (mzszmxxxList != null && mzszmxxxList.size() > 0) {
 
+            wmlsb.getSubWMLSBList().clear();
+
             for (int i = 0; i < mzszmxxxList.size(); i++) {
                 MZSZMXXX mzszmxxx = mzszmxxxList.get(i);
                 JYXMSZ subJyxmsz = DataSupport.where("xmbh = ?", mzszmxxx.getXMBH()).findFirst(JYXMSZ.class);
@@ -503,11 +506,11 @@ public class CartList {
                     subWmlsb.setSFZS("1");
                     subWmlsb.setBY17("7");
                     subWmlsb.setBy5(wmlsb.getBy5());
-                    wmlsb.getSubWMLSBList().clear();
                     wmlsb.getSubWMLSBList().add(subWmlsb);
-                    EventBus.getDefault().post(new CartUpdateEvent());
                 }
             }
+            EventBus.getDefault().post(new CartUpdateEvent());
+
 
             if ("2".equals(jbby1) && mzszmxxxList.size() > 0) {
                 // 加价

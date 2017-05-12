@@ -594,7 +594,7 @@ public class WMLSB implements Serializable {
                         sql += "update wmlsb" +
                                 " set sl = sl - isnull(DWSL, 1)" +
                                 " where xh = " + w.getXH() + "|";
-                        break;
+//                        break;
                     }
                 }
             }
@@ -638,7 +638,6 @@ public class WMLSB implements Serializable {
                                     " where xh = " + w.getXH() + "|";
                         }
 
-                        return sql;
                     }
                 }
             }
