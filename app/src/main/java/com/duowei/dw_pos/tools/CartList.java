@@ -14,10 +14,10 @@ import com.duowei.dw_pos.bean.OpenInfo;
 import com.duowei.dw_pos.bean.OrderNo;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
-import com.duowei.dw_pos.event.AddPriceEvent;
+import com.duowei.dw_pos.event.AddEvent;
 import com.duowei.dw_pos.event.CartMsgDialogEvent;
 import com.duowei.dw_pos.event.CartUpdateEvent;
-import com.duowei.dw_pos.fragment.AddPriceDialogFragment;
+import com.duowei.dw_pos.fragment.AddDialogFragment;
 
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.DateTime;
@@ -493,30 +493,18 @@ public class CartList {
 
             wmlsb.getSubWMLSBList().clear();
 
-            for (int i = 0; i < mzszmxxxList.size(); i++) {
-                MZSZMXXX mzszmxxx = mzszmxxxList.get(i);
-                JYXMSZ subJyxmsz = DataSupport.where("xmbh = ?", mzszmxxx.getXMBH()).findFirst(JYXMSZ.class);
-
-                if ("1".equals(jbby1)) {
-                    // 添加买赠
-                    WMLSB subWmlsb = new WMLSB(subJyxmsz);
-                    subWmlsb.setSL(Float.valueOf(mzszmxxx.getSL()));
-                    subWmlsb.setDJ(0);
-                    subWmlsb.setBY13("赠送");
-                    subWmlsb.setSFZS("1");
-                    subWmlsb.setBY17("7");
-                    subWmlsb.setBy5(wmlsb.getBy5());
-                    wmlsb.getSubWMLSBList().add(subWmlsb);
-                }
+            if ("1".equals(jbby1) && mzszmxxxList.size() > 0) {
+                // 添加买赠
+                AddDialogFragment.sWMLSB = wmlsb;
+                AddDialogFragment.sMZSZMXXXList = mzszmxxxList;
+                EventBus.getDefault().post(new AddEvent(1));
             }
-            EventBus.getDefault().post(new CartUpdateEvent());
-
 
             if ("2".equals(jbby1) && mzszmxxxList.size() > 0) {
                 // 加价
-                AddPriceDialogFragment.sWMLSB = wmlsb;
-                AddPriceDialogFragment.sMZSZMXXXList = mzszmxxxList;
-                EventBus.getDefault().post(new AddPriceEvent());
+                AddDialogFragment.sWMLSB = wmlsb;
+                AddDialogFragment.sMZSZMXXXList = mzszmxxxList;
+                EventBus.getDefault().post(new AddEvent(2));
             }
         }
     }

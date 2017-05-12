@@ -22,15 +22,14 @@ import com.duowei.dw_pos.adapter.RightAdapter;
 import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
-import com.duowei.dw_pos.event.AddPriceEvent;
+import com.duowei.dw_pos.event.AddEvent;
 import com.duowei.dw_pos.event.CheckSuccess;
 import com.duowei.dw_pos.event.ClearSearchEvent;
 import com.duowei.dw_pos.event.FinishEvent;
-import com.duowei.dw_pos.fragment.AddPriceDialogFragment;
+import com.duowei.dw_pos.fragment.AddDialogFragment;
 import com.duowei.dw_pos.fragment.CartFragment;
 import com.duowei.dw_pos.httputils.CheckVersion;
 import com.duowei.dw_pos.tools.AnimUtils;
-import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.view.ToggleButton;
 
 import org.greenrobot.eventbus.EventBus;
@@ -380,13 +379,14 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
     }
 
     /**
-     * 显示加价促销窗口
+     * 显示赠送 、加价促销窗口
      *
      * @param event
      */
     @Subscribe
-    public void addPrice(AddPriceEvent event) {
-        AddPriceDialogFragment fragment = new AddPriceDialogFragment();
+    public void addPrice(AddEvent event) {
+
+        AddDialogFragment fragment = AddDialogFragment.newInstance(event.getType());
         fragment.show(getSupportFragmentManager(), null);
     }
 }
