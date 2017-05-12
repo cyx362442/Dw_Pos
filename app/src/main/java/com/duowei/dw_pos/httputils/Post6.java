@@ -183,6 +183,10 @@ public class Post6 {
         });
     }
 
+    public void Http_yun_cash(){
+
+    }
+
 
     public Float bigDecimal(Float f) {
         return BigDecimal.valueOf(f).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();

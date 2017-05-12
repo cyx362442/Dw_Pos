@@ -23,6 +23,7 @@ import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WXFWQDZ;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.bean.YunFu;
+import com.duowei.dw_pos.dialog.UnpayDialog;
 import com.duowei.dw_pos.dialog.YunFuDialog;
 import com.duowei.dw_pos.event.YunSqlFinish;
 import com.duowei.dw_pos.event.YunSubmit;
@@ -364,7 +365,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                 if(listYunPayFragment.size()<=0){
                     Toast.makeText(getActivity(),"请选择付款方式",Toast.LENGTH_SHORT).show();
                 }else if(bigDecimal(Moneys.wfjr)>0){
-                    Toast.makeText(getActivity(),"金额不足",Toast.LENGTH_SHORT).show();
+                    new UnpayDialog(getActivity(),mSqlYun,mSqlLocal);
                 }else{
                     mConfirm.setEnabled(false);
                     EventBus.getDefault().post(new YunSubmit());
