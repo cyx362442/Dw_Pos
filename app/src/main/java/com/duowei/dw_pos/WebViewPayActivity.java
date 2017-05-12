@@ -31,6 +31,8 @@ import com.duowei.dw_pos.bean.PaySet;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.event.CheckSuccess;
 import com.duowei.dw_pos.httputils.DownHTTP;
+import com.duowei.dw_pos.httputils.Post6;
+import com.duowei.dw_pos.httputils.Post7;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.tools.CloseActivity;
 import com.duowei.dw_pos.tools.DateTimes;
@@ -39,6 +41,7 @@ import com.duowei.dw_pos.sunmiprint.Prints;
 import com.duowei.dw_pos.tools.Users;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -106,6 +109,7 @@ public class WebViewPayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view_pay);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         CloseActivity.addAcitity(this);
         mDrawable2 = (AnimationDrawable) mImgLoad.getDrawable();
         SharedPreferences user = getSharedPreferences("user", Context.MODE_PRIVATE);
@@ -173,6 +177,23 @@ public class WebViewPayActivity extends AppCompatActivity {
         }
     }
 
+    @Subscribe
+    public void paySuccess(final CheckSuccess event) {
+        mWebview.setVisibility(View.GONE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                flag = true;
+                mDrawable2.start();
+                mLlReturn.setVisibility(View.VISIBLE);
+                mTvReturn.setText("恭喜你," + event.payStytle + "收款成功!");
+
+                mPrinter.setWoyouService(woyouService);
+                mPrinter.print_jiezhang(mItem.getYS(), mItem.getYS(), "0.00", event.payStytle);
+            }
+        });
+    }
+
     @OnClick(R.id.img_return)
     public void onViewClicked() {
         PayExit();
@@ -233,7 +254,8 @@ public class WebViewPayActivity extends AppCompatActivity {
             if (payStytle.equals("支付宝")) {
                     ZFBID = result.substring(result.indexOf("*") + 1, result.length());
                 }
-            updateData(payStytle);
+            Post6.getInstance().Http_scan(mItem,mBm,nr,mPad,mID,ZFBID,payStytle);
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -250,67 +272,6 @@ public class WebViewPayActivity extends AppCompatActivity {
                 }
             }
         }
-    }
-
-    private void updateData(final String payStytle) {
-        String sj = mItem.getSj().replaceAll("-", "");
-        String exec = "exec prc_AADBPRK_android_001 '" + sj + "',1|";
-        DownHTTP.postVolley6(Net.url, exec, new VolleyResultListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-            }
-            @Override
-            public void onResponse(String s) {
-                try {
-                    JSONArray jsonArray = new JSONArray(s);
-                    JSONObject jsonObject = jsonArray.getJSONObject(0);
-                    int prk = jsonObject.getInt("prk");
-                    Http_jiezhang(prk, payStytle);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void Http_jiezhang(int prk, final String payStytle) {
-        String url = "";
-        String insertXSFKFS = "insert into XSFKFS(XSDH,BM,NR,FKJE,DYQZS) values ('" + mItem.getWMDBH() + "','" + mBm + "','" + nr + "'," + mItem.getYS() + ",0)|";
-        String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS,DDSJ,JYSJ,BZ,JZFSBM,BMMC,WMBS,ZH,KHBH,QKJE,JCRS,CZKYE,BY7,CXYH)" +
-                "VALUES('" + mItem.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣','" + bigDecimal(Moneys.xfzr) + "','" + bigDecimal(Moneys.zkjr) + "',0,'" + mItem.getYS() + "',0,'" + mItem.getZKFS() + "'," +
-                "'" + mItem.getJYSJ() + "',GETDATE(),'"+mPad+"','" + mItem.getJcfs() + "','','" + prk + "','" + mItem.getZH() + "',0,0,'" + mItem.getJCRS() + "',0,'','" + mID + "')|";
-        String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
-                "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mItem.getWMDBH() + "'|";
-        String updateWMLSBJB = "update WMLSBJB set JSJ='"+mPad+"',SFYJZ='1',DJLSH='" + prk + "',BY13='" + mID + "',BY16='" + ZFBID + "',YSJE='" + bigDecimal(Moneys.xfzr) + "',JSKSSJ=getdate() where WMDBH='" + mItem.getWMDBH() + "'|";
-        url = insertXSFKFS + insertXSJBXX + insertXSMXXX + updateWMLSBJB;
-        Http_local(payStytle, url);
-    }
-
-    private void Http_local(final String payStytle, String sql) {
-        DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-            }
-            @Override
-            public void onResponse(String s) {
-                if (s.contains("richado")) {
-                    mWebview.setVisibility(View.GONE);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            flag = true;
-                            mDrawable2.start();
-                            mLlReturn.setVisibility(View.VISIBLE);
-                            mTvReturn.setText("恭喜你," + payStytle + "收款成功!");
-
-                            mPrinter.setWoyouService(woyouService);
-                            mPrinter.print_jiezhang(mItem.getYS(),mItem.getYS(),"0.00",payStytle);
-                            EventBus.getDefault().post(new CheckSuccess());
-                        }
-                    });
-                }
-            }
-        });
     }
 
     @Override
@@ -348,5 +309,6 @@ public class WebViewPayActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(connService);
+        EventBus.getDefault().unregister(this);
     }
 }

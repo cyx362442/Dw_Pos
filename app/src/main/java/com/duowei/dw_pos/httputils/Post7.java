@@ -1,13 +1,11 @@
 package com.duowei.dw_pos.httputils;
 
-import android.net.http.LoggingEventHandler;
-import android.util.Log;
 
 import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.event.ChangeTable;
+import com.duowei.dw_pos.event.CheckSuccess;
 import com.duowei.dw_pos.event.OrderUpdateEvent;
-import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.Net;
 
 import org.greenrobot.eventbus.EventBus;
@@ -53,6 +51,35 @@ public class Post7 {
             public void onResponse(String response) {
                 if(response.contains("richado")){
                     EventBus.getDefault().post(new ChangeTable());
+                }
+            }
+        });
+    }
+    /**现金结账提交*/
+    public void Http_check(String sql, final String payStytle){
+        DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+            @Override
+            public void onResponse(String response) {
+                if (response.contains("richado")) {
+                    EventBus.getDefault().post(new CheckSuccess(payStytle));
+                }
+            }
+        });
+    }
+    /**扫码支付*/
+    public void Http_scan(String sql, final String payStytle){
+        DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+            @Override
+            public void onResponse(String response) {
+                if (response.contains("richado")) {
+                    EventBus.getDefault().post(new CheckSuccess(payStytle));
                 }
             }
         });

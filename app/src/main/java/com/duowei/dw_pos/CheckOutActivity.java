@@ -24,6 +24,7 @@ import com.duowei.dw_pos.bean.OrderNo;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.bean.YHJBQK;
+import com.duowei.dw_pos.bean.YunFu;
 import com.duowei.dw_pos.constant.ExtraParm;
 import com.duowei.dw_pos.dialog.CheckOutDialog;
 import com.duowei.dw_pos.dialog.ConfirmDialog;
@@ -31,6 +32,7 @@ import com.duowei.dw_pos.event.CheckSuccess;
 import com.duowei.dw_pos.event.FinishEvent;
 import com.duowei.dw_pos.event.YunSqlFinish;
 import com.duowei.dw_pos.httputils.DownHTTP;
+import com.duowei.dw_pos.httputils.Post6;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.sunmiprint.Prints;
 import com.duowei.dw_pos.tools.CartList;
@@ -137,6 +139,10 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     private Prints mPrinter;
     private ConfirmDialog mConfirmDialog;
     private String mOrderstytle;
+    //云会员付款方式
+    private List<YunFu> mYunPayStytle;
+    //云会员后的数据
+    private ArrayList<WMLSB> mListYunWmlsb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -288,9 +294,6 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                 mIntent.putExtra("listWmlsb", list_wmlsb);
                 startActivityForResult(mIntent, YUPAYREQUEST);
                 break;
-            case R.id.ll_cashier:
-//                inputMoney();
-                break;
             case R.id.rl_xianjin:
                 if (canCheck()) return;
 
@@ -309,60 +312,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
         }
         return false;
     }
-
-    /**
-     * 现金结账
-     */
-    private void Http_cashier() {
-        mProgressBar.setVisibility(View.VISIBLE);
-        String sj = mWmlsbjb.getSj().replaceAll("-", "");
-        String exec = "exec prc_AADBPRK_android_001 '" + sj + "',1|";
-        DownHTTP.postVolley6(Net.url, exec, new VolleyResultListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Toast.makeText(CheckOutActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
-                mProgressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onResponse(String s) {
-                try {
-                    JSONArray jsonArray = new JSONArray(s);
-                    JSONObject jsonObject = jsonArray.getJSONObject(0);
-                    int prk = jsonObject.getInt("prk");
-                    String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS,DDSJ,JYSJ,BZ,JZFSBM,BMMC,WMBS,ZH,KHBH,QKJE,JCRS,BY7)" +
-                            "VALUES('" + mWmlsbjb.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣','" + bigDecimal(Moneys.xfzr) + "','" + bigDecimal(Moneys.zkjr) + "'," + bigDecimal(mYingshou) + ",'" + mWmlsbjb.getYS() + "',0,'" + mWmlsbjb.getZKFS() + "'," +
-                            "'" + mWmlsbjb.getJYSJ() + "',GETDATE(),'" + mPad + "','" + mWmlsbjb.getJcfs() + "','','" + prk + "','" + mWmlsbjb.getZH() + "'," + bigDecimal(mYishou) + "," + bigDecimal(mZhaoling) + ",'" + mWmlsbjb.getJCRS() + "','')|";
-                    String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
-                            "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mWmlsbjb.getWMDBH() + "'|";
-                    String updateWMLSBJB = "update WMLSBJB set JSJ='" + mPad + "',SFYJZ='1',DJLSH='" + prk + "',YSJE='" + bigDecimal(Moneys.xfzr) + "',JSKSSJ=getdate() where WMDBH='" + mWmlsbjb.getWMDBH() + "'|";
-                    String sql = insertXSJBXX + insertXSMXXX + updateWMLSBJB;
-                    DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(CheckOutActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
-                            mProgressBar.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onResponse(String response) {
-                            if (response.contains("richado")) {
-                                mPrinter.setWoyouService(woyouService);
-                                mPrinter.print_jiezhang(bigDecimal(mYingshou) + "",
-                                        bigDecimal(mYishou) + "", bigDecimal(mZhaoling) + "", "收现");
-                                mProgressBar.setVisibility(View.GONE);
-                                EventBus.getDefault().post(new CheckSuccess());
-                                finish();
-                            }
-                        }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
+    /**输入金额*/
     private void inputMoney() {
         final CheckOutDialog dialog = new CheckOutDialog(this, "现金支付", bigDecimal(mYingshou));
         dialog.mConfirm.setOnClickListener(new View.OnClickListener() {
@@ -384,6 +334,13 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
             }
         });
     }
+    /**
+     * 现金结账
+     */
+    private void Http_cashier() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        Post6.getInstance().Http_cashier(this,mWmlsbjb,mPad,mYingshou,mYishou,mZhaoling);
+    }
 
     /**
      * 云会员支付全额支付
@@ -391,55 +348,23 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     @Subscribe
     public void getYunPayLocal(final YunSqlFinish event) {
         mProgressBar.setVisibility(View.VISIBLE);
-        String sj = mWmlsbjb.getSj().replaceAll("-", "");
-        String exec = "exec prc_AADBPRK_android_001 '" + sj + "',1|";
-        DownHTTP.postVolley6(Net.url, exec, new VolleyResultListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(CheckOutActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
-                mProgressBar.setVisibility(View.GONE);
-            }
+        mListYunWmlsb = event.mListWmlsb;
+        mYunPayStytle = event.listPay;
+        Post6.getInstance().Http_yun(this,mWmlsbjb,mPad,mWmdbh,event.sql);
+    }
 
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONArray jsonArray = new JSONArray(response);
-                    JSONObject jsonObject = jsonArray.getJSONObject(0);
-                    int prk = jsonObject.getInt("prk");
-                    String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS," +
-                            "DDSJ,JYSJ,BZ,JZFSBM,WMBS,ZH,KHBH,QKJE,JCRS," +
-                            "CZKYE,BY7,CXYH,JZFSMC,HYJF,ZL,HYBH,HYKDJ)" +
-                            "VALUES('" + mWmdbh + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣'," + bigDecimal(Moneys.xfzr) + "," + bigDecimal(Moneys.zkjr) + ",0," + bigDecimal(Moneys.ysjr) + ",0,'" + mWmlsbjb.getZKFS() + "'," +
-                            "'" + mWmlsbjb.getJYSJ() + "',GETDATE(),'" + mPad + "','" + mWmlsbjb.getJcfs() + "','" + prk + "','" + mWmlsbjb.getZH() + "',0,0," + Integer.parseInt(mWmlsbjb.getJCRS()) + "," +
-                            "" + SqlYun.CZKYE + ",'','','云会员消费'," + (SqlYun.jfbfb_add - SqlYun.jfbfb_sub) + "," + SqlYun.jfbfb_add + ",'" + SqlYun.HYBH + "','" + SqlYun.HYKDJ + "')|";
-                    String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
-                            "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mWmdbh + "'|";
-                    String updateWMLSBJB = "update WMLSBJB set JSJ='" + mPad + "',SFYJZ='1',DJLSH='" + prk + "',YSJE=" + bigDecimal(Moneys.xfzr) + ",JSKSSJ=getdate(),BY8='" + SqlYun.from_user + "',JZBZ='" + SqlYun.JZBZ + "' where WMDBH='" + mWmdbh + "'|";
-                    String sql = event.sql + insertXSJBXX + insertXSMXXX + updateWMLSBJB;
-                    DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(CheckOutActivity.this, "云会员付款失败", Toast.LENGTH_SHORT).show();
-                            mProgressBar.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onResponse(String response) {
-                            if (response.contains("richado")) {
-                                //打印结账单
-                                mPrinter.setWoyouService(woyouService);
-                                mPrinter.print_yun(event.mWmlsbjb, event.mListWmlsb, event.listPay);
-                                mProgressBar.setVisibility(View.GONE);
-                                EventBus.getDefault().post(new CheckSuccess());
-                                finish();
-                            }
-                        }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+    @Subscribe
+    public void checkSuccess(CheckSuccess event){
+        mPrinter.setWoyouService(woyouService);
+        if(event.payStytle.equals(getResources().getString(R.string.payStytle_cash))){
+            mPrinter.print_jiezhang(bigDecimal(mYingshou) + "",
+                    bigDecimal(mYishou) + "", bigDecimal(mZhaoling) + "", "收现");
+        }else if(event.payStytle.equals(getResources().getString(R.string.payStytle_yun))){
+            mPrinter.print_yun(mWmlsbjb, mListYunWmlsb, mYunPayStytle);
+            mProgressBar.setVisibility(View.GONE);
+        }
+        mProgressBar.setVisibility(View.GONE);
+        finish();
     }
 
     public Float bigDecimal(Float f) {

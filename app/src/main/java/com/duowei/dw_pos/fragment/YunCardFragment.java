@@ -343,7 +343,6 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
             Float money=inputNum*mYun.getCouponmoney()>Moneys.wfjr?Moneys.wfjr:inputNum*mYun.getCouponmoney();
             listYunPayFragment.add(new YunFu(mYun.getId(),mYun.getFrom_user(),mYun.getCardsn(),mYun.getCardgrade(), mYun.getTitle(), mYun.getCredit1(), mYun.getCredit2(), money, inputNum,mYun.getTicket()));
         }
-
         brushYunPayFragmentData();
         mAdapter.notifyDataSetChanged();
         listener.yunPayFragment(listYunPayFragment);
@@ -364,132 +363,20 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
             case R.id.btn_confirm:
                 if(listYunPayFragment.size()<=0){
                     Toast.makeText(getActivity(),"请选择付款方式",Toast.LENGTH_SHORT).show();
-                    return;
                 }else if(bigDecimal(Moneys.wfjr)>0){
                     Toast.makeText(getActivity(),"金额不足",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                mConfirm.setEnabled(false);
-                EventBus.getDefault().post(new YunSubmit());
-                for(int i=0;i<listYunPayFragment.size();i++){
-                    YunFu yunFu = listYunPayFragment.get(i);
-                    saveSqlData(yunFu);
-                    /**
-                     * 储值卡消费
-                     */
-                    if(yunFu.ticket==0){
-                        //储值卡消费扣减
-                        String sql2=SqlYun.updateIms_card_members1(yunFu.money,mWeid,yunFu.fromUser);
-                        //储值卡消费记录
-                        String sql3 = SqlYun.insertIms_card_deal_record(mWeid, yunFu.fromUser, mJysj,yunFu.credit2, yunFu.money, 0, yunFu.credit2 - yunFu.money, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, yunFu.id);
-                        //0按消费金额获取积分&&(2 储值卡消费.3 现金消费和储值卡消费金额)
-                        if(mJfgzsz.jfly==0&&(mJfgzsz.jfgz==2||mJfgzsz.jfgz==3)){
-                            mJfbfb =  (int)yunFu.money * mJfgzsz.jfbfb / 100;//获得积分
-                            //积分获得
-                            String jifen1 = SqlYun.updateIms_card_members2(mJfbfb, mWeid, yunFu.fromUser);
-                            //积分获得记录
-                            String jifen2 = SqlYun.insertIms_card_jf_record(mWeid, yunFu.fromUser, mJysj, "获取积分",yunFu.credit1, mJfbfb,
-                                    yunFu.credit1+mJfbfb, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, yunFu.id);
-                            sqlCZXF=sql2+sql3+jifen1+jifen2;
-                        }else{
-                            sqlCZXF=sql2+sql3;
-                        }
-                        SqlYun.jfbfb_add=mJfbfb;
-                        //插入sqlserver
-                        sqlXSFKFS1="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"','999999999','云会员-储值消费',"+yunFu.money+",0)|";
-                        sqlCZKJYMXXX="INSERT INTO CZKJYMXXX(HYKH,JYSJ,JYLX,CZQJE,KCZJE,SSJE,KYE,KCZXL,SYJH,YHBH,BY3)" +
-                                "VALUES('"+yunFu.cardsn+"',getdate(), '消费',"+yunFu.credit2+", "+yunFu.money+",0, "+(yunFu.credit2 - yunFu.money)+" , '999','"+mWmlsbjb.getJSJ()+"' , '"+mWmlsbjb.getYHBH()+"','1')|";
-                    }
-                    /**
-                     * 积分消费
-                     */
-                    else if(yunFu.ticket==1){
-                        //积分获得
-                        String sql4 = SqlYun.updateIms_card_members2(-by3, mWeid, yunFu.fromUser);
-                        //积分获得记录
-                        String sql5 = SqlYun.insertIms_card_jf_record(mWeid, yunFu.fromUser, mJysj, "积分消费",yunFu.credit1, -by3,
-                                yunFu.credit1-by3, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, yunFu.id);
-                        sqlJFXF=sql4+sql5;
-                        //插入sqlserver
-                        sqlXSFKFS2="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"','999999998','云会员-积分消费',"+yunFu.money+",0)|";
-                        SqlYun.jfbfb_sub=by3;
-                    }
-                        /**
-                         * 各种电子券消费
-                         */
-                    else if(yunFu.ticket==2){
-                        //电子券使用状态更新
-                        String sql7 = SqlYun.updateIms_card_members_coupon(mWmlsbjb.getYHBH(), mJysj, mDeal_id, mWeid, yunFu.id, yunFu.fromUser,yunFu.sl);
-                        //电子券使用记录
-                        String sql8 = SqlYun.insertCoupon_deal_record(mWeid, yunFu.id, yunFu.fromUser, mJysj, -yunFu.sl,
-                                mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, "云会员-" + yunFu.title, -yunFu.money,
-                                "云会员-" + yunFu.title + "(" + yunFu.sl + "张)", yunFu.id);
-                        sqlJYQ1=sql7+sql8;
-                        //插入sqlserver
-                        String NR="云会员-"+yunFu.title;
-                        sqlXSFKFS31="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"',"+yunFu.id+",'"+NR+"',"+yunFu.money+","+yunFu.sl+")|";
-                    }
-                    else if(yunFu.ticket==3){
-                        //电子券使用状态更新
-                        String sql7 = SqlYun.updateIms_card_members_coupon(mWmlsbjb.getYHBH(), mJysj, mDeal_id, mWeid, yunFu.id, yunFu.fromUser,yunFu.sl);
-                        //电子券使用记录
-                        String sql8 = SqlYun.insertCoupon_deal_record(mWeid, yunFu.id, yunFu.fromUser, mJysj, -yunFu.sl,
-                                mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, "云会员-" + yunFu.title, -yunFu.money,
-                                "云会员-" + yunFu.title + "(" + yunFu.sl + "张)", yunFu.id);
-                        sqlJYQ2=sql7+sql8;
-                        //插入sqlserver
-                        String NR="云会员-"+yunFu.title;
-                        sqlXSFKFS32="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"',"+yunFu.id+",'"+NR+"',"+yunFu.money+","+yunFu.sl+")|";
-                    }
-                    else if(yunFu.ticket==4){
-                        //电子券使用状态更新
-                        String sql7 = SqlYun.updateIms_card_members_coupon(mWmlsbjb.getYHBH(), mJysj, mDeal_id, mWeid, yunFu.id, yunFu.fromUser,yunFu.sl);
-                        //电子券使用记录
-                        String sql8 = SqlYun.insertCoupon_deal_record(mWeid, yunFu.id, yunFu.fromUser, mJysj, -yunFu.sl,
-                                mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, "云会员-" + yunFu.title, -yunFu.money,
-                                "云会员-" + yunFu.title + "(" + yunFu.sl + "张)", yunFu.id);
-                        sqlJYQ3=sql7+sql8;
-                        //插入sqlserver
-                        String NR="云会员-"+yunFu.title;
-                        sqlXSFKFS33="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"',"+yunFu.id+",'"+NR+"',"+yunFu.money+","+yunFu.sl+")|";
-                    }
-                    else if(yunFu.ticket==5){
-                        //电子券使用状态更新
-                        String sql7 = SqlYun.updateIms_card_members_coupon(mWmlsbjb.getYHBH(), mJysj, mDeal_id, mWeid, yunFu.id, yunFu.fromUser,yunFu.sl);
-                        //电子券使用记录
-                        String sql8 = SqlYun.insertCoupon_deal_record(mWeid, yunFu.id, yunFu.fromUser, mJysj, -yunFu.sl,
-                                mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, "云会员-" + yunFu.title, -yunFu.money,
-                                "云会员-" + yunFu.title + "(" + yunFu.sl + "张)", yunFu.id);
-                        sqlJYQ4=sql7+sql8;
-                        //插入sqlserver
-                        String NR="云会员-"+yunFu.title;
-                        sqlXSFKFS34="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"',"+yunFu.id+",'"+NR+"',"+yunFu.money+","+yunFu.sl+")|";
-                    }
-                    else if(yunFu.ticket==6){
-                        //电子券使用状态更新
-                        String sql7 = SqlYun.updateIms_card_members_coupon(mWmlsbjb.getYHBH(), mJysj, mDeal_id, mWeid, yunFu.id, yunFu.fromUser,yunFu.sl);
-                        //电子券使用记录
-                        String sql8 = SqlYun.insertCoupon_deal_record(mWeid, yunFu.id, yunFu.fromUser, mJysj, -yunFu.sl,
-                                mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, "云会员-" + yunFu.title, -yunFu.money,
-                                "云会员-" + yunFu.title + "(" + yunFu.sl + "张)", yunFu.id);
-                        sqlJYQ5=sql7+sql8;
-                        //插入sqlserver
-                        String NR="云会员-"+yunFu.title;
-                        sqlXSFKFS35="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"',"+yunFu.id+",'"+NR+"',"+yunFu.money+","+yunFu.sl+")|";
-                    }
-                }
-                    //汇总
-                    mSqlYun=sqlCZXF+sqlJFXF+sqlJYQ1+sqlJYQ2+sqlJYQ3+sqlJYQ4+sqlJYQ5;
-                    //消费明细deal_record
-                    mSql1Deal_record =  SqlYun.insertDeal_record(mWeid, mYun.getFrom_user(), mJysj,mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, 0, Moneys.ysjr, Moneys.yfjr,mWmlsbjb.getWMDBH()+"_"+mBmbh,mYun.getId());
-                    mSqlYun = mSqlYun +mSql1Deal_record;
-                    //sqlServer汇总语句
-                    mSqlLocal=sqlXSFKFS1+sqlXSFKFS2+sqlXSFKFS31+sqlXSFKFS32+sqlXSFKFS33+sqlXSFKFS34+sqlXSFKFS35+sqlCZKJYMXXX;
-                MyAsync async = new MyAsync();
-                async.execute();
+                }else{
+                    mConfirm.setEnabled(false);
+                    EventBus.getDefault().post(new YunSubmit());
+                    //各种Sql语句汇总
+                    getSql();
+                    //提交云会员数据
+                    MyAsync async = new MyAsync();
+                    async.execute();
 
-                Moneys.yfjr=0;
-                Moneys.wfjr=Moneys.ysjr;
+                    Moneys.yfjr=0;
+                    Moneys.wfjr=Moneys.ysjr;
+                }
                 break;
             case R.id.btn_cancel:
                 Moneys.yfjr=0;
@@ -498,6 +385,84 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                 break;
         }
     }
+
+    private void getSql() {
+        for(int i=0;i<listYunPayFragment.size();i++){
+            YunFu yunFu = listYunPayFragment.get(i);
+            saveSqlData(yunFu);
+            /**
+             * 储值卡消费
+             */
+            if(yunFu.ticket==0){
+                //储值卡消费扣减
+                String sql2= SqlYun.updateIms_card_members1(yunFu.money,mWeid,yunFu.fromUser);
+                //储值卡消费记录
+                String sql3 = SqlYun.insertIms_card_deal_record(mWeid, yunFu.fromUser, mJysj,yunFu.credit2, yunFu.money, 0, yunFu.credit2 - yunFu.money, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, yunFu.id);
+                //0按消费金额获取积分&&(2 储值卡消费.3 现金消费和储值卡消费金额)
+                if(mJfgzsz.jfly==0&&(mJfgzsz.jfgz==2||mJfgzsz.jfgz==3)){
+                    mJfbfb =  (int)yunFu.money * mJfgzsz.jfbfb / 100;//获得积分
+                    //积分获得
+                    String jifen1 = SqlYun.updateIms_card_members2(mJfbfb, mWeid, yunFu.fromUser);
+                    //积分获得记录
+                    String jifen2 = SqlYun.insertIms_card_jf_record(mWeid, yunFu.fromUser, mJysj, "获取积分",yunFu.credit1, mJfbfb,
+                            yunFu.credit1+mJfbfb, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, yunFu.id);
+                    sqlCZXF=sql2+sql3+jifen1+jifen2;
+                }else{
+                    sqlCZXF=sql2+sql3;
+                }
+                SqlYun.jfbfb_add=mJfbfb;
+                //插入sqlserver
+                sqlXSFKFS1="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"','999999999','云会员-储值消费',"+yunFu.money+",0)|";
+                sqlCZKJYMXXX="INSERT INTO CZKJYMXXX(HYKH,JYSJ,JYLX,CZQJE,KCZJE,SSJE,KYE,KCZXL,SYJH,YHBH,BY3)" +
+                        "VALUES('"+yunFu.cardsn+"',getdate(), '消费',"+yunFu.credit2+", "+yunFu.money+",0, "+(yunFu.credit2 - yunFu.money)+" , '999','"+mWmlsbjb.getJSJ()+"' , '"+mWmlsbjb.getYHBH()+"','1')|";
+            }
+            /**
+             * 积分消费
+             */
+            else if(yunFu.ticket==1){
+                //积分获得
+                String sql4 = SqlYun.updateIms_card_members2(-by3, mWeid, yunFu.fromUser);
+                //积分获得记录
+                String sql5 = SqlYun.insertIms_card_jf_record(mWeid, yunFu.fromUser, mJysj, "积分消费",yunFu.credit1, -by3,
+                        yunFu.credit1-by3, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, yunFu.id);
+                sqlJFXF=sql4+sql5;
+                //插入sqlserver
+                sqlXSFKFS2="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"','999999998','云会员-积分消费',"+yunFu.money+",0)|";
+                SqlYun.jfbfb_sub=by3;
+            }
+                /**
+                 * 各种电子券消费
+                 */
+            else if(yunFu.ticket==2){
+                sqlJYQ1= sqlJYQ(yunFu);
+                sqlXSFKFS31=sqlXSFKFS(yunFu);
+            }
+            else if(yunFu.ticket==3){
+                sqlJYQ2= sqlJYQ(yunFu);
+                sqlXSFKFS32=sqlXSFKFS(yunFu);
+            }
+            else if(yunFu.ticket==4){
+                sqlJYQ3= sqlJYQ(yunFu);
+                sqlXSFKFS33=sqlXSFKFS(yunFu);
+            }
+            else if(yunFu.ticket==5){
+                sqlJYQ4= sqlJYQ(yunFu);
+                sqlXSFKFS34=sqlXSFKFS(yunFu);
+            }
+            else if(yunFu.ticket==6){
+                sqlJYQ5= sqlJYQ(yunFu);
+                sqlXSFKFS35=sqlXSFKFS(yunFu);
+            }
+        }
+        //汇总
+        mSqlYun=sqlCZXF+sqlJFXF+sqlJYQ1+sqlJYQ2+sqlJYQ3+sqlJYQ4+sqlJYQ5;
+        //消费明细deal_record
+        mSql1Deal_record =  SqlYun.insertDeal_record(mWeid, mYun.getFrom_user(), mJysj,mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, 0, Moneys.ysjr, Moneys.yfjr,mWmlsbjb.getWMDBH()+"_"+mBmbh,mYun.getId());
+        mSqlYun = mSqlYun +mSql1Deal_record;
+        //sqlServer汇总语句
+        mSqlLocal=sqlXSFKFS1+sqlXSFKFS2+sqlXSFKFS31+sqlXSFKFS32+sqlXSFKFS33+sqlXSFKFS34+sqlXSFKFS35+sqlCZKJYMXXX;
+    }
+
     class MyAsync extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... strings) {
@@ -516,6 +481,18 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
             }
             super.onPostExecute(result);
         }
+    }
+
+    private String sqlJYQ(YunFu yunFu){
+        return SqlYun.updateIms_card_members_coupon(mWmlsbjb.getYHBH(), mJysj, mDeal_id, mWeid, yunFu.id, yunFu.fromUser,yunFu.sl)+
+                SqlYun.insertCoupon_deal_record(mWeid, yunFu.id, yunFu.fromUser, mJysj, -yunFu.sl,
+                        mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, "云会员-" + yunFu.title, -yunFu.money,
+                        "云会员-" + yunFu.title + "(" + yunFu.sl + "张)", yunFu.id);
+    }
+
+    private String sqlXSFKFS(YunFu yunFu){
+        String NR="云会员-"+yunFu.title;
+        return "INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"',"+yunFu.id+",'"+NR+"',"+yunFu.money+","+yunFu.sl+")|";
     }
 
     private void saveSqlData(YunFu yunFu) {

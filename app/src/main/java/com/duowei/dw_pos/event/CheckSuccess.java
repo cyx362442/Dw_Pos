@@ -5,4 +5,9 @@ package com.duowei.dw_pos.event;
  */
 
 public class CheckSuccess {
+    public String payStytle;
+
+    public CheckSuccess(String payStytle) {
+        this.payStytle = payStytle;
+    }
 }
