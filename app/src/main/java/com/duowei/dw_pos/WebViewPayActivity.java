@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -106,7 +107,6 @@ public class WebViewPayActivity extends AppCompatActivity {
         mItem = (Wmslbjb_jiezhang) getIntent().getSerializableExtra("WMLSBJB");
         mSqlYun=getIntent().getStringExtra("sqlYun");
         mSqlLocal = getIntent().getStringExtra("sqlLocal");
-
     }
 
     @Override
