@@ -367,9 +367,8 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                     Toast.makeText(getActivity(),"请选择付款方式",Toast.LENGTH_SHORT).show();
                 }else if(bigDecimal(Moneys.wfjr)>0){//云会员支付不够
                     //各种Sql语句汇总
-                    EventBus.getDefault().post(new YunSubmit(mListWmlsb,listYunPayFragment,Moneys.wfjr));
                     getSql();
-
+                    EventBus.getDefault().post(new YunSubmit(mListWmlsb,listYunPayFragment,Moneys.wfjr));
                     new UnpayDialog(getActivity(),mWmlsbjb,mSqlYun,mSqlLocal);
                 }else{
                     mConfirm.setEnabled(false);
