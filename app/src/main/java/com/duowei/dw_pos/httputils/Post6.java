@@ -155,7 +155,7 @@ public class Post6 {
     }
 
     /**扫码支付*/
-    public void Http_scan(final Wmslbjb_jiezhang mItem, final String mBm, final String nr, final String mPad, final String mID, final String ZFBID,final String payStytle){
+    public void Http_scan(final Wmslbjb_jiezhang mItem, final String mBm, final String mPad, final String mID, final String ZFBID,final String payStytle){
         String sj = mItem.getSj().replaceAll("-", "");
         String exec = "exec prc_AADBPRK_android_001 '" + sj + "',1|";
         DownHTTP.postVolley6(Net.url, exec, new VolleyResultListener() {
@@ -168,7 +168,7 @@ public class Post6 {
                     JSONArray jsonArray = new JSONArray(s);
                     JSONObject jsonObject = jsonArray.getJSONObject(0);
                     int prk = jsonObject.getInt("prk");
-                    String insertXSFKFS = "insert into XSFKFS(XSDH,BM,NR,FKJE,DYQZS) values ('" + mItem.getWMDBH() + "','" + mBm + "','" + nr + "'," + mItem.getYS() + ",0)|";
+                    String insertXSFKFS = "insert into XSFKFS(XSDH,BM,NR,FKJE,DYQZS) values ('" + mItem.getWMDBH() + "','" + mBm + "','" + payStytle + "'," + mItem.getYS() + ",0)|";
                     String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS,DDSJ,JYSJ,BZ,JZFSBM,BMMC,WMBS,ZH,KHBH,QKJE,JCRS,CZKYE,BY7,CXYH)" +
                             "VALUES('" + mItem.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣','" + bigDecimal(Moneys.xfzr) + "','" + bigDecimal(Moneys.zkjr) + "',0,'" + mItem.getYS() + "',0,'" + mItem.getZKFS() + "'," +
                             "'" + mItem.getJYSJ() + "',GETDATE(),'"+mPad+"','" + mItem.getJcfs() + "','','" + prk + "','" + mItem.getZH() + "',0,0,'" + mItem.getJCRS() + "',0,'','" + mID + "')|";
@@ -211,6 +211,36 @@ public class Post6 {
                     String sql = yunLoacalSql + insertXSJBXX + insertXSMXXX + updateWMLSBJB;
 
                     Post7.getInstance().Http_check(sql,context.getString(R.string.payStytle_cash_yun));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    /**云会员—扫码支付*/
+    public void Http_yun_scan(final Wmslbjb_jiezhang mItem, final String yunLoacalSql,final String mBm,final String mPad, final String mID, final String ZFBID,final String payStytle){
+        String sj = mItem.getSj().replaceAll("-", "");
+        String exec = "exec prc_AADBPRK_android_001 '" + sj + "',1|";
+        DownHTTP.postVolley6(Net.url, exec, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+            }
+            @Override
+            public void onResponse(String s) {
+                try {
+                    JSONArray jsonArray = new JSONArray(s);
+                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                    int prk = jsonObject.getInt("prk");
+                    String insertXSFKFS = "insert into XSFKFS(XSDH,BM,NR,FKJE,DYQZS) values ('" + mItem.getWMDBH() + "','" + mBm + "','" + payStytle + "'," + Moneys.wfjr + ",0)|";
+                    String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS,DDSJ,JYSJ,BZ,JZFSBM,BMMC,WMBS,ZH,KHBH,QKJE,JCRS,CZKYE,BY7,CXYH)" +
+                            "VALUES('" + mItem.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣','" + bigDecimal(Moneys.xfzr) + "','" + bigDecimal(Moneys.zkjr) + "',0,'" + mItem.getYS() + "',0,'" + mItem.getZKFS() + "'," +
+                            "'" + mItem.getJYSJ() + "',GETDATE(),'"+mPad+"','" + mItem.getJcfs() + "','','" + prk + "','" + mItem.getZH() + "',0,0,'" + mItem.getJCRS() + "',0,'','" + mID + "')|";
+                    String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
+                            "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mItem.getWMDBH() + "'|";
+                    String updateWMLSBJB = "update WMLSBJB set JSJ='"+mPad+"',SFYJZ='1',DJLSH='" + prk + "',BY13='" + mID + "',BY16='" + ZFBID + "',YSJE='" + bigDecimal(Moneys.xfzr) + "',JSKSSJ=getdate() where WMDBH='" + mItem.getWMDBH() + "'|";
+                    String sql = yunLoacalSql+insertXSFKFS + insertXSJBXX + insertXSMXXX + updateWMLSBJB;
+
+                    Post7.getInstance().Http_scan(sql,payStytle);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

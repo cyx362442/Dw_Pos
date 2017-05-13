@@ -6,6 +6,7 @@ import android.content.ServiceConnection;
 import android.os.RemoteException;
 import android.text.TextUtils;
 
+import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
@@ -115,7 +116,7 @@ public class Prints {
         });
     }
     //现金\支付宝、微信结账
-    public void print_jiezhang(final String ys, final String sx, final String zl, final String payStyle){
+    public void print_jiezhang(final Context context,final String ys, final String sx, final String zl, final String payStyle){
         ThreadPoolManager.getInstance().executeTask(new Runnable() {
             @Override
             public void run() {
@@ -149,10 +150,10 @@ public class Prints {
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_________________________________________________________________________________
                     woyouService.printTextWithFont("应收现金:￥" + ys + "\n", "", 30, callback);
-                    if(payStyle.equals("收现")){
+                    if(payStyle.equals(context.getString(R.string.payStytle_cash))){
                         woyouService.printTextWithFont(payStyle+":￥"+sx+"  找零:"+zl+"\n","",30,callback);
                     }else{
-                        woyouService.printTextWithFont(payStyle+"支付:￥"+sx+"\n","",30,callback);
+                        woyouService.printTextWithFont(payStyle+":￥"+sx+"\n","",30,callback);
                     }
                     woyouService.setAlignment(1, callback);// 对齐方式
                     woyouService.lineWrap(1, callback);
@@ -166,7 +167,7 @@ public class Prints {
     }
 
     //云会员结账
-    public void print_yun(final Wmslbjb_jiezhang wmlsbjb, final List<WMLSB>wmlsbList, final List<YunFu>listYunFu, final float other){
+    public void print_yun(final Wmslbjb_jiezhang wmlsbjb, final List<WMLSB>wmlsbList, final List<YunFu>listYunFu, final String payStytle, final float other){
         ThreadPoolManager.getInstance().executeTask(new Runnable() {
             @Override
             public void run() {
@@ -203,7 +204,7 @@ public class Prints {
                         woyouService.printTextWithFont("云会员—"+listYunFu.get(i).title+"￥"+bigDecimal(listYunFu.get(i).money)+"\n","",28,callback);
                     }
                     if(other>0){
-                        woyouService.printTextWithFont("现金支付"+"￥"+bigDecimal(other)+"\n","",28,callback);
+                        woyouService.printTextWithFont(payStytle+"￥"+bigDecimal(other)+"\n","",28,callback);
                     }
                     woyouService.setAlignment(1, callback);// 对齐方式
                     woyouService.lineWrap(1, callback);

@@ -272,7 +272,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                 mIntent = new Intent(this, WebViewPayActivity.class);
                 mIntent.putExtra("WMLSBJB", mWmlsbjb);
                 mIntent.putExtra("listWmlsb", list_wmlsb);
-                mIntent.putExtra("from", "支付宝");
+                mIntent.putExtra("from", getString(R.string.payStytle_zhifubao));
                 startActivity(mIntent);
                 break;
             case R.id.rl_weixin:
@@ -280,8 +280,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
 
                 mIntent = new Intent(this, WebViewPayActivity.class);
                 mIntent.putExtra("WMLSBJB", mWmlsbjb);
-                mIntent.putExtra("listWmlsb", list_wmlsb);
-                mIntent.putExtra("from", "微信");
+                mIntent.putExtra("from", getString(R.string.payStytle_weixin));
                 startActivity(mIntent);
                 break;
             case R.id.rl_yun:
@@ -358,13 +357,18 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     public void checkSuccess(CheckSuccess event){
         mPrinter.setWoyouService(woyouService);
         if(event.payStytle.equals(getResources().getString(R.string.payStytle_cash))){//现金支付
-            mPrinter.print_jiezhang(bigDecimal(mYingshou) + "",
-                    bigDecimal(mYishou) + "", bigDecimal(mZhaoling) + "", "收现");
+            mPrinter.print_jiezhang(this,bigDecimal(mYingshou) + "",
+                    bigDecimal(mYishou) + "", bigDecimal(mZhaoling) + "", event.payStytle);
+        }else if(event.payStytle.equals(getString(R.string.payStytle_zhifubao))||event.payStytle.equals(getString(R.string.payStytle_weixin))){//支付宝，微信
+            mPrinter.print_jiezhang(this,mYingshou+"", mYingshou+"", "0.00", event.payStytle);
         }else if(event.payStytle.equals(getResources().getString(R.string.payStytle_yun))){//云会员支付
-            mPrinter.print_yun(mWmlsbjb, mListYunWmlsb, mYunPayStytle,0);
+            mPrinter.print_yun(mWmlsbjb, mListYunWmlsb, mYunPayStytle,"",0);
             mProgressBar.setVisibility(View.GONE);
         }else if(event.payStytle.equals(getString(R.string.payStytle_cash_yun))){//云会员、现金支付
-            mPrinter.print_yun(mWmlsbjb, mListYunWmlsb, mYunPayStytle,mOtherPay);
+            mPrinter.print_yun(mWmlsbjb, mListYunWmlsb, mYunPayStytle,event.payStytle,mOtherPay);
+            mProgressBar.setVisibility(View.GONE);
+        }else if(event.payStytle.equals(getString(R.string.payStytle_zhifubao_yun))||event.payStytle.equals(getString(R.string.payStytle_weixin_yun))){//云会员、扫码
+            mPrinter.print_yun(mWmlsbjb, mListYunWmlsb, mYunPayStytle,event.payStytle,mOtherPay);
             mProgressBar.setVisibility(View.GONE);
         }
         mProgressBar.setVisibility(View.GONE);

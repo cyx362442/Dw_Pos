@@ -1,6 +1,7 @@
 package com.duowei.dw_pos.dialog;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -12,18 +13,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.duowei.dw_pos.R;
+import com.duowei.dw_pos.WebViewPayActivity;
 import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
-import com.duowei.dw_pos.bean.YunFu;
-import com.duowei.dw_pos.event.YunSubmit;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.Post6;
 import com.duowei.dw_pos.tools.Net;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.math.BigDecimal;
-import java.util.List;
 
 
 /**
@@ -64,6 +61,7 @@ public class UnpayDialog implements View.OnClickListener, CheckOutDialog.Onconfi
 
     @Override
     public void onClick(View view) {
+        Intent mIntent;
         switch (view.getId()){
             case R.id.btn_close:
                 mDialog.dismiss();
@@ -74,11 +72,24 @@ public class UnpayDialog implements View.OnClickListener, CheckOutDialog.Onconfi
                 mDialog.dismiss();
                 break;
             case R.id.btn_zfb:
+                toWebViewPay(context.getString(R.string.payStytle_zhifubao_yun));
                 break;
             case R.id.btn_wx:
+                toWebViewPay(context.getString(R.string.payStytle_weixin_yun));
                 break;
         }
     }
+
+    private void toWebViewPay(String from) {
+        Intent intent = new Intent(context, WebViewPayActivity.class);
+        intent.putExtra("WMLSBJB", mWmlsbjb);
+        intent.putExtra("from", from);
+        intent.putExtra("sqlYun",sqlYun);
+        intent.putExtra("sqlLocal",sqlLocal);
+        context.startActivity(intent);
+        mDialog.dismiss();
+    }
+
     public void dialogCancel(){
         mDialog.dismiss();
     }

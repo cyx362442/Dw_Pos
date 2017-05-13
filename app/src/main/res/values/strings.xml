@@ -80,8 +80,10 @@
     <string name="order_stytle_zhongxican">中西餐</string>
     <string name="order_stytle_kuaican">快餐</string>
     <string name="payStytle_cash">现金支付</string>
+    <string name="payStytle_cash_yun">-现金支付</string>
     <string name="payStytle_yun">云会员支付</string>
     <string name="payStytle_zhifubao">支付宝支付</string>
     <string name="payStytle_weixin">微信支付</string>
-    <string name="payStytle_cash_yun">现金-云会员</string>
+    <string name="payStytle_zhifubao_yun">-支付宝支付</string>
+    <string name="payStytle_weixin_yun">-微信支付</string>
 </resources>

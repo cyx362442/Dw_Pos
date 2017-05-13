@@ -115,7 +115,9 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
     }
     @Subscribe
     public void yunSubmit(YunSubmit event){
-        mProgressBar.setVisibility(View.VISIBLE);
+        if(event.otherPay<=0){
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
     }
     @Subscribe
     public void yunSubmitFail(YunSubmitFail event){
