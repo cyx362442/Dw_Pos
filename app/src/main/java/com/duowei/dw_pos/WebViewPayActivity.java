@@ -112,7 +112,7 @@ public class WebViewPayActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mTvPayStytle.setText(mPayStytle);
+        mTvPayStytle.setText(mPayStytle+"  ￥"+bigDecimal(Moneys.wfjr));
         if (mPayStytle.equals(getString(R.string.payStytle_zhifubao))||mPayStytle.equals(getString(R.string.payStytle_zhifubao_yun))) {
             mBm="PPPPP";
             if (TextUtils.isEmpty("mPid")) {
@@ -297,7 +297,6 @@ public class WebViewPayActivity extends AppCompatActivity {
             super.onPostExecute(result);
         }
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

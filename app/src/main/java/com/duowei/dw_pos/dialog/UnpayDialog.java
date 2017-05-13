@@ -54,9 +54,9 @@ public class UnpayDialog implements View.OnClickListener, CheckOutDialog.Onconfi
         TextView title = (TextView) mLayout.findViewById(R.id.tv_title);
         title.setText("您还有￥"+ bigDecimal(Moneys.wfjr)+"未付，是否使用其它付款方式？");
         mLayout.findViewById(R.id.btn_close).setOnClickListener(this);
-        mLayout.findViewById(R.id.btn_cash).setOnClickListener(this);
-        mLayout.findViewById(R.id.btn_zfb).setOnClickListener(this);
-        mLayout.findViewById(R.id.btn_wx).setOnClickListener(this);
+        mLayout.findViewById(R.id.ll_cash).setOnClickListener(this);
+        mLayout.findViewById(R.id.ll_zhifubao).setOnClickListener(this);
+        mLayout.findViewById(R.id.ll_weixin).setOnClickListener(this);
     }
 
     @Override
@@ -66,15 +66,15 @@ public class UnpayDialog implements View.OnClickListener, CheckOutDialog.Onconfi
             case R.id.btn_close:
                 mDialog.dismiss();
                 break;
-            case R.id.btn_cash:
+            case R.id.ll_cash:
                 mCheckOutDialog = new CheckOutDialog(context, "现金支付", Moneys.wfjr);
                 mCheckOutDialog.setOnconfirmClick(this);
                 mDialog.dismiss();
                 break;
-            case R.id.btn_zfb:
+            case R.id.ll_zhifubao:
                 toWebViewPay(context.getString(R.string.payStytle_zhifubao_yun));
                 break;
-            case R.id.btn_wx:
+            case R.id.ll_weixin:
                 toWebViewPay(context.getString(R.string.payStytle_weixin_yun));
                 break;
         }
