@@ -97,7 +97,7 @@ public class YunLandActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-       org.greenrobot.eventbus.EventBus.getDefault().unregister(this);
+       EventBus.getDefault().unregister(this);
     }
     /**EventBus提起Post请求返回的云会员等级信息*/
     @Subscribe

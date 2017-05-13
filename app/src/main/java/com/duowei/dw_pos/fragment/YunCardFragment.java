@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -342,7 +343,10 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         else if(payStyte>=2){
             //电子券扣掉的金额大于未付金额，取未付金额；否则，取实际扣掉的电子券金额；
             Float money=inputNum*mYun.getCouponmoney()>Moneys.wfjr?Moneys.wfjr:inputNum*mYun.getCouponmoney();
+            Log.e("mYun====",mYun.getCardsn()+":"+mYun.getCardgrade());
             listYunPayFragment.add(new YunFu(mYun.getId(),mYun.getFrom_user(),mYun.getCardsn(),mYun.getCardgrade(), mYun.getTitle(), mYun.getCredit1(), mYun.getCredit2(), money, inputNum,mYun.getTicket()));
+            YunFu yunFu = listYunPayFragment.get(0);
+            Log.e("=====",yunFu.cardgrade+":"+yunFu.cardsn);
         }
         brushYunPayFragmentData();
         mAdapter.notifyDataSetChanged();
@@ -366,8 +370,9 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                     Toast.makeText(getActivity(),"请选择付款方式",Toast.LENGTH_SHORT).show();
                 }else if(bigDecimal(Moneys.wfjr)>0){//云会员支付不够
                     //各种Sql语句汇总
-                    getSql();
                     EventBus.getDefault().post(new YunSubmit(mListWmlsb,listYunPayFragment,Moneys.wfjr));
+                    getSql();
+
                     new UnpayDialog(getActivity(),mWmlsbjb,mSqlYun,mSqlLocal);
                 }else{
                     mConfirm.setEnabled(false);
