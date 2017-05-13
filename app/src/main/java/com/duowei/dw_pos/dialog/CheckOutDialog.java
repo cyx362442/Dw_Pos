@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.duowei.dw_pos.R;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 
 /**
@@ -67,7 +68,7 @@ public class CheckOutDialog implements View.OnClickListener {
         mCancel.setOnClickListener(this);
         mTitle.setText(title);
         mTitle.setFocusableInTouchMode(true);
-        mEtInput.setText(money+"");
+        mEtInput.setText(bigDecimal(money)+"");
     }
 
     @Override
@@ -80,5 +81,8 @@ public class CheckOutDialog implements View.OnClickListener {
                listener.getDialogInput(mEtInput.getText().toString().trim());
                break;
        }
+    }
+    public  Float bigDecimal(Float f){
+        return BigDecimal.valueOf(f).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
     }
 }

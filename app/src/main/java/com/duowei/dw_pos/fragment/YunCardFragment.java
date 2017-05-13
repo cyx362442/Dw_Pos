@@ -364,11 +364,14 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
             case R.id.btn_confirm:
                 if(listYunPayFragment.size()<=0){
                     Toast.makeText(getActivity(),"请选择付款方式",Toast.LENGTH_SHORT).show();
-                }else if(bigDecimal(Moneys.wfjr)>0){
-                    new UnpayDialog(getActivity(),mSqlYun,mSqlLocal);
+                }else if(bigDecimal(Moneys.wfjr)>0){//云会员支付不够
+                    //各种Sql语句汇总
+                    getSql();
+                    EventBus.getDefault().post(new YunSubmit(mListWmlsb,listYunPayFragment,Moneys.wfjr));
+                    new UnpayDialog(getActivity(),mWmlsbjb,mSqlYun,mSqlLocal);
                 }else{
                     mConfirm.setEnabled(false);
-                    EventBus.getDefault().post(new YunSubmit());
+                    EventBus.getDefault().post(new YunSubmit(mListWmlsb,listYunPayFragment,0));
                     //各种Sql语句汇总
                     getSql();
                     //提交云会员数据
@@ -473,7 +476,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         @Override
         protected void onPostExecute(String result) {
             if (result.contains("richado")) {
-                EventBus.getDefault().post(new YunSqlFinish(mSqlLocal,mListWmlsb,mWmlsbjb,listYunPayFragment));
+                EventBus.getDefault().post(new YunSqlFinish(mSqlLocal));
                 getActivity().finish();
             }else{
                 mConfirm.setEnabled(true);

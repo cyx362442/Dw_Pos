@@ -3,16 +3,27 @@ package com.duowei.dw_pos.dialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.Moneys;
+import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
+import com.duowei.dw_pos.bean.YunFu;
+import com.duowei.dw_pos.event.YunSubmit;
 import com.duowei.dw_pos.httputils.DownHTTP;
+import com.duowei.dw_pos.httputils.Post6;
 import com.duowei.dw_pos.tools.Net;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 
 /**
@@ -26,9 +37,12 @@ public class UnpayDialog implements View.OnClickListener, CheckOutDialog.Onconfi
     private AlertDialog mDialog;
     private LinearLayout mLayout;
     private CheckOutDialog mCheckOutDialog;
+    private Wmslbjb_jiezhang mWmlsbjb;
+    private float shouxian;
 
-    public UnpayDialog(Context context,String sqlYun,String sqlLocal) {
+    public UnpayDialog(Context context,Wmslbjb_jiezhang mWmlsbjb,String sqlYun,String sqlLocal) {
         this.context = context;
+        this.mWmlsbjb=mWmlsbjb;
         this.sqlYun=sqlYun;
         this.sqlLocal=sqlLocal;
         mDialog = new AlertDialog.Builder(context).create();
@@ -41,7 +55,7 @@ public class UnpayDialog implements View.OnClickListener, CheckOutDialog.Onconfi
         mDialog.getWindow().setAttributes(params);
 
         TextView title = (TextView) mLayout.findViewById(R.id.tv_title);
-        title.setText("您还有￥"+ Moneys.wfjr+"未付，是否使用其它付款方式？");
+        title.setText("您还有￥"+ bigDecimal(Moneys.wfjr)+"未付，是否使用其它付款方式？");
         mLayout.findViewById(R.id.btn_close).setOnClickListener(this);
         mLayout.findViewById(R.id.btn_cash).setOnClickListener(this);
         mLayout.findViewById(R.id.btn_zfb).setOnClickListener(this);
@@ -71,8 +85,8 @@ public class UnpayDialog implements View.OnClickListener, CheckOutDialog.Onconfi
 
     @Override
     public void getDialogInput(String money) {
+        this.shouxian=Float.parseFloat(money);
         new MyAsync().execute();
-        mCheckOutDialog.cancel();
     }
     class MyAsync extends AsyncTask<String, Void, String> {
         @Override
@@ -83,14 +97,15 @@ public class UnpayDialog implements View.OnClickListener, CheckOutDialog.Onconfi
         @Override
         protected void onPostExecute(String result) {
             if (result.contains("richado")) {
-//                EventBus.getDefault().post(new YunSqlFinish(mSqlLocal,mListWmlsb,mWmlsbjb,listYunPayFragment));
-//                getActivity().finish();
+                Post6.getInstance().Http_yun_cash(context,mWmlsbjb,sqlLocal,shouxian,(shouxian-Moneys.wfjr));
+                mCheckOutDialog.cancel();
             }else{
-//                mConfirm.setEnabled(true);
-//                EventBus.getDefault().post(new YunSubmitFail());
-//                Toast.makeText(getActivity(),"数据提交失败",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"数据提交失败", Toast.LENGTH_SHORT).show();
             }
             super.onPostExecute(result);
         }
+    }
+    public  Float bigDecimal(Float f){
+        return BigDecimal.valueOf(f).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
     }
 }

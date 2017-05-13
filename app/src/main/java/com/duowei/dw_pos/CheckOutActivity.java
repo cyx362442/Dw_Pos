@@ -31,6 +31,7 @@ import com.duowei.dw_pos.dialog.ConfirmDialog;
 import com.duowei.dw_pos.event.CheckSuccess;
 import com.duowei.dw_pos.event.FinishEvent;
 import com.duowei.dw_pos.event.YunSqlFinish;
+import com.duowei.dw_pos.event.YunSubmit;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.Post6;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
@@ -38,15 +39,11 @@ import com.duowei.dw_pos.sunmiprint.Prints;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.CloseActivity;
 import com.duowei.dw_pos.tools.Net;
-import com.duowei.dw_pos.tools.SqlYun;
 import com.duowei.dw_pos.tools.Users;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
 import java.math.BigDecimal;
@@ -143,6 +140,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     private List<YunFu> mYunPayStytle;
     //云会员后的数据
     private ArrayList<WMLSB> mListYunWmlsb;
+    private float mOtherPay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -348,19 +346,25 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     @Subscribe
     public void getYunPayLocal(final YunSqlFinish event) {
         mProgressBar.setVisibility(View.VISIBLE);
+        Post6.getInstance().Http_yun(this,mWmlsbjb,event.sql);
+    }
+    @Subscribe
+    public void yunSubmit(YunSubmit event){
         mListYunWmlsb = event.mListWmlsb;
         mYunPayStytle = event.listPay;
-        Post6.getInstance().Http_yun(this,mWmlsbjb,mPad,mWmdbh,event.sql);
+        mOtherPay = event.otherPay;
     }
-
     @Subscribe
     public void checkSuccess(CheckSuccess event){
         mPrinter.setWoyouService(woyouService);
-        if(event.payStytle.equals(getResources().getString(R.string.payStytle_cash))){
+        if(event.payStytle.equals(getResources().getString(R.string.payStytle_cash))){//现金支付
             mPrinter.print_jiezhang(bigDecimal(mYingshou) + "",
                     bigDecimal(mYishou) + "", bigDecimal(mZhaoling) + "", "收现");
-        }else if(event.payStytle.equals(getResources().getString(R.string.payStytle_yun))){
-            mPrinter.print_yun(mWmlsbjb, mListYunWmlsb, mYunPayStytle);
+        }else if(event.payStytle.equals(getResources().getString(R.string.payStytle_yun))){//云会员支付
+            mPrinter.print_yun(mWmlsbjb, mListYunWmlsb, mYunPayStytle,0);
+            mProgressBar.setVisibility(View.GONE);
+        }else if(event.payStytle.equals(getString(R.string.payStytle_cash_yun))){//云会员、现金支付
+            mPrinter.print_yun(mWmlsbjb, mListYunWmlsb, mYunPayStytle,mOtherPay);
             mProgressBar.setVisibility(View.GONE);
         }
         mProgressBar.setVisibility(View.GONE);

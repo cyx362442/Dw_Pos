@@ -16,6 +16,7 @@ import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WXFWQDZ;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.bean.YunFu;
+import com.duowei.dw_pos.event.CheckSuccess;
 import com.duowei.dw_pos.event.ImsCardCouponStores;
 import com.duowei.dw_pos.event.YunSubmit;
 import com.duowei.dw_pos.event.YunSubmitFail;
@@ -129,7 +130,10 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         ft.replace(R.id.frame01, fragment);
         ft.commit();
     }
-
+    @Subscribe
+    public void checkSuccess(CheckSuccess event){
+        finish();
+    }
     private void toYunPayFragment(List<YunFu> listPay) {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.RemoteException;
+import android.text.TextUtils;
 
 import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.WMLSB;
@@ -165,7 +166,7 @@ public class Prints {
     }
 
     //云会员结账
-    public void print_yun(final Wmslbjb_jiezhang wmlsbjb, final List<WMLSB>wmlsbList, final List<YunFu>listYunFu){
+    public void print_yun(final Wmslbjb_jiezhang wmlsbjb, final List<WMLSB>wmlsbList, final List<YunFu>listYunFu, final float other){
         ThreadPoolManager.getInstance().executeTask(new Runnable() {
             @Override
             public void run() {
@@ -198,10 +199,11 @@ public class Prints {
                     woyouService.printTextWithFont("应付：" + bigDecimal(getZj(wmlsbList)) + "\n", "", 30, callback);
                     woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
                     //_________________________________________________________________________________
-//                    woyouService.printTextWithFont("应收现金:￥" + getZj(wmlsbList) + "\n", "", 30, callback);
-//                    woyouService.printTextWithFont("云会员支付:￥"+getZj(wmlsbList)+"\n","",30,callback);
                     for(int i=0;i<listYunFu.size();i++){
                         woyouService.printTextWithFont("云会员—"+listYunFu.get(i).title+"￥"+bigDecimal(listYunFu.get(i).money)+"\n","",28,callback);
+                    }
+                    if(other>0){
+                        woyouService.printTextWithFont("现金支付"+"￥"+bigDecimal(other)+"\n","",28,callback);
                     }
                     woyouService.setAlignment(1, callback);// 对齐方式
                     woyouService.lineWrap(1, callback);
