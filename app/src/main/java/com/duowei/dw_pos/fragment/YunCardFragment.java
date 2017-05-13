@@ -343,10 +343,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         else if(payStyte>=2){
             //电子券扣掉的金额大于未付金额，取未付金额；否则，取实际扣掉的电子券金额；
             Float money=inputNum*mYun.getCouponmoney()>Moneys.wfjr?Moneys.wfjr:inputNum*mYun.getCouponmoney();
-            Log.e("mYun====",mYun.getCardsn()+":"+mYun.getCardgrade());
             listYunPayFragment.add(new YunFu(mYun.getId(),mYun.getFrom_user(),mYun.getCardsn(),mYun.getCardgrade(), mYun.getTitle(), mYun.getCredit1(), mYun.getCredit2(), money, inputNum,mYun.getTicket()));
-            YunFu yunFu = listYunPayFragment.get(0);
-            Log.e("=====",yunFu.cardgrade+":"+yunFu.cardsn);
         }
         brushYunPayFragmentData();
         mAdapter.notifyDataSetChanged();
@@ -511,9 +508,9 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         SqlYun.CZQJE=yunFu.credit2;
         SqlYun.KCZJE=Moneys.yfjr;
         SqlYun.CZKYE=yunFu.credit2-Moneys.yfjr;
-        SqlYun.HYBH=yunFu.cardsn;
-        SqlYun.HYKDJ=yunFu.cardgrade;
-        SqlYun.from_user=yunFu.fromUser;
+        SqlYun.HYBH=mYunList.get(0).getCardsn();
+        SqlYun.HYKDJ=mYunList.get(0).getCardgrade();
+        SqlYun.from_user=mYunList.get(0).getFrom_user();
         SqlYun.JZBZ=mDeal_id;
     }
     public  Float bigDecimal(Float f){

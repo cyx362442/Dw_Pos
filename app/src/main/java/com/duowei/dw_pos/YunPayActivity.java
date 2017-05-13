@@ -82,7 +82,7 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         mCard.setText(mImsCards.getCardsn());
         mName.setText(mImsCards.getRealname());
         toYunAccountFragment();
-        toYunCardFragment();
+//        toYunCardFragment();
         toYunPayFragment(listYunFu);
     }
 
