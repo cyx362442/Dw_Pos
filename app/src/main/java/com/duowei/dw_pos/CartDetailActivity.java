@@ -283,7 +283,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             fragment.show(getSupportFragmentManager(), null);
 
         }else if(id==R.id.btn_check){
-            mDialog=new NumInputDialog(this,CashierDeskActivity.tabNum);
+            mDialog=new NumInputDialog(this);
             mDialog.setOnconfirmClick(this);
         }
     }
@@ -385,7 +385,8 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
                 openInfo.getPeopleType(),
                 openInfo.getRemark()
         );
-        NetUtils.post7(Net.url, wmlsbjb.toInsertString(), new Callback() {
+        String sql=mOrderstytle.equals(getString(R.string.order_stytle_zhongxican))?wmlsbjb.toInsertString():wmlsbjb.toInsertString2(mAdapter.getOriginalMoney(),mAdapter.getTotalPrice());
+        NetUtils.post7(Net.url, sql, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -409,7 +410,6 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     /**快餐模式，获取餐牌号,生成定单，送厨打*/
     @Override
     public void getDialogInput(String tableNum, String orderStytle) {
-        CashierDeskActivity.tabNum=Integer.parseInt(tableNum);
         CartList cartList = CartList.newInstance(this);
         cartList.setOpenInfo(new OpenInfo(
                 tableNum,

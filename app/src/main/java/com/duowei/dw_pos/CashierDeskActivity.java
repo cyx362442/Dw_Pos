@@ -67,8 +67,6 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
 
     private Handler mHandler = new Handler();
 
-    public static int tabNum=1;
-
     /**
      * 1 单品 2 套餐
      */
@@ -107,7 +105,6 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onStart() {
         super.onStart();
-        mCartFragment.setTabNum(CashierDeskActivity.tabNum+"，");
     }
 
     @Override
@@ -125,13 +122,6 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
     public void checkJycxmsz(){
         mRightJyxmszAllList = getJyxmszAllList();
         mRightAdapter.setAllList(mRightJyxmszAllList);
-    }
-
-    //结账成功
-    @Subscribe
-    public void checkSuccess(CheckSuccess event){
-        CashierDeskActivity.tabNum++;
-        mCartFragment.setTabNum(tabNum+"，");
     }
 
     @Subscribe

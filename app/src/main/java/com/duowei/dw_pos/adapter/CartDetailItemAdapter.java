@@ -357,6 +357,20 @@ public class CartDetailItemAdapter extends BaseAdapter {
     }
 
     /**
+     * @return 原始总的金额
+     */
+    public float getOriginalMoney() {
+        float total = 0;
+
+        for (int i = 0; i < mAllList.size(); i++) {
+            WMLSB w = mAllList.get(i);
+            total += w.getSL() * w.getYSJG();
+        }
+
+        return BigDecimal.valueOf(total).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
+    }
+
+    /**
      * @return true, 有未下单数据
      */
     public boolean hasUnOrder() {

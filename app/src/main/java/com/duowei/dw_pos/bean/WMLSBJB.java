@@ -209,6 +209,10 @@ public class WMLSBJB{
      */
     public String toInsertString() {
         return "INSERT INTO WMLSBJB (WMDBH,           XTBZ,           YHBH,           ZH,           YS,     JYSJ,           SFYJZ,      YSJE, HYKH,      JSJ,      QBDB,     JCRS,     ZK,   ZR,   BCWNJS, SS,   HYKDJ, ZKFS,      jcfs,     by1,by2, by3,  by4,  by5,  JZBZ,       JSKSSJ,    JSJSSJ, DJLSH, BY6, BY7,  BY8,  BY9,  BY10, BY11, SFFS,    BY12,      BY13, BY14, BY15, BY16, BY17, BY18, BY19, BY20) " +
-                "       VALUES ('" + WMDBH + "', '" + XTBZ + "', '" + YHBH + "', '" + ZH + "', " + YS + ", GETDATE(), '" + SFYJZ + "', null, null, '" + JSJ + "', null, " + JCRS + ", null, null, null,   null, null,  null, '" + jcfs + "', '"+by1+"', '', null, null, null, null, GETDATE(), null,  null,  '',  null, null, null, null, null, '', '" + BY12 + "', null, null, null, null, null, null, null, null)|";
+                "       VALUES ('" + WMDBH + "', '" + XTBZ + "', '" + YHBH + "', '" + ZH + "', " + YS + ", GETDATE(), '" + SFYJZ + "', null, null, '" + JSJ + "', null, " + JCRS + ", null, null, null,   null, null,  null, '" + jcfs + "', '"+by1+"', '', null, null, null, null, GETDATE(), null,  null,  '',  null, null, null, null, null, '','" + BY12 + "', null, null, null, null, null, null, null, null)|";
+    }
+    public String toInsertString2(float original,float ss) {
+        return "INSERT INTO WMLSBJB (WMDBH,           XTBZ,           YHBH,           ZH,           YS,     JYSJ,           SFYJZ,      YSJE, HYKH,      JSJ,      QBDB,     JCRS,     ZK,   ZR,   BCWNJS, SS,   HYKDJ, ZKFS,      jcfs,     by1,by2, by3,  by4,  by5,  JZBZ,       JSKSSJ,    JSJSSJ, DJLSH, BY6, BY7,  BY8,  BY9,  BY10, BY11, SFFS,    BY12,      BY13, BY14, BY15, BY16, BY17, BY18, BY19, BY20) " +
+                "       VALUES ('" + WMDBH + "', '" + XTBZ + "', '" + YHBH + "', '" + ZH + "', " + original + ", GETDATE(), '" + SFYJZ + "', null, null, '" + JSJ + "', null, " + JCRS + ", "+(original-ss)+", null, null,"+ss+",  null,  null, '" + by1 + "', null, '', null, null, null, null, GETDATE(), null,  null,  '',  null, null, null, null, null, '','" + BY12 + "', null, null, null, null, null, null, null, null)|";
     }
 }
