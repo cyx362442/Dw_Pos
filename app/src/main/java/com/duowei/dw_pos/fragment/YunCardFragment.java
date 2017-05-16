@@ -378,9 +378,6 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                     //提交云会员数据
                     MyAsync async = new MyAsync();
                     async.execute();
-
-                    Moneys.yfjr=0;
-                    Moneys.wfjr=Moneys.ysjr;
                 }
                 break;
             case R.id.btn_cancel:

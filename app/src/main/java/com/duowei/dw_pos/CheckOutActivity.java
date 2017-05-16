@@ -372,6 +372,9 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
             mProgressBar.setVisibility(View.GONE);
         }
         mProgressBar.setVisibility(View.GONE);
+
+        Moneys.yfjr=0;
+        Moneys.wfjr=Moneys.ysjr;
         finish();
     }
 

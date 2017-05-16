@@ -65,6 +65,15 @@ public class JYXMSZ extends DataSupport{
     public String HYJ8;
     public String HYJ9;
     public String BY3;
+    public String SFMYPC;
+
+    public String getSFMYPC() {
+        return SFMYPC;
+    }
+
+    public void setSFMYPC(String SFMYPC) {
+        this.SFMYPC = SFMYPC;
+    }
 
     public String getXMBH() {
         return XMBH;
