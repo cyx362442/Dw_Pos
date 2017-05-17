@@ -149,11 +149,6 @@ public class SqlNetHandler {
                                 Intent intent = new Intent(context, DinningActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 context.startActivity(intent);
-                                //快餐
-                            }else if(orderstytle.equals(context.getResources().getString(R.string.order_stytle_kuaican))){
-                                Intent intent = new Intent(context, CheckOutActivity.class);
-                                intent.putExtra("WMDBH",CartList.newInstance(context).getOrderNo().getWmdbh());
-                                context.startActivity(intent);
                             }
 
                         } else {
@@ -163,6 +158,5 @@ public class SqlNetHandler {
                 });
             }
         });
-
     }
 }

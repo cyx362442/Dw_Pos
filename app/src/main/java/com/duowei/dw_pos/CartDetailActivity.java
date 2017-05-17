@@ -199,8 +199,9 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         }
         //快餐
         else if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))){
-            OrderNo orderNo = CartList.newInstance(CartDetailActivity.this).getOrderNo();
-            new SqlNetHandler().handleCommit1(mHandler, CartDetailActivity.this, orderNo);
+            Intent intent = new Intent(this, CheckOutActivity.class);
+            intent.putExtra("WMDBH",CartList.newInstance(this).getOrderNo().getWmdbh());
+            startActivity(intent);
             mDialog.cancel();
         }
     }

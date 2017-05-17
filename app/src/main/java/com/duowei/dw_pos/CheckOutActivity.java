@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -39,6 +40,7 @@ import com.duowei.dw_pos.sunmiprint.Prints;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.CloseActivity;
 import com.duowei.dw_pos.tools.Net;
+import com.duowei.dw_pos.tools.SqlNetHandler;
 import com.duowei.dw_pos.tools.Users;
 import com.google.gson.Gson;
 
@@ -105,6 +107,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     @BindView(R.id.linearLayout)
     LinearLayout mLinearLayout;
     private ArrayList<WMLSB> list_wmlsb = new ArrayList<>();
+    private Handler mHandler = new Handler();
     private float mTotalMoney = 0;//总额(原始价格总额)
     private float mActualMoney = 0;//实际金额
     private float mYishou = 0.00f;
@@ -370,6 +373,11 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
         }else if(event.payStytle.equals(getString(R.string.payStytle_zhifubao_yun))||event.payStytle.equals(getString(R.string.payStytle_weixin_yun))){//云会员、扫码
             mPrinter.print_yun(mWmlsbjb, mListYunWmlsb, mYunPayStytle,event.payStytle,mOtherPay);
             mProgressBar.setVisibility(View.GONE);
+        }
+        //快餐模式，下厨打印
+        if(mOrderstytle.equals(getString(R.string.order_stytle_kuaican))){
+            OrderNo orderNo = CartList.newInstance(this).getOrderNo();
+            new SqlNetHandler().handleCommit1(mHandler, this, orderNo);
         }
         mProgressBar.setVisibility(View.GONE);
 
