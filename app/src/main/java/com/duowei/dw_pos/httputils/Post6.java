@@ -239,8 +239,8 @@ public class Post6 {
                             "'云会员消费'," + (SqlYun.jfbfb_add - SqlYun.jfbfb_sub) + "," + SqlYun.jfbfb_add + ",'" + SqlYun.HYBH + "','" + SqlYun.HYKDJ + "')|";
                     String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
                             "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mItem.getWMDBH() + "'|";
-                    String updateWMLSBJB = "update WMLSBJB set JSJ='"+mPad+"',SFYJZ='1',DJLSH='" + prk + "',BY13='" + mID + "',BY16='" + ZFBID + "',YSJE='" + bigDecimal(Moneys.xfzr) + "',JSKSSJ=getdate() where WMDBH='" + mItem.getWMDBH() + "'|";
-                    String sql = yunLoacalSql+insertXSFKFS + insertXSJBXX + insertXSMXXX + updateWMLSBJB;
+                    String updateWMLSBJB = "update WMLSBJB set JSJ='"+mPad+"',SFYJZ='1',DJLSH='" + prk + "',BY13='" + mID + "',BY16='" + ZFBID + "',YSJE='" + bigDecimal(Moneys.xfzr) + "',JSKSSJ=getdate(),BY8='" + SqlYun.from_user + "',JZBZ='" + SqlYun.JZBZ + "' where WMDBH='" + mItem.getWMDBH() + "'|";
+                     String sql = yunLoacalSql+insertXSFKFS + insertXSJBXX + insertXSMXXX + updateWMLSBJB;
 
                     Post7.getInstance().Http_scan(sql,payStytle);
                 } catch (JSONException e) {
