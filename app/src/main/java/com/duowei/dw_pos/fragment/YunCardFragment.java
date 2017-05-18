@@ -366,7 +366,6 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         switch (view.getId()) {
             case R.id.btn_confirm:
                 if(listYunPayFragment.size()<=0){
-//                    Toast.makeText(getActivity(),"请选择付款方式",Toast.LENGTH_SHORT).show();
                     getSql();
                     EventBus.getDefault().post(new YunSubmit(mListWmlsb,listYunPayFragment,Moneys.wfjr));
                     new UnpayDialog(getActivity(),mWmlsbjb,mSqlYun,mSqlLocal);
@@ -395,9 +394,9 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
 
     private void getSql() {
        float jinfenMoney=Moneys.ysjr;//可兑换积分的钱
+
         for(int i=0;i<listYunPayFragment.size();i++){
             YunFu yunFu = listYunPayFragment.get(i);
-            saveSqlData(yunFu);
             /**
              * 储值卡消费
              */
@@ -452,23 +451,22 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                 sqlJYQ5 = sqlJYQ(yunFu);
                 sqlXSFKFS35 = sqlXSFKFS(yunFu);
             }
-
         }
+        saveSqlData();
         //0按消费金额获取积分&&(2 储值卡消费.3 现金消费和储值卡消费金额)
         if (mJfgzsz.jfly == 0 && (mJfgzsz.jfgz == 2 || mJfgzsz.jfgz == 3)) {
             mJfbfb = (int) jinfenMoney * mJfgzsz.jfbfb / 100;//获得积分
             SqlYun.jfbfb_add = mJfbfb;
             //更新积分表
-            mJifen1 = SqlYun.updateIms_card_members2(mJfbfb, mWeid, mYun.getFrom_user());
+            mJifen1 = SqlYun.updateIms_card_members2(mJfbfb, mWeid, mYunList.get(0).getFrom_user());
             //积分获得记录
-            mJifen2 = SqlYun.insertIms_card_jf_record(mWeid, listYunPayFragment.get(0).fromUser, mJysj, "获取积分", mYun.getCredit1(), mJfbfb,
-                    mYun.getCredit1() + mJfbfb, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, mYun.getId());
+            mJifen2 = SqlYun.insertIms_card_jf_record(mWeid, mYunList.get(0).getFrom_user(), mJysj, "获取积分", mYunList.get(0).getCredit1(), mJfbfb,
+                    mYunList.get(0).getCredit1() + mJfbfb, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, mYunList.get(0).getId());
         }
-
         //汇总
         mSqlYun=mJifen1+mJifen2+sqlCZXF+sqlJFXF+sqlJYQ1+sqlJYQ2+sqlJYQ3+sqlJYQ4+sqlJYQ5;
         //消费明细deal_record
-        mSql1Deal_record =  SqlYun.insertDeal_record(mWeid, mYun.getFrom_user(), mJysj,mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, 0, Moneys.ysjr, Moneys.yfjr,mWmlsbjb.getWMDBH()+"_"+mBmbh,mYun.getId());
+        mSql1Deal_record =  SqlYun.insertDeal_record(mWeid, mYunList.get(0).getFrom_user(), mJysj,mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, 0, Moneys.ysjr, Moneys.yfjr,mWmlsbjb.getWMDBH()+"_"+mBmbh,mYunList.get(0).getId());
         mSqlYun = mSqlYun +mSql1Deal_record;
         //sqlServer汇总语句
         mSqlLocal=sqlXSFKFS1+sqlXSFKFS2+sqlXSFKFS31+sqlXSFKFS32+sqlXSFKFS33+sqlXSFKFS34+sqlXSFKFS35+sqlCZKJYMXXX;
@@ -506,13 +504,13 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         return "INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"',"+yunFu.id+",'"+NR+"',"+yunFu.money+","+yunFu.sl+")|";
     }
 
-    private void saveSqlData(YunFu yunFu) {
+    private void saveSqlData() {
         SqlYun.sqlYun=mSqlYun;
         SqlYun.sqlLocal=mSqlLocal;
         SqlYun.WMBS=mDeal_id;
-        SqlYun.CZQJE=yunFu.credit2;
+        SqlYun.CZQJE=mYunList.get(0).getCredit2();
         SqlYun.KCZJE=Moneys.yfjr;
-        SqlYun.CZKYE=yunFu.credit2-Moneys.yfjr;
+        SqlYun.CZKYE=mYunList.get(0).getCredit2()-Moneys.yfjr;
         SqlYun.HYBH=mYunList.get(0).getCardsn();
         SqlYun.HYKDJ=mYunList.get(0).getCardgrade();
         SqlYun.from_user=mYunList.get(0).getFrom_user();

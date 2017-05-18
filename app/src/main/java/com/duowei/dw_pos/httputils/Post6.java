@@ -1,6 +1,7 @@
 package com.duowei.dw_pos.httputils;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.VolleyError;
 import com.duowei.dw_pos.R;
@@ -209,7 +210,6 @@ public class Post6 {
                             "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mWmlsbjb.getWMDBH() + "'|";
                     String updateWMLSBJB = "update WMLSBJB set JSJ='" + pad + "',SFYJZ='1',DJLSH='" + prk + "',YSJE=" + bigDecimal(Moneys.xfzr) + ",JSKSSJ=getdate(),BY8='" + SqlYun.from_user + "',JZBZ='" + SqlYun.JZBZ + "' where WMDBH='" + mWmlsbjb.getWMDBH() + "'|";
                     String sql = yunLoacalSql + insertXSJBXX + insertXSMXXX + updateWMLSBJB;
-
                     Post7.getInstance().Http_check(sql,context.getString(R.string.payStytle_cash_yun));
                 } catch (JSONException e) {
                     e.printStackTrace();
