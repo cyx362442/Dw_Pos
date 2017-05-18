@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -155,8 +156,9 @@ public class WebViewPayActivity extends AppCompatActivity {
         }
     }
 
+        int num=5;
     @Subscribe
-    public void paySuccess(final CheckSuccess event) {
+    public void paySuccess(final CheckSuccess event){
         mWebview.setVisibility(View.GONE);
         runOnUiThread(new Runnable() {
             @Override
@@ -167,6 +169,13 @@ public class WebViewPayActivity extends AppCompatActivity {
                 mTvReturn.setText("恭喜你," + event.payStytle + "收款成功!");
             }
         });
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mTvReturn.setText(--num+"秒");
+                finish();
+            }
+        },5000);
     }
 
     @OnClick(R.id.img_return)
