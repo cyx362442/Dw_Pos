@@ -239,13 +239,14 @@
                     android:id="@+id/imgxianjin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
                     android:src="@mipmap/check_cash"/>
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@+id/imgxianjin"
                     android:text="现金支付"
@@ -254,7 +255,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_keyboard_arrow_right_black_36dp"
-                    android:layout_alignParentRight="true"/>
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -271,13 +273,14 @@
                     android:id="@+id/imgzhifubao"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
                     android:src="@mipmap/check_zhifubao"/>
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@+id/imgzhifubao"
                     android:text="支付宝支付"
@@ -286,6 +289,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_keyboard_arrow_right_black_36dp"
+                    android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"/>
             </RelativeLayout>
 
@@ -302,12 +306,13 @@
                     android:id="@+id/imgweixin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
                     android:src="@mipmap/check_weixin"/>
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:text="微信支付"
                     android:textSize="@dimen/textSize20"
                     android:layout_marginLeft="10dp"
@@ -315,6 +320,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:src="@drawable/ic_keyboard_arrow_right_black_36dp"
                     android:layout_alignParentRight="true"/>
             </RelativeLayout>
@@ -332,12 +338,13 @@
                     android:id="@+id/imgyun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
                     android:src="@drawable/ic_cloud_circle_light_blue_300_48dp"/>
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:text="云会员支付"
                     android:textSize="@dimen/textSize20"
                     android:layout_marginLeft="10dp"
@@ -345,6 +352,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:src="@drawable/ic_keyboard_arrow_right_black_36dp"
                     android:layout_alignParentRight="true"/>
             </RelativeLayout>

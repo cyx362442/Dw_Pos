@@ -75,13 +75,23 @@ public class SettingsActivity extends AppCompatActivity implements RadioGroup.On
         RadioGroup rg = (RadioGroup) findViewById(R.id.radioGroup);
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb1);
         RadioButton rb2 = (RadioButton) findViewById(R.id.rb2);
+        RadioGroup rg2 = (RadioGroup) findViewById(R.id.radioGroup2);
+        RadioButton rb3 = (RadioButton) findViewById(R.id.rb3);
+        RadioButton rb4 = (RadioButton) findViewById(R.id.rb4);
         String orderstytle = mSp.getString("orderstytle", getResources().getString(R.string.order_stytle_zhongxican));
+        String cashpay = mSp.getString("cashpay", getString(R.string.cash_unallowed));
         if(orderstytle.equals(getResources().getString(R.string.order_stytle_zhongxican))){
             rb1.setChecked(true);
         }else if(orderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))){
             rb2.setChecked(true);
         }
+        if(cashpay.equals(getString(R.string.cash_allow))){
+            rb4.setChecked(true);
+        }else if(cashpay.equals(getString(R.string.cash_unallowed))){
+            rb3.setChecked(true);
+        }
         rg.setOnCheckedChangeListener(this);
+        rg2.setOnCheckedChangeListener(this);
     }
 
     @OnClick({R.id.rl_autoStart, R.id.btn_load, R.id.btn_back})
@@ -131,9 +141,16 @@ public class SettingsActivity extends AppCompatActivity implements RadioGroup.On
 
     @Override
     public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
-        int radioButtonId = radioGroup.getCheckedRadioButtonId();
-        RadioButton rb = (RadioButton)findViewById(radioButtonId);
-        mEdit.putString("orderstytle",rb.getText().toString());
-        mEdit.commit();
+        if(radioGroup.getId()==R.id.radioGroup){
+            int radioButtonId = radioGroup.getCheckedRadioButtonId();
+            RadioButton rb = (RadioButton)findViewById(radioButtonId);
+            mEdit.putString("orderstytle",rb.getText().toString());
+            mEdit.commit();
+        }else if(radioGroup.getId()==R.id.radioGroup2){
+            int radioButtonId = radioGroup.getCheckedRadioButtonId();
+            RadioButton rb = (RadioButton)findViewById(radioButtonId);
+            mEdit.putString("cashpay",rb.getText().toString());
+            mEdit.commit();
+        }
     }
 }

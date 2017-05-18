@@ -31,7 +31,7 @@
         <EditText
             android:id="@+id/et_input"
             style="@style/editText_openTable"
-            android:inputType="numberDecimal"
+            android:inputType="numberPassword"
             android:selectAllOnFocus="true"
             android:layout_toRightOf="@id/tv1"/>
     </RelativeLayout>

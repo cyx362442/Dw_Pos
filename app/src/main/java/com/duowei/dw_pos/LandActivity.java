@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.duowei.dw_pos.bean.YHJBQK;
+import com.duowei.dw_pos.dialog.MsgInputDialog;
+import com.duowei.dw_pos.dialog.YunFuDialog;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.Users;
@@ -24,7 +26,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
-public class LandActivity extends AppCompatActivity implements View.OnClickListener {
+public class LandActivity extends AppCompatActivity implements View.OnClickListener, MsgInputDialog.OnconfirmClick {
     private SharedPreferences.Editor mEdit;
     private SharedPreferences mSp;
     private EditText mEtAccount;
@@ -32,6 +34,7 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
     private Intent mIntent;
     private TextView mVersion;
     private String mOrderstytle;
+    private MsgInputDialog mMsgInputDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +66,8 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.tv_setting:
-                mIntent=new Intent(this,SettingsActivity.class);
-                startActivity(mIntent);
+                mMsgInputDialog = new MsgInputDialog(this, "请输入密码", "密码：");
+                mMsgInputDialog.setOnconfirmClick(this);
                 break;
             case R.id.btn_land:
                 String account = mEtAccount.getText().toString().trim();
@@ -114,5 +117,16 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
         SQLiteStudioService.instance().stop();
         CartList.newInstance(this).getList().clear();
         super.onDestroy();
+    }
+
+    @Override
+    public void getDialogInput(String contents) {
+        if(contents.equals("5651400")){
+            mIntent=new Intent(this,SettingsActivity.class);
+            startActivity(mIntent);
+            mMsgInputDialog.cancel();
+        }else{
+            Toast.makeText(this,"密码有误",Toast.LENGTH_SHORT).show();
+        }
     }
 }

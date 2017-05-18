@@ -52,8 +52,6 @@ public class SalesReturnDialog implements View.OnClickListener{
         mDialog.setView(mLayout);
         mDialog.show();
         WindowManager.LayoutParams params = mDialog.getWindow().getAttributes();
-//        params.width = 550;
-//        params.height = 400 ;
         mDialog.getWindow().setAttributes(params);
         List<SZLB> szlb = DataSupport.findAll(SZLB.class);
         list.clear();

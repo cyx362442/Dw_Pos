@@ -77,6 +77,8 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
 
+    <string name="cash_allow">开启</string>
+    <string name="cash_unallowed">禁用</string>
     <string name="order_stytle_zhongxican">中西餐</string>
     <string name="order_stytle_kuaican">快餐</string>
     <string name="payStytle_cash">现金支付</string>

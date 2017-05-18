@@ -157,7 +157,12 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
         SharedPreferences user = getSharedPreferences("user", Context.MODE_PRIVATE);
         mPad = user.getString("pad", "");
         mOrderstytle = user.getString("orderstytle", getResources().getString(R.string.order_stytle_zhongxican));
-
+        String cashpay = user.getString("cashpay", getString(R.string.cash_unallowed));
+        if(cashpay.equals(getString(R.string.cash_allow))){
+            mRlXianjin.setVisibility(View.VISIBLE);
+        }else{
+            mRlXianjin.setVisibility(View.GONE);
+        }
         mWmdbh = getIntent().getStringExtra("WMDBH");
         mPrinter = Prints.getPrinter();
         mPrinter.bindPrintService(this, connService);

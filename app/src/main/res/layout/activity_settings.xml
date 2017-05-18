@@ -61,6 +61,37 @@
         style="@style/linearLayout_setting">
         <TextView
             style="@style/textview_setting"
+            android:text="现金支付"/>
+        <RadioGroup
+            android:id="@+id/radioGroup2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/rb3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/colorWhite"
+                android:text="@string/cash_unallowed"/>
+            <RadioButton
+                android:id="@+id/rb4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/colorWhite"
+                android:text="@string/cash_allow"/>
+        </RadioGroup>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#000000"></View>
+    <LinearLayout
+        style="@style/linearLayout_setting">
+        <TextView
+            style="@style/textview_setting"
             android:text="点餐模式"/>
         <RadioGroup
             android:id="@+id/radioGroup"
