@@ -391,7 +391,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
     }
 
     private void getSql() {
-       int jinfenMoney=0;
+       float jinfenMoney=Moneys.ysjr;//可兑换积分的钱
         for(int i=0;i<listYunPayFragment.size();i++){
             YunFu yunFu = listYunPayFragment.get(i);
             saveSqlData(yunFu);
@@ -403,21 +403,6 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                 String sql2= SqlYun.updateIms_card_members1(yunFu.money,mWeid,yunFu.fromUser);
                 //储值卡消费记录
                 String sql3 = SqlYun.insertIms_card_deal_record(mWeid, yunFu.fromUser, mJysj,yunFu.credit2, yunFu.money, 0, yunFu.credit2 - yunFu.money, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, yunFu.id);
-//                //0按消费金额获取积分&&(2 储值卡消费.3 现金消费和储值卡消费金额)
-//                if(mJfgzsz.jfly==0&&(mJfgzsz.jfgz==2||mJfgzsz.jfgz==3)){
-//                    mJfbfb =  (int)yunFu.money * mJfgzsz.jfbfb / 100;//获得积分
-//                    //积分获得
-//                    String jifen1 = SqlYun.updateIms_card_members2(mJfbfb, mWeid, yunFu.fromUser);
-//                    //积分获得记录
-//                    String jifen2 = SqlYun.insertIms_card_jf_record(mWeid, yunFu.fromUser, mJysj, "获取积分",yunFu.credit1, mJfbfb,
-//                            yunFu.credit1+mJfbfb, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, yunFu.id);
-//                    sqlCZXF=sql2+sql3+jifen1+jifen2;
-//                }else{
-//                    sqlCZXF=sql2+sql3;
-//                }
-//                SqlYun.jfbfb_add=mJfbfb;
-                jinfenMoney=(int)(jinfenMoney+yunFu.money);
-                SqlYun.jfbfb_add=jinfenMoney;
                 sqlCZXF=sql2+sql3;
                 //插入sqlserver
                 sqlXSFKFS1="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"','999999999','云会员-储值消费',"+yunFu.money+",0)|";
@@ -428,12 +413,10 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
              * 积分消费
              */
             else if(yunFu.ticket==1){
-                //积分获得
-                String sql4 = SqlYun.updateIms_card_members2(-by3, mWeid, yunFu.fromUser);
+                jinfenMoney=jinfenMoney-yunFu.money;
                 //积分获得记录
-                String sql5 = SqlYun.insertIms_card_jf_record(mWeid, yunFu.fromUser, mJysj, "积分消费",yunFu.credit1, -by3,
+                sqlJFXF = SqlYun.insertIms_card_jf_record(mWeid, yunFu.fromUser, mJysj, "积分消费",yunFu.credit1, -by3,
                         yunFu.credit1-by3, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, yunFu.id);
-                sqlJFXF=sql4+sql5;
                 //插入sqlserver
                 sqlXSFKFS2="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"','999999998','云会员-积分消费',"+yunFu.money+",0)|";
                 SqlYun.jfbfb_sub=by3;
@@ -442,36 +425,42 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                  * 各种电子券消费
                  */
             else if(yunFu.ticket==2){
+                jinfenMoney=jinfenMoney-yunFu.money;
                 sqlJYQ1= sqlJYQ(yunFu);
                 sqlXSFKFS31=sqlXSFKFS(yunFu);
             }
             else if(yunFu.ticket==3){
+                jinfenMoney=jinfenMoney-yunFu.money;
                 sqlJYQ2= sqlJYQ(yunFu);
                 sqlXSFKFS32=sqlXSFKFS(yunFu);
             }
             else if(yunFu.ticket==4){
+                jinfenMoney=jinfenMoney-yunFu.money;
                 sqlJYQ3= sqlJYQ(yunFu);
                 sqlXSFKFS33=sqlXSFKFS(yunFu);
             }
             else if(yunFu.ticket==5){
+                jinfenMoney=jinfenMoney-yunFu.money;
                 sqlJYQ4= sqlJYQ(yunFu);
                 sqlXSFKFS34=sqlXSFKFS(yunFu);
             }
             else if(yunFu.ticket==6){
-                sqlJYQ5= sqlJYQ(yunFu);
-                sqlXSFKFS35=sqlXSFKFS(yunFu);
+                jinfenMoney = jinfenMoney - yunFu.money;
+                sqlJYQ5 = sqlJYQ(yunFu);
+                sqlXSFKFS35 = sqlXSFKFS(yunFu);
             }
 
-            if(mJfgzsz.jfly==0&&(mJfgzsz.jfgz==2||mJfgzsz.jfgz==3)){
-                mJfbfb =  (int) jinfenMoney * mJfgzsz.jfbfb / 100;//获得积分
-                //积分获得
-                mJifen1 = SqlYun.updateIms_card_members2(jinfenMoney, mWeid, yunFu.fromUser);
-                //积分获得记录
-                mJifen2 = SqlYun.insertIms_card_jf_record(mWeid, yunFu.fromUser, mJysj, "获取积分",yunFu.credit1, jinfenMoney,
-                        yunFu.credit1+jinfenMoney, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, yunFu.id);
-            }
         }
-
+        //0按消费金额获取积分&&(2 储值卡消费.3 现金消费和储值卡消费金额)
+        if (mJfgzsz.jfly == 0 && (mJfgzsz.jfgz == 2 || mJfgzsz.jfgz == 3)) {
+            mJfbfb = (int) jinfenMoney * mJfgzsz.jfbfb / 100;//获得积分
+            SqlYun.jfbfb_add = mJfbfb;
+            //更新积分表
+            mJifen1 = SqlYun.updateIms_card_members2(mJfbfb, mWeid, listYunPayFragment.get(0).fromUser);
+            //积分获得记录
+            mJifen2 = SqlYun.insertIms_card_jf_record(mWeid, listYunPayFragment.get(0).fromUser, mJysj, "获取积分", listYunPayFragment.get(0).credit1, mJfbfb,
+                    listYunPayFragment.get(0).credit1 + mJfbfb, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, listYunPayFragment.get(0).id);
+        }
 
         //汇总
         mSqlYun=mJifen1+mJifen2+sqlCZXF+sqlJFXF+sqlJYQ1+sqlJYQ2+sqlJYQ3+sqlJYQ4+sqlJYQ5;
