@@ -86,6 +86,7 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                         mIntent = new Intent(this, DinningActivity.class);
                     }else if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))){
                         mIntent = new Intent(this, CashierDeskActivity.class);
+                        CartList.newInstance(this).clear();
                     }
                     startActivity(mIntent);
                 }else{
