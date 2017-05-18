@@ -44,7 +44,7 @@ public class SqlYun {
         return Base64.getBase64(sql).replaceAll("\n","");
     }
     /**积分获得*/
-    public static String updateIms_card_members2(int jfbfb,int weid,String from_user){
+    public static String updateIms_card_members2(float jfbfb,int weid,String from_user){
         String sql="update ims_card_members set credit1=Round(credit1+"+jfbfb+",2) where weid="+weid+" and from_user='"+from_user+"'|";
         return Base64.getBase64(sql).replaceAll("\n","");
     }
@@ -63,7 +63,7 @@ public class SqlYun {
     public static float CZKYE;//未付
     public static String HYBH;//卡号
     public static String HYKDJ;//卡等级
-    public static int jfbfb_add=0;//获得积分
+    public static float jfbfb_add=0;//获得积分
     public static int jfbfb_sub=0;//积分消费
     public static String from_user;
     public static String JZBZ;

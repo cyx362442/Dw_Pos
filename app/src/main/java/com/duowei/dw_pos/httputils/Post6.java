@@ -107,7 +107,7 @@ public class Post6 {
                     JSONObject jsonObject = jsonArray.getJSONObject(0);
                     int prk = jsonObject.getInt("prk");
                     String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS,DDSJ,JYSJ,BZ,JZFSBM,BMMC,WMBS,ZH,KHBH,QKJE,JCRS,BY7)" +
-                            "VALUES('" + mWmlsbjb.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣','" + bigDecimal(Moneys.xfzr) + "','" + bigDecimal(Moneys.zkjr) + "'," + bigDecimal(mYingshou) + ",'" + mWmlsbjb.getYS() + "',0,'" + mWmlsbjb.getZKFS() + "'," +
+                            "VALUES('" + mWmlsbjb.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣','" + bigDecimal(Moneys.xfzr) + "','" + bigDecimal(Moneys.zkjr) + "'," + bigDecimal(mYingshou) + "," + mWmlsbjb.getYS() + "," + mWmlsbjb.getYS() + ",'" + mWmlsbjb.getZKFS() + "'," +
                             "'" + mWmlsbjb.getJYSJ() + "',GETDATE(),'" + mPad + "','" + mWmlsbjb.getJcfs() + "','','" + prk + "','" + mWmlsbjb.getZH() + "'," + bigDecimal(mYishou) + "," + bigDecimal(mZhaoling) + ",'" + mWmlsbjb.getJCRS() + "','')|";
                     String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
                             "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,xmmc,tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mWmlsbjb.getWMDBH() + "'|";
@@ -139,7 +139,7 @@ public class Post6 {
                     String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS," +
                             "DDSJ,JYSJ,BZ,JZFSBM,WMBS,ZH,KHBH,QKJE,JCRS," +
                             "CZKYE,BY7,CXYH,JZFSMC,HYJF,ZL,HYBH,HYKDJ)" +
-                            "VALUES('" + mWmlsbjb.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣'," + bigDecimal(Moneys.xfzr) + "," + bigDecimal(Moneys.zkjr) + ",0," + bigDecimal(Moneys.ysjr) + "," + bigDecimal(Moneys.ysjr) + ",'" + mWmlsbjb.getZKFS() + "'," +
+                            "VALUES('" + mWmlsbjb.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣'," + bigDecimal(Moneys.xfzr) + "," + bigDecimal(Moneys.zkjr) + ",0," + bigDecimal(Moneys.ysjr) + ",'0','" + mWmlsbjb.getZKFS() + "'," +
                             "'" + mWmlsbjb.getJYSJ() + "',GETDATE(),'" + pad + "','" + mWmlsbjb.getJcfs() + "','" + prk + "','" + mWmlsbjb.getZH() + "',0,0," + Integer.parseInt(mWmlsbjb.getJCRS()) + "," +
                             "" + SqlYun.CZKYE + ",'','','云会员消费'," + (SqlYun.jfbfb_add - SqlYun.jfbfb_sub) + "," + SqlYun.jfbfb_add + ",'" + SqlYun.HYBH + "','" + SqlYun.HYKDJ + "')|";
                     String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
@@ -203,7 +203,7 @@ public class Post6 {
                     String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS," +
                             "DDSJ,JYSJ,BZ,JZFSBM,WMBS,ZH,KHBH,QKJE,JCRS," +
                             "CZKYE,BY7,CXYH,JZFSMC,HYJF,ZL,HYBH,HYKDJ)" +
-                            "VALUES('" + mWmlsbjb.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣'," + bigDecimal(Moneys.xfzr) + "," + bigDecimal(Moneys.zkjr) + ",0," + bigDecimal(Moneys.ysjr) + "," + bigDecimal(Moneys.ysjr) + ",'" + mWmlsbjb.getZKFS() + "'," +
+                            "VALUES('" + mWmlsbjb.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣'," + bigDecimal(Moneys.xfzr) + "," + bigDecimal(Moneys.zkjr) + ",0," + bigDecimal(Moneys.ysjr) + "," + bigDecimal(mShouXian-mZhaoling) + ",'" + mWmlsbjb.getZKFS() + "'," +
                             "'" + mWmlsbjb.getJYSJ() + "',GETDATE(),'" + pad + "','" + mWmlsbjb.getJcfs() + "','" + prk + "','" + mWmlsbjb.getZH() + "'," + bigDecimal(mShouXian) + "," + bigDecimal(mZhaoling) + "," + Integer.parseInt(mWmlsbjb.getJCRS()) + "," +
                             "" + SqlYun.CZKYE + ",'','','云会员消费'," + (SqlYun.jfbfb_add - SqlYun.jfbfb_sub) + "," + SqlYun.jfbfb_add + ",'" + SqlYun.HYBH + "','" + SqlYun.HYKDJ + "')|";
                     String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
@@ -234,7 +234,7 @@ public class Post6 {
                     String insertXSFKFS = "insert into XSFKFS(XSDH,BM,NR,FKJE,DYQZS) values ('" + mItem.getWMDBH() + "','" + mBm + "','" + payStytle.substring(1,payStytle.length()) + "'," + Moneys.wfjr + ",0)|";
                     String insertXSJBXX = "insert into XSJBXX (XSDH,XH,DDYBH,ZS,JEZJ,ZKJE,ZRJE,YS,SS,ZKFS,DDSJ,JYSJ,BZ,JZFSBM,BMMC,WMBS,ZH,KHBH,QKJE,JCRS,CZKYE,BY7,CXYH," +
                             "JZFSMC,HYJF,ZL,HYBH,HYKDJ)" +
-                            "VALUES('" + mItem.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣','" + bigDecimal(Moneys.xfzr) + "','" + bigDecimal(Moneys.zkjr) + "',0,'" +Moneys.ysjr + "','" + Moneys.ysjr + "','" + mItem.getZKFS() + "'," +
+                            "VALUES('" + mItem.getWMDBH() + "','" + Users.YHBH + "','" + Users.YHMC + "','无折扣','" + bigDecimal(Moneys.xfzr) + "','" + bigDecimal(Moneys.zkjr) + "',0,'" +Moneys.ysjr + "','0','" + mItem.getZKFS() + "'," +
                             "'" + mItem.getJYSJ() + "',GETDATE(),'"+mPad+"','" + mItem.getJcfs() + "','','" + prk + "','" + mItem.getZH() + "',0,0,'" + mItem.getJCRS() + "',0,'','" + mID + "'," +
                             "'云会员消费'," + (SqlYun.jfbfb_add - SqlYun.jfbfb_sub) + "," + SqlYun.jfbfb_add + ",'" + SqlYun.HYBH + "','" + SqlYun.HYKDJ + "')|";
                     String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +

@@ -93,7 +93,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
     private Wmslbjb_jiezhang mWmlsbjb;
     private String mBmbh;
     private String mDeal_id;
-    private int mJfbfb;//获得积分
+    private float mJfbfb;//获得积分
     private int by3=0;//总需积分;
     private Button mConfirm;
     private String mJifen1;
@@ -455,7 +455,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         saveSqlData();
         //0按消费金额获取积分&&(2 储值卡消费.3 现金消费和储值卡消费金额)
         if (mJfgzsz.jfly == 0 && (mJfgzsz.jfgz == 2 || mJfgzsz.jfgz == 3)) {
-            mJfbfb = (int) jinfenMoney * mJfgzsz.jfbfb / 100;//获得积分
+            mJfbfb = jinfenMoney * mJfgzsz.jfbfb / 100;//获得积分
             SqlYun.jfbfb_add = mJfbfb;
             //更新积分表
             mJifen1 = SqlYun.updateIms_card_members2(mJfbfb, mWeid, mYunList.get(0).getFrom_user());

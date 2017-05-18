@@ -289,7 +289,6 @@ public class WebViewPayActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             if (result.contains("richado")) {
-//                mPayStytle=mPayStytle.substring(1,mPayStytle.length());
                 Post6.getInstance().Http_yun_scan(mItem,mSqlLocal,mBm,mPad,mID,ZFBID,mPayStytle);
             }else{
                 Toast.makeText(WebViewPayActivity.this,"云会员提交失败", Toast.LENGTH_SHORT).show();
