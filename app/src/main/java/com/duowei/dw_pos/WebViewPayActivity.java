@@ -156,7 +156,6 @@ public class WebViewPayActivity extends AppCompatActivity {
         }
     }
 
-        int num=5;
     @Subscribe
     public void paySuccess(final CheckSuccess event){
         mWebview.setVisibility(View.GONE);
@@ -172,10 +171,9 @@ public class WebViewPayActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mTvReturn.setText(--num+"秒");
                 finish();
             }
-        },5000);
+        },4000);
     }
 
     @OnClick(R.id.img_return)
