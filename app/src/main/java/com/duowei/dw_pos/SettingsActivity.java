@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.DataLoad;
 import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.Users;
@@ -152,5 +153,6 @@ public class SettingsActivity extends AppCompatActivity implements RadioGroup.On
             mEdit.putString("cashpay",rb.getText().toString());
             mEdit.commit();
         }
+        CartList.newInstance(this).clear();
     }
 }
