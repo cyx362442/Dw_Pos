@@ -224,12 +224,11 @@ public class WebViewPayActivity extends AppCompatActivity {
             if (payStytle.equals(getString(R.string.payStytle_zhifubao_yun))||payStytle.equals(getString(R.string.payStytle_zhifubao))) {
                     ZFBID = result.substring(result.indexOf("*") + 1, result.length());
                 }
-            if(!TextUtils.isEmpty(mSqlYun)&&!TextUtils.isEmpty(mSqlLocal)){//云会员-扫码
+            if(!TextUtils.isEmpty(mSqlYun)){//云会员-扫码
                new MyAsync().execute();
             }else{//纯扫码
                 Post6.getInstance().Http_scan(mItem,mBm,mPad,mID,ZFBID,mPayStytle);
             }
-
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -290,6 +289,7 @@ public class WebViewPayActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             if (result.contains("richado")) {
+                mPayStytle=mPayStytle.substring(1,mPayStytle.length());
                 Post6.getInstance().Http_yun_scan(mItem,mSqlLocal,mBm,mPad,mID,ZFBID,mPayStytle);
             }else{
                 Toast.makeText(WebViewPayActivity.this,"云会员提交失败", Toast.LENGTH_SHORT).show();
