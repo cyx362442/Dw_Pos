@@ -2,6 +2,7 @@ package com.duowei.dw_pos.dialog;
 
 import android.content.Context;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -50,7 +51,7 @@ public class MsgInputDialog implements View.OnClickListener {
         mDialog = new AlertDialog.Builder(context).create();
         //必须先setView，否则在dialog\popuwindow中无法自动弹出软健盘
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mLayout = (LinearLayout) inflater.inflate(R.layout.dialog_item, null);
+        mLayout = (LinearLayout) inflater.inflate(R.layout.dialog_msg_item, null);
         mDialog.setView(mLayout);
         mDialog.show();
         WindowManager.LayoutParams params = mDialog.getWindow().getAttributes();

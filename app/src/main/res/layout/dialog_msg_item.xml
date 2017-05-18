@@ -3,7 +3,6 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
             android:orientation="vertical">
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -14,41 +13,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="就餐方式、餐牌号"
+            android:text="标题"
             android:textSize="20dp"
             android:textColor="#ffffff"/>
     </RelativeLayout>
-
-    <RadioGroup
-        android:id="@+id/rg"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:orientation="horizontal"
-        >
-
-        <RadioButton
-            android:id="@+id/rb1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="堂食"/>
-
-        <RadioButton
-            android:id="@+id/rb2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="外带"/>
-
-        <RadioButton
-            android:id="@+id/rb3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="外送"/>
-    </RadioGroup>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -56,13 +24,14 @@
         android:gravity="center_vertical">
         <TextView
             android:id="@+id/tv1"
-            android:text="餐牌号："
+            android:text="现金："
             android:layout_centerVertical="true"
             style="@style/textView_openTable"/>
         <EditText
             android:id="@+id/et_input"
             style="@style/editText_openTable"
-            android:inputType="textPhonetic"
+            android:inputType="numberPassword"
+            android:selectAllOnFocus="true"
             android:layout_toRightOf="@id/tv1"/>
     </RelativeLayout>
     <LinearLayout

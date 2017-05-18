@@ -2,6 +2,7 @@ package com.duowei.dw_pos.dialog;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -51,10 +52,18 @@ public class UnpayDialog implements View.OnClickListener, CheckOutDialog.Onconfi
         WindowManager.LayoutParams params = mDialog.getWindow().getAttributes();
         mDialog.getWindow().setAttributes(params);
 
+        SharedPreferences user = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+        String cashpay = user.getString("cashpay", context.getString(R.string.cash_unallowed));
         TextView title = (TextView) mLayout.findViewById(R.id.tv_title);
         title.setText("您还有￥"+ bigDecimal(Moneys.wfjr)+"未付，是否使用其它付款方式？");
         mLayout.findViewById(R.id.btn_close).setOnClickListener(this);
-        mLayout.findViewById(R.id.ll_cash).setOnClickListener(this);
+        LinearLayout llCash = (LinearLayout) mLayout.findViewById(R.id.ll_cash);
+        if(cashpay.equals(context.getString(R.string.cash_allow))){
+            llCash.setVisibility(View.VISIBLE);
+        }else {
+            llCash.setVisibility(View.GONE);
+        }
+        llCash.setOnClickListener(this);
         mLayout.findViewById(R.id.ll_zhifubao).setOnClickListener(this);
         mLayout.findViewById(R.id.ll_weixin).setOnClickListener(this);
     }
