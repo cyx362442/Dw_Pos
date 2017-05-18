@@ -366,7 +366,10 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         switch (view.getId()) {
             case R.id.btn_confirm:
                 if(listYunPayFragment.size()<=0){
-                    Toast.makeText(getActivity(),"请选择付款方式",Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(),"请选择付款方式",Toast.LENGTH_SHORT).show();
+                    getSql();
+                    EventBus.getDefault().post(new YunSubmit(mListWmlsb,listYunPayFragment,Moneys.wfjr));
+                    new UnpayDialog(getActivity(),mWmlsbjb,mSqlYun,mSqlLocal);
                 }else if(bigDecimal(Moneys.wfjr)>0){//云会员支付不够
                     //各种Sql语句汇总
                     getSql();
@@ -414,7 +417,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
              */
             else if(yunFu.ticket==1){
                 jinfenMoney=jinfenMoney-yunFu.money;
-                //积分获得记录
+                //积分消费记录
                 sqlJFXF = SqlYun.insertIms_card_jf_record(mWeid, yunFu.fromUser, mJysj, "积分消费",yunFu.credit1, -by3,
                         yunFu.credit1-by3, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, yunFu.id);
                 //插入sqlserver
@@ -456,10 +459,10 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
             mJfbfb = (int) jinfenMoney * mJfgzsz.jfbfb / 100;//获得积分
             SqlYun.jfbfb_add = mJfbfb;
             //更新积分表
-            mJifen1 = SqlYun.updateIms_card_members2(mJfbfb, mWeid, listYunPayFragment.get(0).fromUser);
+            mJifen1 = SqlYun.updateIms_card_members2(mJfbfb, mWeid, mYun.getFrom_user());
             //积分获得记录
-            mJifen2 = SqlYun.insertIms_card_jf_record(mWeid, listYunPayFragment.get(0).fromUser, mJysj, "获取积分", listYunPayFragment.get(0).credit1, mJfbfb,
-                    listYunPayFragment.get(0).credit1 + mJfbfb, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, listYunPayFragment.get(0).id);
+            mJifen2 = SqlYun.insertIms_card_jf_record(mWeid, listYunPayFragment.get(0).fromUser, mJysj, "获取积分", mYun.getCredit1(), mJfbfb,
+                    mYun.getCredit1() + mJfbfb, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, mYun.getId());
         }
 
         //汇总
