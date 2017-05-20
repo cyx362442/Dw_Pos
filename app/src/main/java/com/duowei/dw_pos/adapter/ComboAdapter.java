@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
+import android.widget.LinearLayout;
 
 import com.duowei.dw_pos.ComboActivity;
 import com.duowei.dw_pos.R;
@@ -124,9 +125,10 @@ public class ComboAdapter extends BaseAdapter {
             }
         }
 
+        LinearLayout mainTasteLayout = (LinearLayout) convertView.findViewById(R.id.ll_taste_main_layout);
         RecyclerView recyclerView = (RecyclerView) convertView.findViewById(R.id.rv_taste);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
-        showTaste(checkedTcsd, recyclerView);
+        showTaste(checkedTcsd, mainTasteLayout, recyclerView);
 
         return convertView;
     }
@@ -156,22 +158,25 @@ public class ComboAdapter extends BaseAdapter {
         mActivity.setTotalPrice(totalSubMoney);
     }
 
-    private void showTaste(TCSD tcsd, RecyclerView layout) {
+    private void showTaste(TCSD tcsd, LinearLayout mainLayout,  RecyclerView tastelayout) {
         if (tcsd == null) {
             // 没有选中项
+            mainLayout.setVisibility(View.GONE);
             return;
         }
 
         List<DMKWDYDP> dmkwdydpList = DataSupport.where("xmbh = ?", tcsd.getXMBH1()).find(DMKWDYDP.class);
         if (dmkwdydpList.size() > 0) {
+            mainLayout.setVisibility(View.VISIBLE);
             List<DMPZSD> dmpzsdList = new ArrayList<>();
             for (int i = 0; i < dmkwdydpList.size(); i++) {
                 dmpzsdList.add(DataSupport.where("pzbm = ?", dmkwdydpList.get(i).getPZBM()).findFirst(DMPZSD.class));
             }
 
-            layout.setAdapter(new TasteAdapter(mActivity, tcsd, dmpzsdList));
+            tastelayout.setAdapter(new TasteAdapter(mActivity, tcsd, dmpzsdList));
         } else {
-            layout.setAdapter(null);
+            mainLayout.setVisibility(View.GONE);
+            tastelayout.setAdapter(null);
         }
     }
 
