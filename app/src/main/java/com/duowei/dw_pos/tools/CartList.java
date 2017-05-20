@@ -192,7 +192,7 @@ public class CartList {
         if (mList.size() == 0) {
             for (int i = 0; i < addTcsdItems.size(); i++) {
                 AddTcsdItem addTcsdItem = addTcsdItems.get(i);
-                mList.add(new WMLSB(addTcsdItem.tcsd, addTcsdItem.sfxs, addTcsdItem.tcbh));
+                mList.add(new WMLSB(addTcsdItem.tcsd, addTcsdItem.sfxs, addTcsdItem.tcbh, addTcsdItem.pz));
             }
             EventBus.getDefault().post(new CartUpdateEvent());
             return;
@@ -223,7 +223,7 @@ public class CartList {
         if (!find) {
             for (int i = 0; i < addTcsdItems.size(); i++) {
                 AddTcsdItem addTcsdItem = addTcsdItems.get(i);
-                mList.add(new WMLSB(addTcsdItem.tcsd, addTcsdItem.sfxs, addTcsdItem.tcbh));
+                mList.add(new WMLSB(addTcsdItem.tcsd, addTcsdItem.sfxs, addTcsdItem.tcbh, addTcsdItem.pz));
             }
             EventBus.getDefault().post(new CartUpdateEvent());
         }

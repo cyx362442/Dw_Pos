@@ -122,7 +122,7 @@ public class ComboActivity extends AppCompatActivity {
                     String datetime = DateTimeUtils.getCurrentDatetime();
 
                     ArrayList<AddTcsdItem> addTcsdItemArrayList = new ArrayList<>();
-                    addTcsdItemArrayList.add(new AddTcsdItem(mMainTcsd, "1", datetime));
+                    addTcsdItemArrayList.add(new AddTcsdItem(mMainTcsd, "1", datetime, ""));
 
                     String[] tmArray = mSubTcsdMap.keySet().toArray(new String[mSubTcsdMap.size()]);
                     for (int i = 0; i < mSubTcsdMap.size(); i++) {
@@ -131,7 +131,7 @@ public class ComboActivity extends AppCompatActivity {
                             TCSD tcsd = tcsdList.get(j);
 
                             if ("1".equals(tcsd.SFXZ)) {
-                                addTcsdItemArrayList.add(new AddTcsdItem(tcsd, "0", datetime));
+                                addTcsdItemArrayList.add(new AddTcsdItem(tcsd, "0", datetime, tcsd.PZ));
                                 break;
                             }
                         }

@@ -421,7 +421,7 @@ public class WMLSB implements Serializable {
      * @param sfxs 主项 1 子项 0
      * @param tcbh 当前时间
      */
-    public WMLSB(TCSD tcsd, String sfxs, String tcbh) {
+    public WMLSB(TCSD tcsd, String sfxs, String tcbh, String pz) {
         this.XMBH = tcsd.XMBH1;
         this.TCXMBH = tcsd.XMBH;
         this.DW = tcsd.DW1;
@@ -443,6 +443,7 @@ public class WMLSB implements Serializable {
         this.SFYXD = "0";
 
         this.by5 = "GETDATE()";
+        this.PZ = pz;
     }
 
 
