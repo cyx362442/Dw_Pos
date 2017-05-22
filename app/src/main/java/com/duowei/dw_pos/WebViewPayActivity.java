@@ -85,6 +85,7 @@ public class WebViewPayActivity extends AppCompatActivity {
 
     private String mSqlYun;
     private String mSqlLocal;
+    private AlertDialog mAlertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -229,8 +230,8 @@ public class WebViewPayActivity extends AppCompatActivity {
     private synchronized void getHtmlResult(final String payStytle) {
         final String result = DownHTTP.getResult(this,chaUrl);
         Log.e("result=====",result);
-        if(result.contains("支付成功") || result.contains("SUCCESS")){
 
+        if(result.contains("支付成功") || result.contains("SUCCESS")){
             if (payStytle.equals(getString(R.string.payStytle_zhifubao_yun))||payStytle.equals(getString(R.string.payStytle_zhifubao))) {
                     ZFBID = result.substring(result.indexOf("*") + 1, result.length());
                 }
@@ -247,30 +248,12 @@ public class WebViewPayActivity extends AppCompatActivity {
             });
         }else{
             if(result.equals("fail")){
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(builder==null){
-                            builder = new AlertDialog.Builder(WebViewPayActivity.this)
-                                    .setTitle("提示")
-                                    .setMessage("与服务器连接中断\n"+"1、己支付成功，网络恢复后点击“继续”\n2、还未付，点击“退出”")
-                                    .setPositiveButton("继续", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            builder=null;
-                                        }
-                                    })
-                                    .setNegativeButton("退出", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            flag=true;
-                                            finish();
-                                        }
-                                    });
-                            builder .create().show();
-                        }
-                    }
-                });
+                dialog_disconnect();
+            }else{
+                if(mAlertDialog!=null){
+                    builder=null;
+                    mAlertDialog.dismiss();
+                }
             }
             if(flag==false){
                 try {
@@ -281,6 +264,36 @@ public class WebViewPayActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void dialog_disconnect() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if(builder==null){
+                    builder = new AlertDialog.Builder(WebViewPayActivity.this)
+                            .setTitle("提示")
+                            .setIcon(R.mipmap.warn)
+                            .setMessage("与服务器连接中断\n"+"1、己支付成功，网络恢复后点击“继续”\n2、还未付，点击“退出”")
+                            .setPositiveButton("继续", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    builder=null;
+                                }
+                            })
+                            .setNegativeButton("退出", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    flag=true;
+                                    finish();
+                                }
+                            });
+                    builder .create();
+                    builder.setCancelable(false);
+                    mAlertDialog = builder.show();
+                }
+            }
+        });
     }
 
     @Override

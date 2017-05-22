@@ -194,6 +194,7 @@ public class DataLoad {
             @Override
             public void onResponse(final String response) {
                 if(response.equals("]")){
+                    DataSupport.deleteAll(TCMC.class);
                     Http_TCSD();
                 }else{
                     new Thread(new Runnable() {
@@ -224,6 +225,7 @@ public class DataLoad {
             @Override
             public void onResponse(final String response) {
                 if(response.equals("]")){
+                    DataSupport.deleteAll(TCSD.class);
                     Http_GKLX();
                 }else{
                     new Thread(new Runnable() {

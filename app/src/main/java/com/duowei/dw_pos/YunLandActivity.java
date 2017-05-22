@@ -16,6 +16,7 @@ import com.duowei.dw_pos.bean.ImsCardMember;
 import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WXFWQDZ;
+import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.event.ImsCardMembers;
 import com.duowei.dw_pos.httputils.Post6;
 import com.duowei.dw_pos.summiscan.ScanActivity;
@@ -115,7 +116,9 @@ public class YunLandActivity extends AppCompatActivity {
                 zkfs = list.get(0).getZKFS();
             }
             String hyj=zkfs.equals("会员价1")?"hyj":zkfs.equals("会员价2")?"hyj2":zkfs.equals("会员价3")?"hyj3":zkfs.equals("会员价4")?"hyj4":
-                    zkfs.equals("会员价5")?"hyj5":zkfs.equals("会员价6")?"hyj6":zkfs.equals("会员价7")?"hyj7":zkfs.equals("会员价8")?"hyj8":zkfs.equals("会员价9")?"hyj9":"";
+                    zkfs.equals("会员价5")?"hyj5":zkfs.equals("会员价6")?"hyj6":zkfs.equals("会员价7")?"hyj7":zkfs.equals("会员价8")?"hyj8":zkfs.equals("会员价9")?"hyj9":"hyj9";
+            Wmslbjb_jiezhang wmlsbjb = (Wmslbjb_jiezhang) mWmlsbjb;
+            wmlsbjb.setZKFS(hyj);//价格策略
             /**重新计算打折后的会员价*/
             float totalMoney=0f;
                 //遍历每一项的会员价
