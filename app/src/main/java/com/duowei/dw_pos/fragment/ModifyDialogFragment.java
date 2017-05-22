@@ -129,7 +129,7 @@ public class ModifyDialogFragment extends AppCompatDialogFragment implements Vie
                         if (response.contains("richado")) {
                             Toast.makeText(mContext, "修改成功", Toast.LENGTH_SHORT).show();
 
-                            EventBus.getDefault().post(new CartRemoteUpdateEvent());
+                            EventBus.getDefault().post(new CartRemoteUpdateEvent(""));
                         } else {
                             Toast.makeText(mContext, "" + response, Toast.LENGTH_SHORT).show();
                         }

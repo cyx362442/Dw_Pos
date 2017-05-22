@@ -1,5 +1,7 @@
 package com.duowei.dw_pos.httputils;
 
+import android.content.Context;
+
 import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
 import com.duowei.dw_pos.tools.Base64;
@@ -93,9 +95,9 @@ public final class DownHTTP {
 	 * 没用Volley的请求方式
 	 * */
 
-	private static final int TIMEOUT = 10000;
+	private static final int TIMEOUT = 5000;
 
-	public static String getResult(String urlGet) {
+	public static String getResult(final Context context, String urlGet) {
 		InputStream is = null;
 		try {
 			URL url = new URL(urlGet);
@@ -133,6 +135,7 @@ public final class DownHTTP {
 			}
 		}
 	}
+
 	public static HashMap<String,String>hashMap;
 	public static String postResult(String strUrlPath,String code,String sql){
 		hashMap=new HashMap<String ,String>();

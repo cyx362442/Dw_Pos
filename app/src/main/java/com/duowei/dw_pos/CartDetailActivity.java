@@ -199,10 +199,14 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         }
         //快餐
         else if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))){
-            Intent intent = new Intent(this, CheckOutActivity.class);
-            intent.putExtra("WMDBH",CartList.newInstance(this).getOrderNo().getWmdbh());
-            startActivity(intent);
-            mDialog.cancel();
+            if(event.result.equals("success")){
+                Intent intent = new Intent(this, CheckOutActivity.class);
+                intent.putExtra("WMDBH",CartList.newInstance(this).getOrderNo().getWmdbh());
+                startActivity(intent);
+                mDialog.cancel();
+            }else{
+                mDialog.mConfirm.setEnabled(true);
+            }
         }
     }
 
@@ -285,6 +289,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
 
         }else if(id==R.id.btn_check){
             mDialog=new NumInputDialog(this);
+
             mDialog.setOnconfirmClick(this);
         }
     }
@@ -390,6 +395,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         NetUtils.post7(Net.url, sql, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                EventBus.getDefault().post(new CartRemoteUpdateEvent("fail"));
                 e.printStackTrace();
             }
             @Override
@@ -411,6 +417,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     /**快餐模式，获取餐牌号,生成定单，送厨打*/
     @Override
     public void getDialogInput(String tableNum, String orderStytle) {
+        mDialog.mConfirm.setEnabled(false);
         CartList cartList = CartList.newInstance(this);
         cartList.setOpenInfo(new OpenInfo(
                 tableNum,

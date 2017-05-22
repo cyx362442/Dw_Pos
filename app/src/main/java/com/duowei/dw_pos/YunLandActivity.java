@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -162,6 +163,10 @@ public class YunLandActivity extends AppCompatActivity {
             case R.id.btn_confirm:
                 mPhone=mEtPhone.getText().toString().trim();
                 mPassword=mEtPassword.getText().toString().trim();
+                if(mPhone.isEmpty()){
+                    Toast.makeText(this,"请输入电话",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 mPost6.post_ims_card_members(mPhone,mPassword,mWeid);//发送post请求云会员登录
                 break;
             case R.id.btn_shama:
