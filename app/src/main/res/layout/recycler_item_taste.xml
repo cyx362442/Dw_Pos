@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheckedTextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:padding="6dp"
+    android:background="@drawable/flexbox_item_bg"
+    android:textColor="@color/flexbox_item_text">
+
+</CheckedTextView>

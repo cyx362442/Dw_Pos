@@ -1,5 +1,6 @@
 package com.duowei.dw_pos.bean;
 
+import org.litepal.annotation.Column;
 import org.litepal.crud.DataSupport;
 
 /**
@@ -33,6 +34,9 @@ public class TCSD extends DataSupport {
     public String SFXZ;
     public String GQ;
     public String LBBM;
+
+    @Column(ignore = true)
+    public String PZ = "";
 
     public String getXH() {
         return XH;

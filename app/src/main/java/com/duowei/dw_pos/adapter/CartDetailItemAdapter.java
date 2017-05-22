@@ -163,7 +163,11 @@ public class CartDetailItemAdapter extends BaseAdapter {
                 holder.tv_name.setText(item.getXMMC());
                 holder.iv_remove.setVisibility(View.VISIBLE);
                 holder.iv_add.setVisibility(View.VISIBLE);
-                holder.btn_taste.setVisibility(View.INVISIBLE);
+//                holder.btn_taste.setVisibility(View.INVISIBLE);
+                holder.taste_layout.setVisibility(View.VISIBLE);
+                holder.btn_taste.setTag(item);
+                holder.btn_taste.setOnClickListener(mTasteClickListener);
+                setTasteShow(holder.recycler_view_taste, item.getPZ());
 
                 // 数量修改
                 holder.btn_edit.setVisibility(View.VISIBLE);

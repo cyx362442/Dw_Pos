@@ -1,16 +1,24 @@
 package com.duowei.dw_pos.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.GridLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
+import android.widget.LinearLayout;
 
 import com.duowei.dw_pos.ComboActivity;
 import com.duowei.dw_pos.R;
+import com.duowei.dw_pos.bean.DMKWDYDP;
+import com.duowei.dw_pos.bean.DMPZSD;
 import com.duowei.dw_pos.bean.TCSD;
+
+import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -65,12 +73,14 @@ public class ComboAdapter extends BaseAdapter {
         GridLayout gridLayout = (GridLayout) convertView.findViewById(R.id.grid_layout);
         gridLayout.removeAllViews();
 
+        TCSD checkedTcsd = null;
         for (int i = 0; i < list.size(); i++) {
             TCSD tcsd = list.get(i);
             final CheckedTextView textView = (CheckedTextView) LayoutInflater.from(mActivity).inflate(R.layout.flexbox_item, null);
 
             if (tcsd.getSFXZ().equals("1")) {
                 textView.setChecked(true);
+                checkedTcsd = tcsd;
             } else {
                 textView.setChecked(false);
             }
@@ -79,6 +89,7 @@ public class ComboAdapter extends BaseAdapter {
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     int i2 = (int) v.getTag();
                     for (int j = 0; j < list.size(); j++) {
                         list.get(j).setSFXZ("");
@@ -114,6 +125,11 @@ public class ComboAdapter extends BaseAdapter {
             }
         }
 
+        LinearLayout mainTasteLayout = (LinearLayout) convertView.findViewById(R.id.ll_taste_main_layout);
+        RecyclerView recyclerView = (RecyclerView) convertView.findViewById(R.id.rv_taste);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
+        showTaste(checkedTcsd, mainTasteLayout, recyclerView);
+
         return convertView;
     }
 
@@ -140,5 +156,87 @@ public class ComboAdapter extends BaseAdapter {
         }
 
         mActivity.setTotalPrice(totalSubMoney);
+    }
+
+    private void showTaste(TCSD tcsd, LinearLayout mainLayout,  RecyclerView tastelayout) {
+        if (tcsd == null) {
+            // 没有选中项
+            mainLayout.setVisibility(View.GONE);
+            return;
+        }
+
+        List<DMKWDYDP> dmkwdydpList = DataSupport.where("xmbh = ?", tcsd.getXMBH1()).find(DMKWDYDP.class);
+        if (dmkwdydpList.size() > 0) {
+            mainLayout.setVisibility(View.VISIBLE);
+            List<DMPZSD> dmpzsdList = new ArrayList<>();
+            for (int i = 0; i < dmkwdydpList.size(); i++) {
+                dmpzsdList.add(DataSupport.where("pzbm = ?", dmkwdydpList.get(i).getPZBM()).findFirst(DMPZSD.class));
+            }
+
+            tastelayout.setAdapter(new TasteAdapter(mActivity, tcsd, dmpzsdList));
+        } else {
+            mainLayout.setVisibility(View.GONE);
+            tastelayout.setAdapter(null);
+        }
+    }
+
+    private static class TasteAdapter extends RecyclerView.Adapter<TasteAdapter.ViewHolder> {
+        Context mContext;
+        TCSD mTCSD;
+        List<DMPZSD> mList;
+
+        TasteAdapter(Context context, TCSD tcsd, List<DMPZSD> list) {
+            mContext = context;
+            mTCSD = tcsd;
+            mList = list;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            CheckedTextView checkedTextView = (CheckedTextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_taste, parent, false);
+            return new ViewHolder(checkedTextView);
+        }
+
+        @Override
+        public void onBindViewHolder(final ViewHolder holder, int position) {
+            final String nr = mList.get(position).getNR();
+
+            holder.mTextView.setText(nr);
+            if (mTCSD.PZ.contains("(" + nr + ")")) {
+                holder.mTextView.setChecked(true);
+            } else {
+                holder.mTextView.setChecked(false);
+            }
+
+            holder.mTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CheckedTextView ctv = (CheckedTextView) v;
+
+                    if (ctv.isChecked()) {
+                        ctv.setChecked(false);
+                        mTCSD.PZ = mTCSD.PZ.replace("(" + nr + ")", "");
+
+                    } else {
+                        ctv.setChecked(true);
+                        mTCSD.PZ = mTCSD.PZ + "(" + nr + ")";
+                    }
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return mList.size();
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            CheckedTextView mTextView;
+
+            ViewHolder(View itemView) {
+                super(itemView);
+                mTextView = (CheckedTextView) itemView;
+            }
+        }
     }
 }

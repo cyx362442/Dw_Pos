@@ -290,9 +290,10 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
                     JYXMSZ jyxmsz = DataSupport.where("xmbh = ?", xmbh).findFirst(JYXMSZ.class);
                     if (jyxmsz != null) {
                         CartList.newInstance(mContext).add(jyxmsz);
-                        EventBus.getDefault().post(new CartAutoSubmit());
                     }
                 }
+
+                EventBus.getDefault().post(new CartAutoSubmit());
             }
         }
 
