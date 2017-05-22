@@ -23,7 +23,6 @@ import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.event.AddEvent;
-import com.duowei.dw_pos.event.CheckSuccess;
 import com.duowei.dw_pos.event.ClearSearchEvent;
 import com.duowei.dw_pos.event.FinishEvent;
 import com.duowei.dw_pos.fragment.AddDialogFragment;
@@ -167,19 +166,22 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         mBackView.setOnClickListener(this);
         mSearchView.setOnClickListener(this);
 
-        mToggleButton.setOnClickListener(this);
-        mToggleButton.setToggleListener(new ToggleButton.OnToggleListener() {
-            @Override
-            public void onToggle(ToggleButton.ButtonType type) {
-                if (type == ToggleButton.ButtonType.TYPE_1) {
-                    // 切换到 单品
-                    setupData();
-                } else {
-                    // 切换到 套餐
-                    setupData2();
+        // 没有套餐数据时，屏蔽切换按钮处理
+        if (getTcmc1List().size() > 0) {
+            mToggleButton.setOnClickListener(this);
+            mToggleButton.setToggleListener(new ToggleButton.OnToggleListener() {
+                @Override
+                public void onToggle(ToggleButton.ButtonType type) {
+                    if (type == ToggleButton.ButtonType.TYPE_1) {
+                        // 切换到 单品
+                        setupData();
+                    } else {
+                        // 切换到 套餐
+                        setupData2();
+                    }
                 }
-            }
-        });
+            });
+        }
 
         mCartFragment = new CartFragment();
         mCartFragment.setArguments(getIntent().getExtras());
