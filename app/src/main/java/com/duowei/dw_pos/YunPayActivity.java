@@ -100,17 +100,21 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         String respone = event.reslut;
         if (!respone.equals("error")) {
             mYunList.clear();
+            /**添加储值、积分项*/
             addImsCardData();
-            Gson gson = new Gson();
-            ImsCardMember[] yunhuiyuen = gson.fromJson(respone, ImsCardMember[].class);
-            for (int i = 0; i < yunhuiyuen.length; i++) {
-                yunhuiyuen[i].setTicket(i+2);
-                yunhuiyuen[i].setSelect(false);
-                yunhuiyuen[i].setFrom_user(mImsCards.getFrom_user());
-                mYunList.add(yunhuiyuen[i]);
+            /**添加礼券项*/
+            if(!respone.equals("]")){
+                Gson gson = new Gson();
+                ImsCardMember[] yunhuiyuen = gson.fromJson(respone, ImsCardMember[].class);
+                for (int i = 0; i < yunhuiyuen.length; i++) {
+                    yunhuiyuen[i].setTicket(i+2);
+                    yunhuiyuen[i].setSelect(false);
+                    yunhuiyuen[i].setFrom_user(mImsCards.getFrom_user());
+                    mYunList.add(yunhuiyuen[i]);
+                }
             }
-            toYunCardFragment();
         }
+        toYunCardFragment();
         mProgressBar.setVisibility(View.GONE);
     }
     @Subscribe
@@ -164,12 +168,12 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
      * 获取会员卡储值余额、积分余额
      */
     private void addImsCardData() {
-        if (mImsCards.getCredit2() >= 0) {//储值消费
+        if (mImsCards.getCredit2() >= 0) {//储值卡
             mYunList.add(new ImsCardMember(mImsCards.getId(), mImsCards.getFrom_user(), mImsCards.getCardsn(), mImsCards.getCredit1(), mImsCards.getCredit2(),
                     mImsCards.getRealname(), mImsCards.getMobile(), mImsCards.getStatus(), mImsCards.getCardgrade(), mImsCards.getOccupation(),
                     mImsCards.getCreatetime(), mImsCards.getTitle(), mImsCards.getCouponmoney(), mImsCards.getSL(), 0,false));
         }
-        if (mImsCards.getCredit1() >= 0) {//积分消费
+        if (mImsCards.getCredit1() >= 0) {//积分
             mYunList.add(new ImsCardMember(mImsCards.getId(), mImsCards.getFrom_user(), mImsCards.getCardsn(), mImsCards.getCredit1(), -1f,
                     mImsCards.getRealname(), mImsCards.getMobile(), mImsCards.getStatus(), mImsCards.getCardgrade(), mImsCards.getOccupation(),
                     mImsCards.getCreatetime(), mImsCards.getTitle(), mImsCards.getCouponmoney(), mImsCards.getSL(), 1,false));

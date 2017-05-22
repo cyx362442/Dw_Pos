@@ -662,7 +662,7 @@ public class WMLSB implements Serializable {
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
                 if (result.contains("richado")) {
-                    EventBus.getDefault().post(new CartRemoteUpdateEvent());
+                    EventBus.getDefault().post(new CartRemoteUpdateEvent("success"));
                 }
             }
         });

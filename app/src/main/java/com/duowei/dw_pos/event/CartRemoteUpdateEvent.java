@@ -5,4 +5,9 @@ package com.duowei.dw_pos.event;
  */
 
 public class CartRemoteUpdateEvent {
+    public String result;
+
+    public CartRemoteUpdateEvent(String result) {
+        this.result = result;
+    }
 }

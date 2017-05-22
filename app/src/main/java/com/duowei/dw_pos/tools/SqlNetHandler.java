@@ -85,10 +85,11 @@ public class SqlNetHandler {
                             if(orderstytle.equals(context.getResources().getString(R.string.order_stytle_zhongxican))){
                                  cartList.getList().clear(); // 清空本地没提交数据
                             }
-                            EventBus.getDefault().post(new CartRemoteUpdateEvent());
+                            EventBus.getDefault().post(new CartRemoteUpdateEvent("success"));
 //                            getWmlsb(handler, orderNo.getWmdbh());
 
                         } else {
+                            EventBus.getDefault().post(new CartRemoteUpdateEvent("fail"));
                             Toast.makeText(context, "提交失败！", Toast.LENGTH_LONG).show();
                         }
                     }

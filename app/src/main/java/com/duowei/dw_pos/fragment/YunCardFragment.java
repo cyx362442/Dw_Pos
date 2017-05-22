@@ -208,6 +208,10 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
             /**储值消费*/
             case PETCARD:
                 if(mYun.isSelect()==false){//未选中，添加
+                    if(mYun.getCredit2()<=0){
+                        Toast.makeText(getActivity(),"请先充值",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     if(Moneys.wfjr<=0){
                         Toast.makeText(getActivity(),"您无需再付款了",Toast.LENGTH_SHORT).show();
                     }else{
