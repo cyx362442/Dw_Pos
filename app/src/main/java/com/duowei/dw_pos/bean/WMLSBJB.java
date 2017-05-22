@@ -44,6 +44,15 @@ public class WMLSBJB{
     private String BY6;
     private String SFFS;
     private String BY12 = "";
+    private String ZKFS;
+
+    public String getZKFS() {
+        return ZKFS;
+    }
+
+    public void setZKFS(String ZKFS) {
+        this.ZKFS = ZKFS;
+    }
 
     public String getWMDBH() {
         return WMDBH;

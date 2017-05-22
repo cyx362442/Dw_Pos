@@ -353,7 +353,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     @Subscribe
     public void getYunPayLocal(final YunSqlFinish event) {
         mProgressBar.setVisibility(View.VISIBLE);
-        Post6.getInstance().Http_yun(this,mWmlsbjb,event.sql);
+        Post6.getInstance().Http_yun(this,event.wmlsbjb,event.sql);
     }
     @Subscribe
     public void yunSubmit(YunSubmit event){
