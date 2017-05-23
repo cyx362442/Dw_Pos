@@ -94,7 +94,6 @@ public class Post7 {
             }
             @Override
             public void onResponse(String response) {
-                Log.e("response======",response);
             }
         });
     }

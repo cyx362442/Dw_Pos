@@ -273,6 +273,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                             mAdapter.notifyDataSetChanged();
                             mYun.setSelect(true);
                         }
+                        Log.e("by3======",by3+"分");
                     }
                 }else{//己选中，删除
                     for (int j = 0; j < listYunPayFragment.size(); j++) {
