@@ -20,6 +20,7 @@ import com.duowei.dw_pos.bean.WXFWQDZ;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.event.ImsCardMembers;
 import com.duowei.dw_pos.httputils.Post6;
+import com.duowei.dw_pos.httputils.Post7;
 import com.duowei.dw_pos.summiscan.ScanActivity;
 import com.duowei.dw_pos.tools.Net;
 import com.google.gson.Gson;
@@ -103,6 +104,7 @@ public class YunLandActivity extends AppCompatActivity {
        EventBus.getDefault().unregister(this);
     }
     /**EventBus提起Post请求返回的云会员等级信息*/
+    String sqlUpdateWmlsb="";
     @Subscribe
     public void getImsCardLand(ImsCardMembers event) {
         String zkfs="";
@@ -124,15 +126,15 @@ public class YunLandActivity extends AppCompatActivity {
             float totalMoney=0f;
                 //遍历每一项的会员价
             for(WMLSB wmlsb:mListWmlsb){
-                if(!TextUtils.isEmpty(hyj)){//有设置了会员价
-                    float hyPrice = getHyPrice(hyj, wmlsb.getXMBH());
+                float hyPrice = getHyPrice(hyj, wmlsb.getXMBH());
                     wmlsb.setDJ(hyPrice>0&&wmlsb.getDJ()>hyPrice?hyPrice:wmlsb.getDJ());//未打折，按新的会员价重新计算单价.己打过折扣，还是按原来打折后的单价算;
                     wmlsb.setXJ(wmlsb.getDJ()*wmlsb.getSL());//重算小计金额
+                    String by13="会员价"+"("+cardgrade+")";
+                    sqlUpdateWmlsb=sqlUpdateWmlsb+"update wmlsb set dj="+wmlsb.getDJ()+",xj="+wmlsb.getXJ()+",by13='"+by13+"' where xh='"+wmlsb.getXH()+"'|";
                     totalMoney=totalMoney+wmlsb.getXJ();//重算总金额
-                }else{
-                    totalMoney=totalMoney+wmlsb.getXJ();//重算总金额
-                }
             }
+            /**更新服务器wmlsb表*/
+            Post7.getInstance().Http_updateWmlsb(sqlUpdateWmlsb);
             /**改变应收金额、折扣金额*/
             Moneys.ysjr=totalMoney;
             Moneys.zkjr=Moneys.xfzr-Moneys.ysjr;

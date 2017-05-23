@@ -1,6 +1,8 @@
 package com.duowei.dw_pos.httputils;
 
 
+import android.util.Log;
+
 import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.event.ChangeTable;
@@ -81,6 +83,18 @@ public class Post7 {
                 if (response.contains("richado")) {
                     EventBus.getDefault().post(new CheckSuccess(payStytle));
                 }
+            }
+        });
+    }
+    //登录云会员
+    public void Http_updateWmlsb(String sql){
+        DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+            @Override
+            public void onResponse(String response) {
+                Log.e("response======",response);
             }
         });
     }
