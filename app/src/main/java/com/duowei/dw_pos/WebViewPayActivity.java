@@ -274,13 +274,7 @@ public class WebViewPayActivity extends AppCompatActivity {
                     builder = new AlertDialog.Builder(WebViewPayActivity.this)
                             .setTitle("提示")
                             .setIcon(R.mipmap.warn)
-                            .setMessage("与服务器连接中断\n"+"1、己支付成功，网络恢复后点击“继续”\n2、还未付，点击“退出”")
-                            .setPositiveButton("继续", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    builder=null;
-                                }
-                            })
+                            .setMessage("与服务器连接中断\n"+"1、己支付成功，请等待网络恢复！\n2、还未支付，可直接点击“退出”")
                             .setNegativeButton("退出", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
