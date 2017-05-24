@@ -127,13 +127,15 @@ public class YunLandActivity extends AppCompatActivity {
                 //遍历每一项的会员价
             for(WMLSB wmlsb:mListWmlsb){
                 float hyPrice = getHyPrice(hyj, wmlsb.getXMBH());
-                if(hyPrice==0){
+                if(hyPrice==0){//非会员价
                     totalMoney=totalMoney+wmlsb.getXJ();//重算总金额
-                }else if(hyPrice!=0){
+                }else if(hyPrice!=0){//会员价
                     wmlsb.setDJ(hyPrice>0&&wmlsb.getDJ()>hyPrice?hyPrice:wmlsb.getDJ());//未打折，按新的会员价重新计算单价.己打过折扣，还是按原来打折后的单价算;
                     wmlsb.setXJ(wmlsb.getDJ()*wmlsb.getSL());//重算小计金额
-                    String by13="会员价"+"("+cardgrade+")";
-                    sqlUpdateWmlsb=sqlUpdateWmlsb+"update wmlsb set dj="+wmlsb.getDJ()+",xj="+wmlsb.getXJ()+",by13='"+by13+"' where xh='"+wmlsb.getXH()+"'|";
+                    if(wmlsb.getDJ()!=wmlsb.getYSJG()){
+                        String by13="会员价"+"("+cardgrade+")";
+                        sqlUpdateWmlsb=sqlUpdateWmlsb+"update wmlsb set dj="+wmlsb.getDJ()+",xj="+wmlsb.getXJ()+",by13='"+by13+"' where xh='"+wmlsb.getXH()+"'|";
+                    }
                     totalMoney=totalMoney+wmlsb.getXJ();//重算总金额
                 }
             }
