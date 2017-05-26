@@ -5,9 +5,12 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +35,8 @@ public class ComboActivity extends AppCompatActivity {
 
     private TextView mComboNameView;
     private TextView mComboMoneyView;
+    private LinearLayout mTasteMainLayout;
+    private RecyclerView mTasteRecyclerView;
     private Button mOkButton;
 
     private ListView mListView;
@@ -61,6 +66,10 @@ public class ComboActivity extends AppCompatActivity {
 
         mComboNameView = (TextView) findViewById(R.id.tv_combo_name);
         mComboMoneyView = (TextView) findViewById(R.id.tv_combo_money);
+        mTasteMainLayout = (LinearLayout) findViewById(R.id.ll_taste_main_layout);
+        mTasteRecyclerView = (RecyclerView) findViewById(R.id.rv_taste);
+        mTasteRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
         mListView = (ListView) findViewById(R.id.list);
         mOkButton = (Button) findViewById(R.id.btn_ok);
 
@@ -107,6 +116,8 @@ public class ComboActivity extends AppCompatActivity {
 
         ComboAdapter adapter = new ComboAdapter(this, mSubTcsdMap, mOkButton);
         mListView.setAdapter(adapter);
+
+        adapter.showTaste(mMainTcsd, mTasteMainLayout, mTasteRecyclerView);
     }
 
     public void setTotalPrice(float totalSubPrice) {
@@ -122,7 +133,7 @@ public class ComboActivity extends AppCompatActivity {
                     String datetime = DateTimeUtils.getCurrentDatetime();
 
                     ArrayList<AddTcsdItem> addTcsdItemArrayList = new ArrayList<>();
-                    addTcsdItemArrayList.add(new AddTcsdItem(mMainTcsd, "1", datetime, ""));
+                    addTcsdItemArrayList.add(new AddTcsdItem(mMainTcsd, "1", datetime, mMainTcsd.PZ));
 
                     String[] tmArray = mSubTcsdMap.keySet().toArray(new String[mSubTcsdMap.size()]);
                     for (int i = 0; i < mSubTcsdMap.size(); i++) {

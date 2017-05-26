@@ -158,7 +158,7 @@ public class ComboAdapter extends BaseAdapter {
         mActivity.setTotalPrice(totalSubMoney);
     }
 
-    private void showTaste(TCSD tcsd, LinearLayout mainLayout, RecyclerView tastelayout) {
+    public  void showTaste(TCSD tcsd, LinearLayout mainLayout, RecyclerView tastelayout) {
         if (tcsd == null) {
             // 没有选中项
             mainLayout.setVisibility(View.GONE);
