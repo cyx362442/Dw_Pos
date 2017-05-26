@@ -64,7 +64,7 @@ public class ComboActivity extends AppCompatActivity {
         mListView = (ListView) findViewById(R.id.list);
         mOkButton = (Button) findViewById(R.id.btn_ok);
 
-        mOkButton.setOnClickListener(mOkButtonClickLinstener);
+        mOkButton.setOnClickListener(mOkButtonClickListener);
     }
 
     private void initData() {
@@ -83,7 +83,7 @@ public class ComboActivity extends AppCompatActivity {
             return;
         }
 
-        List<TCSD> oneTcsdList = DataSupport.where("xmbh = ? and tm = ?", mXmbh, "A").find(TCSD.class);
+        List<TCSD> oneTcsdList = DataSupport.where("xmbh = ? and tm = ? and gq = ?", mXmbh, "A", "1").find(TCSD.class);
         if (oneTcsdList.size() == 1) {
             mMainTcsd = oneTcsdList.get(0);
             mComboNameView.setText(mMainTcsd.getXMMC1());
@@ -113,7 +113,7 @@ public class ComboActivity extends AppCompatActivity {
         mComboMoneyView.setText("¥" + (mTotalMainPrice + totalSubPrice));
     }
 
-    private View.OnClickListener mOkButtonClickLinstener = new View.OnClickListener() {
+    private View.OnClickListener mOkButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             // 添加选择好的套餐子项

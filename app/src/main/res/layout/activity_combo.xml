@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -57,7 +58,7 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:background="@drawable/shape_combo_name_bg"
-            android:text="名称00000000"
+            tools:text="套餐名称"
             android:textColor="@android:color/white"/>
 
         <TextView
@@ -74,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:text="¥10.0"
+            tools:text="¥10.0"
             android:textColor="#1fb5ac"
             android:textSize="18sp"
             android:layout_alignParentTop="true"

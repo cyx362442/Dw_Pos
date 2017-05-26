@@ -158,7 +158,7 @@ public class ComboAdapter extends BaseAdapter {
         mActivity.setTotalPrice(totalSubMoney);
     }
 
-    private void showTaste(TCSD tcsd, LinearLayout mainLayout,  RecyclerView tastelayout) {
+    private void showTaste(TCSD tcsd, LinearLayout mainLayout, RecyclerView tastelayout) {
         if (tcsd == null) {
             // 没有选中项
             mainLayout.setVisibility(View.GONE);
@@ -166,8 +166,10 @@ public class ComboAdapter extends BaseAdapter {
         }
 
         List<DMKWDYDP> dmkwdydpList = DataSupport.where("xmbh = ?", tcsd.getXMBH1()).find(DMKWDYDP.class);
+
+        mainLayout.setVisibility(View.VISIBLE);
         if (dmkwdydpList.size() > 0) {
-            mainLayout.setVisibility(View.VISIBLE);
+
             List<DMPZSD> dmpzsdList = new ArrayList<>();
             for (int i = 0; i < dmkwdydpList.size(); i++) {
                 dmpzsdList.add(DataSupport.where("pzbm = ?", dmkwdydpList.get(i).getPZBM()).findFirst(DMPZSD.class));
@@ -175,8 +177,9 @@ public class ComboAdapter extends BaseAdapter {
 
             tastelayout.setAdapter(new TasteAdapter(mActivity, tcsd, dmpzsdList));
         } else {
-            mainLayout.setVisibility(View.GONE);
-            tastelayout.setAdapter(null);
+//            mainLayout.setVisibility(View.GONE);
+//            tastelayout.setAdapter(null);
+            tastelayout.setAdapter(new TasteAdapter(mActivity, tcsd, DataSupport.findAll(DMPZSD.class)));
         }
     }
 
