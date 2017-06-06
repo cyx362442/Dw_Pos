@@ -56,6 +56,8 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
 
     private WMLSB mWMLSB;
 
+    private float mSl=1;
+
     /**
      * 1:整单备注   2:单个口味选择
      */
@@ -79,10 +81,11 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
      *
      * @param wmlsb 当前购物车项
      */
-    public static TasteChoiceDialogFragment newInstance(WMLSB wmlsb) {
+    public static TasteChoiceDialogFragment newInstance(WMLSB wmlsb,float sl) {
 
         Bundle args = new Bundle();
         args.putInt("mode", 2);
+        args.putFloat("sl",sl);
         args.putSerializable("wmlsb", wmlsb);
 
         TasteChoiceDialogFragment fragment = new TasteChoiceDialogFragment();
@@ -95,6 +98,7 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
         super.onCreate(savedInstanceState);
         mContext = getContext();
         mMode = getArguments().getInt("mode");
+        mSl=getArguments().getFloat("sl");
         mWMLSB = (WMLSB) getArguments().getSerializable("wmlsb");
     }
 
@@ -289,7 +293,8 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
                     String xmbh = dycp.substring(dycp.indexOf('@') + 1, dycp.indexOf('#'));
                     JYXMSZ jyxmsz = DataSupport.where("xmbh = ?", xmbh).findFirst(JYXMSZ.class);
                     if (jyxmsz != null) {
-                        CartList.newInstance(mContext).add(jyxmsz);
+                        WMLSB wmlsb = CartList.newInstance(mContext).add(jyxmsz);
+                        wmlsb.setSL(mSl);
                     }
                 }
 

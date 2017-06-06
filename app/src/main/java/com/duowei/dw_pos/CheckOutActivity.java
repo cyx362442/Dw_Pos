@@ -319,7 +319,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     }
     /**输入金额*/
     private void inputMoney() {
-        final CheckOutDialog dialog = new CheckOutDialog(this, "现金支付", bigDecimal(mYingshou));
+        final CheckOutDialog dialog = new CheckOutDialog(this, "现金支付","", bigDecimal(mYingshou));
         dialog.mConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

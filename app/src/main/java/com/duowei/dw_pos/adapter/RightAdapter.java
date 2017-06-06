@@ -12,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import com.duowei.dw_pos.bean.Jgsz;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.bean.TCSD;
 import com.duowei.dw_pos.bean.WMLSB;
+import com.duowei.dw_pos.dialog.CheckOutDialog;
 import com.duowei.dw_pos.event.ClearSearchEvent;
 import com.duowei.dw_pos.fragment.InputNumDialogFragment;
 import com.duowei.dw_pos.fragment.TasteChoiceDialogFragment;
@@ -86,7 +88,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_righ, parent, false);
@@ -94,6 +96,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
             holder.tv_name = (TextView) convertView.findViewById(R.id.tv_name);
             holder.tv_money = (TextView) convertView.findViewById(R.id.tv_money);
             holder.btn_add = (ImageButton) convertView.findViewById(R.id.btn_add);
+            holder.btn_mul= (ImageView) convertView.findViewById(R.id.btn_mul);
             holder.ll_view = (LinearLayout) convertView.findViewById(R.id.temp);
 
             convertView.setTag(holder);
@@ -133,47 +136,29 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                     }
 
 
-                    final JYXMSZ jyxmsz = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).findFirst(JYXMSZ.class);
+                    showDialog2(wmlsb,1);//有必选口味，称重产品再次弹出dialog
+                }
+            });
 
-                    // 称重处理
-                    boolean hasWeight = false;
-                    Jgsz jgsz = DataSupport.findFirst(Jgsz.class);
-                    if (jgsz != null && "1".equals(jgsz.by52) && "1".equals(jyxmsz.getBY3())) {
-                        hasWeight = true;
-
-                        InputNumDialogFragment fragment = new InputNumDialogFragment();
-                        fragment.show(mContext.getSupportFragmentManager(), null);
-                        fragment.setOnOkBtnClickListener(new InputNumDialogFragment.OnOkBtnClickListener() {
-                            @Override
-                            public void onOkBtnClick(float inputValue) {
-                                CartList.newInstance(mContext).modifyNum(wmlsb, inputValue);
-
-                                // 必选口味处理
-                                if ("1".equals(jyxmsz.getSFYHQ())) {
-
-                                    List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
-
-                                    if (tasteList != null) {
-                                        // 有选中必须口味框，都弹出口味选择
-                                        TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb);
-                                        fragment.show(mContext.getSupportFragmentManager(), null);
-                                    }
-                                }
-                            }
-                        });
+            holder.btn_mul.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (item.getGQ().equals("1")) {
+                        Toast.makeText(mContext, "该单品己停售", Toast.LENGTH_SHORT).show();
+                        return;
                     }
+                    EventBus.getDefault().post(new ClearSearchEvent());
+                    final CheckOutDialog dialog = new CheckOutDialog(mContext,"请输入数量","数量：", 2);
+                    dialog.setOnconfirmClick(new CheckOutDialog.OnconfirmClick() {
+                        @Override
+                        public void getDialogInput(String money) {
+                            final WMLSB wmlsb = CartList.newInstance(mContext).mul(item, Float.parseFloat(money));
 
-                    // 必选口味处理(有称重是，就不处理必选口味了)
-                    if (!hasWeight && "1".equals(jyxmsz.getSFYHQ())) {
+                            showDialog2(wmlsb,Float.parseFloat(money));//有必选口味，称重产品再次弹出dialog
 
-                        List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
-
-                        if (tasteList != null) {
-                            // 有选中必须口味框，都弹出口味选择
-                            TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb);
-                            fragment.show(mContext.getSupportFragmentManager(), null);
+                            dialog.cancel();
                         }
-                    }
+                    });
                 }
             });
 
@@ -197,9 +182,66 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                     mContext.startActivity(intent);
                 }
             });
+
+            holder.btn_mul.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    EventBus.getDefault().post(new ClearSearchEvent());
+
+                    Intent intent = new Intent(mContext, ComboActivity.class);
+                    intent.putExtra("xmbh", item.getXMBH());
+                    mContext.startActivity(intent);
+                }
+            });
+
         }
 
         return convertView;
+    }
+
+    /**必选口味、称重*/
+    private void showDialog2(final WMLSB wmlsb, final float sl) {
+        final JYXMSZ jyxmsz = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).findFirst(JYXMSZ.class);
+
+        // 称重处理
+        boolean hasWeight = false;
+        Jgsz jgsz = DataSupport.findFirst(Jgsz.class);
+        if (jgsz != null && "1".equals(jgsz.by52) && "1".equals(jyxmsz.getBY3())) {
+            hasWeight = true;
+
+            InputNumDialogFragment fragment = new InputNumDialogFragment();
+            fragment.show(mContext.getSupportFragmentManager(), null);
+            fragment.setOnOkBtnClickListener(new InputNumDialogFragment.OnOkBtnClickListener() {
+                @Override
+                public void onOkBtnClick(float inputValue) {
+                    CartList.newInstance(mContext).modifyNum(wmlsb, inputValue);
+
+                    // 必选口味处理
+                    if ("1".equals(jyxmsz.getSFYHQ())) {
+
+                        List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
+
+                        if (tasteList != null) {
+                            // 有选中必须口味框，都弹出口味选择
+                            TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb,sl);
+                            fragment.show(mContext.getSupportFragmentManager(), null);
+                        }
+                    }
+                }
+            });
+        }
+
+        // 必选口味处理(有称重是，就不处理必选口味了)
+        if (!hasWeight && "1".equals(jyxmsz.getSFYHQ())) {
+
+            List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
+
+            if (tasteList != null) {
+                // 有选中必须口味框，都弹出口味选择
+                TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb,sl);
+                fragment.show(mContext.getSupportFragmentManager(), null);
+            }
+        }
     }
 
     public void setList(List list) {
@@ -233,6 +275,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         TextView tv_name;
         TextView tv_money;
         ImageButton btn_add;
+        ImageView btn_mul;
         LinearLayout ll_view;
     }
 

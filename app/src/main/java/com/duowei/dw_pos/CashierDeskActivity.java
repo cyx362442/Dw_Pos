@@ -22,6 +22,7 @@ import com.duowei.dw_pos.adapter.RightAdapter;
 import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
+import com.duowei.dw_pos.dialog.CheckOutDialog;
 import com.duowei.dw_pos.event.AddEvent;
 import com.duowei.dw_pos.event.ClearSearchEvent;
 import com.duowei.dw_pos.event.FinishEvent;
@@ -29,6 +30,7 @@ import com.duowei.dw_pos.fragment.AddDialogFragment;
 import com.duowei.dw_pos.fragment.CartFragment;
 import com.duowei.dw_pos.httputils.CheckVersion;
 import com.duowei.dw_pos.tools.AnimUtils;
+import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.view.ToggleButton;
 
 import org.greenrobot.eventbus.EventBus;
@@ -45,7 +47,7 @@ import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
  */
 
 public class CashierDeskActivity extends AppCompatActivity implements View.OnClickListener,
-        AdapterView.OnItemClickListener {
+        AdapterView.OnItemClickListener{
     private static final String TAG = "CashierDeskActivity";
 
     private ImageView mBackView;
@@ -378,7 +380,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
     @Subscribe
     public void addPrice(AddEvent event) {
 
-        AddDialogFragment fragment = AddDialogFragment.newInstance(event.getType());
+        AddDialogFragment fragment = AddDialogFragment.newInstance(event.getType(),event.num);
         fragment.show(getSupportFragmentManager(), null);
     }
 }

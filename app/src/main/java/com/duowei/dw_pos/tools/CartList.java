@@ -174,7 +174,35 @@ public class CartList {
             mList.add(wmlsb);
 
             if (!hasCXDMXXX) {
-                processMzszjb(wmlsb, jyxmsz);
+                processMzszjb(wmlsb, jyxmsz,1);
+            }
+
+            EventBus.getDefault().post(new CartUpdateEvent());
+        }
+
+        return wmlsb;
+    }
+    /**
+     * 添加单品,乘以
+     *
+     * @param jyxmsz
+     */
+    public WMLSB mul(JYXMSZ jyxmsz,float num){
+        float dj = processCxdmxxx(jyxmsz);
+
+        boolean find = false;
+
+        WMLSB wmlsb = null;
+
+        if (!find) {
+            // 购物车没有当前要添加的单品
+            // 直接添加
+            wmlsb = new WMLSB(jyxmsz);
+            wmlsb.setSL(num);
+            mList.add(wmlsb);
+
+            if (!hasCXDMXXX) {
+                processMzszjb(wmlsb, jyxmsz,num);
             }
 
             EventBus.getDefault().post(new CartUpdateEvent());
@@ -446,7 +474,7 @@ public class CartList {
      *
      * @param jyxmsz
      */
-    private void processMzszjb(WMLSB wmlsb, JYXMSZ jyxmsz) {
+    private void processMzszjb(WMLSB wmlsb, JYXMSZ jyxmsz,float num) {
         MZSZJBXX mzszjbxx = DataSupport.where("xmbh = ?", jyxmsz.getXMBH()).findFirst(MZSZJBXX.class);
         if (mzszjbxx != null) {
             SimpleDateFormat dateSdf = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss", Locale.CHINA);
@@ -468,10 +496,10 @@ public class CartList {
                             String jbby3 = mzszjbxx.getJBBY3();
                             if ("1".equals(jbby1) && Float.valueOf(jbby3) >= 1) {
                                 // 买赠
-                                processMzJj("1", wmlsb, mzszjbxx.getBM());
+                                processMzJj("1", wmlsb, mzszjbxx.getBM(),num);
                             } else if ("2".equals(jbby1)) {
                                 // 加价促销
-                                processMzJj("2", wmlsb, mzszjbxx.getBM());
+                                processMzJj("2", wmlsb, mzszjbxx.getBM(),num);
                             }
                         }
                     }
@@ -487,7 +515,7 @@ public class CartList {
     /**
      * 处理 买赠 加价
      */
-    private void processMzJj(String jbby1, WMLSB wmlsb, String bm) {
+    private void processMzJj(String jbby1, WMLSB wmlsb, String bm,float num) {
         List<MZSZMXXX> mzszmxxxList = DataSupport.where("bm = ?", bm).find(MZSZMXXX.class);
         if (mzszmxxxList != null && mzszmxxxList.size() > 0) {
 
@@ -497,14 +525,14 @@ public class CartList {
                 // 添加买赠
                 AddDialogFragment.sWMLSB = wmlsb;
                 AddDialogFragment.sMZSZMXXXList = mzszmxxxList;
-                EventBus.getDefault().post(new AddEvent(1));
+                EventBus.getDefault().post(new AddEvent(1,num));
             }
 
             if ("2".equals(jbby1) && mzszmxxxList.size() > 0) {
                 // 加价
                 AddDialogFragment.sWMLSB = wmlsb;
                 AddDialogFragment.sMZSZMXXXList = mzszmxxxList;
-                EventBus.getDefault().post(new AddEvent(2));
+                EventBus.getDefault().post(new AddEvent(2,num));
             }
         }
     }

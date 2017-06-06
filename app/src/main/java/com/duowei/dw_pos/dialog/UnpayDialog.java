@@ -76,7 +76,7 @@ public class UnpayDialog implements View.OnClickListener, CheckOutDialog.Onconfi
                 mDialog.dismiss();
                 break;
             case R.id.ll_cash:
-                mCheckOutDialog = new CheckOutDialog(context, "现金支付", Moneys.wfjr);
+                mCheckOutDialog = new CheckOutDialog(context, "现金支付", "现金",Moneys.wfjr);
                 mCheckOutDialog.setOnconfirmClick(this);
                 mDialog.dismiss();
                 break;

@@ -462,6 +462,7 @@ public class DataLoad {
             @Override
             public void onResponse(final String response) {
                 if(response.equals("]")){
+                    DataSupport.deleteAll(CXDMXXX.class);
                     Http_MZSZJBXX();
                 }else{
                     new Thread(new Runnable() {
@@ -491,6 +492,7 @@ public class DataLoad {
             @Override
             public void onResponse(final String response) {
                 if(response.equals("]")){
+                    DataSupport.deleteAll(MZSZJBXX.class);
                     Http_MZSZMXXX();
                 }else{
                     new Thread(new Runnable() {
@@ -520,6 +522,7 @@ public class DataLoad {
             @Override
             public void onResponse(final String response) {
                 if(response.equals("]")){
+                    DataSupport.deleteAll(MZSZMXXX.class);
                     Http_JGSZ();
                 }else{
                     new Thread(new Runnable() {

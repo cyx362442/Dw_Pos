@@ -6,9 +6,10 @@ package com.duowei.dw_pos.event;
 
 public class AddEvent {
     private int type;
-
-    public AddEvent(int type) {
+    public float num;
+    public AddEvent(int type,float num) {
         this.type = type;
+        this.num=num;
     }
 
     public int getType() {

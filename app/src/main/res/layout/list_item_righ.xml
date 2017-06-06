@@ -38,6 +38,17 @@
     </LinearLayout>
 
     <ImageButton
+        android:id="@+id/btn_mul"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:minHeight="78dp"
+        android:minWidth="48dp"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/ic_mul"
+        />
+
+    <ImageButton
         android:id="@+id/btn_add"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"

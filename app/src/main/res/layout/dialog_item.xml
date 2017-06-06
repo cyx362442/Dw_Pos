@@ -18,23 +18,27 @@
             android:textSize="20dp"
             android:textColor="#ffffff"/>
     </RelativeLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_margin="20dp"
         android:gravity="center_vertical">
+
         <TextView
             android:id="@+id/tv1"
-            android:text="现金："
+            style="@style/textView_openTable"
             android:layout_centerVertical="true"
-         style="@style/textView_openTable"/>
+            android:text="现金："/>
+
         <EditText
             android:id="@+id/et_input"
             style="@style/editText_openTable"
+            android:layout_toRightOf="@id/tv1"
             android:inputType="numberDecimal"
-            android:selectAllOnFocus="true"
-            android:layout_toRightOf="@id/tv1"/>
+            android:selectAllOnFocus="true"/>
     </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

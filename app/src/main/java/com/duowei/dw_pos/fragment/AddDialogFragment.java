@@ -38,16 +38,17 @@ public class AddDialogFragment extends AppCompatDialogFragment {
     private ArrayAdapter<MZSZMXXX> mArrayAdapter;
 
     private ListView mListView;
-
     private int mType;
+    private float mNum=1;
 
     /**
      * @param type 1, 赠送; 2, 加价促销
      */
-    public static AddDialogFragment newInstance(int type) {
+    public static AddDialogFragment newInstance(int type,float num) {
 
         Bundle args = new Bundle();
         args.putInt("type", type);
+        args.putFloat("num",num);
 
         AddDialogFragment fragment = new AddDialogFragment();
         fragment.setArguments(args);
@@ -59,6 +60,7 @@ public class AddDialogFragment extends AppCompatDialogFragment {
         super.onCreate(savedInstanceState);
         mContext = getContext();
         mType = getArguments().getInt("type", 1);
+        mNum = getArguments().getFloat("num",1);
     }
 
     @NonNull
@@ -126,7 +128,7 @@ public class AddDialogFragment extends AppCompatDialogFragment {
                 if (mType == 1) {
                     // 添加买赠
                     WMLSB subWmlsb = new WMLSB(subJyxmsz);
-                    subWmlsb.setSL(Float.valueOf(item.getSL()));
+                    subWmlsb.setSL(Float.valueOf(item.getSL())*mNum);
                     subWmlsb.setDJ(0);
                     subWmlsb.setBY13("赠送");
                     subWmlsb.setSFZS("1");
@@ -137,7 +139,7 @@ public class AddDialogFragment extends AppCompatDialogFragment {
 
                 } else if (mType == 2) {
                     WMLSB wmlsb = new WMLSB(subJyxmsz);
-                    wmlsb.setSL(Float.valueOf(item.getSL()));
+                    wmlsb.setSL(Float.valueOf(item.getSL())*mNum);
                     wmlsb.setDJ(Float.valueOf(item.getXSJG()));
                     wmlsb.setBY13("加价促销");
                     sWMLSB.getSubWMLSBList().add(wmlsb);

@@ -21,14 +21,12 @@ import java.util.Locale;
 
 public class CheckOutDialog implements View.OnClickListener {
     Context context;
-    String title;
     float money;
     private AlertDialog mDialog;
     public EditText mEtInput;
     public Button mConfirm;
     private Button mCancel;
     private final LinearLayout mLayout;
-    public TextView mTitle;
 
     public OnconfirmClick listener;
 
@@ -40,9 +38,8 @@ public class CheckOutDialog implements View.OnClickListener {
         this.listener=listener;
     }
 
-    public CheckOutDialog(Context context, String title,float money) {
+    public CheckOutDialog(Context context, String title,String contents,float money) {
         this.context = context;
-        this.title = title;
         this.money=money;
         mDialog = new AlertDialog.Builder(context).create();
         //必须先setView，否则在dialog\popuwindow中无法自动弹出软健盘
@@ -52,22 +49,24 @@ public class CheckOutDialog implements View.OnClickListener {
         mDialog.show();
         WindowManager.LayoutParams params = mDialog.getWindow().getAttributes();
         mDialog.getWindow().setAttributes(params);
-        initWidget();
+        initWidget(title,contents);
     }
 
     public void cancel(){
         mDialog.dismiss();
     }
 
-    private void initWidget() {
-        mTitle=(TextView)mLayout.findViewById(R.id.tv_title);
+    private void initWidget(String title,String contents) {
+        TextView tvTitle = (TextView) mLayout.findViewById(R.id.tv_title);
+        TextView tvContent = (TextView) mLayout.findViewById(R.id.tv1);
         mEtInput=(EditText)mLayout.findViewById(R.id.et_input);
         mConfirm=(Button)mLayout.findViewById(R.id.btn_confirm);
         mCancel=(Button)mLayout.findViewById(R.id.btn_cancel);
         mConfirm.setOnClickListener(this);
         mCancel.setOnClickListener(this);
-        mTitle.setText(title);
-        mTitle.setFocusableInTouchMode(true);
+        tvTitle.setText(title);
+        tvTitle.setFocusableInTouchMode(true);
+        tvContent.setText(contents);
         mEtInput.setText(bigDecimal(money)+"");
     }
 
