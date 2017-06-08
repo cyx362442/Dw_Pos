@@ -144,7 +144,8 @@ public class Post6 {
                             "" + SqlYun.CZKYE + ",'','','云会员消费'," + (SqlYun.jfbfb_add - SqlYun.jfbfb_sub) + "," + SqlYun.jfbfb_sub + ",'" + SqlYun.HYBH + "','" + SqlYun.HYKDJ + "')|";
                     String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
                             "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,ltrim(xmmc),tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mWmlsbjb.getWMDBH() + "'|";
-                    String updateWMLSBJB = "update WMLSBJB set JSJ='" + pad + "',SFYJZ='1',DJLSH='" + prk + "',YSJE=" + bigDecimal(Moneys.xfzr) + ",JSKSSJ=getdate(),BY8='" + SqlYun.from_user + "',JZBZ='" + SqlYun.JZBZ + "' where WMDBH='" + mWmlsbjb.getWMDBH() + "'|";
+                    String updateWMLSBJB = "update WMLSBJB set JSJ='" + pad + "',SFYJZ='1',DJLSH='" + prk + "',YSJE=" + bigDecimal(Moneys.xfzr) + ",JSKSSJ=getdate(),BY8='" + SqlYun.from_user + "'," +
+                            "JZBZ='" + SqlYun.JZBZ + "',HYKH='" + SqlYun.HYBH + "',SS=" + bigDecimal(Moneys.ysjr) + ",HYKDJ='" + SqlYun.HYKDJ + "',ZKFS='" + mWmlsbjb.getZKFS() + "' where WMDBH='" + mWmlsbjb.getWMDBH() + "'|";
                     String sql = yunLoacalSql + insertXSJBXX + insertXSMXXX + updateWMLSBJB;
 
                     Post7.getInstance().Http_check(sql,context.getString(R.string.payStytle_yun));
@@ -208,7 +209,8 @@ public class Post6 {
                             "" + SqlYun.CZKYE + ",'','','云会员消费'," + (SqlYun.jfbfb_add - SqlYun.jfbfb_sub) + "," + SqlYun.jfbfb_sub+ ",'" + SqlYun.HYBH + "','" + SqlYun.HYKDJ + "')|";
                     String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
                             "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,ltrim(xmmc),tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mWmlsbjb.getWMDBH() + "'|";
-                    String updateWMLSBJB = "update WMLSBJB set JSJ='" + pad + "',SFYJZ='1',DJLSH='" + prk + "',YSJE=" + bigDecimal(Moneys.xfzr) + ",JSKSSJ=getdate(),BY8='" + SqlYun.from_user + "',JZBZ='" + SqlYun.JZBZ + "' where WMDBH='" + mWmlsbjb.getWMDBH() + "'|";
+                    String updateWMLSBJB = "update WMLSBJB set JSJ='" + pad + "',SFYJZ='1',DJLSH='" + prk + "',YSJE=" + bigDecimal(Moneys.xfzr) + ",JSKSSJ=getdate(),BY8='" + SqlYun.from_user + "'," +
+                            "JZBZ='" + SqlYun.JZBZ + "',HYKH='" + SqlYun.HYBH + "',SS=" + bigDecimal(Moneys.ysjr) + ",HYKDJ='" + SqlYun.HYKDJ + "',ZKFS='" + mWmlsbjb.getZKFS() + "' where WMDBH='" + mWmlsbjb.getWMDBH() + "'|";
                     String sql = yunLoacalSql + insertXSJBXX + insertXSMXXX + updateWMLSBJB;
                     Post7.getInstance().Http_check(sql,context.getString(R.string.payStytle_cash_yun));
                 } catch (JSONException e) {
@@ -239,7 +241,8 @@ public class Post6 {
                             "'云会员消费'," + (SqlYun.jfbfb_add - SqlYun.jfbfb_sub) + "," + SqlYun.jfbfb_sub + ",'" + SqlYun.HYBH + "','" + SqlYun.HYKDJ + "')|";
                     String insertXSMXXX = "insert into XSMXXX(XH,XSDH,XMBH,XMMC,TM,DW,YSJG,XSJG,SL,XSJEXJ,FTJE,SYYXM,SQRXM,SFXS,ZSSJ,TCXMBH,SSLBBM,BZ)" +
                             "select WMDBH+convert(varchar(10),xh),WMDBH,xmbh,ltrim(xmmc),tm,dw,ysjg,dj,sl,ysjg*sl,dj*sl,syyxm,SQRXM,SFXS,ZSSJ,TCXMBH,by2,BY13 from wmlsb where wmdbh='" + mItem.getWMDBH() + "'|";
-                    String updateWMLSBJB = "update WMLSBJB set JSJ='"+mPad+"',SFYJZ='1',DJLSH='" + prk + "',BY13='" + mID + "',BY16='" + ZFBID + "',YSJE='" + bigDecimal(Moneys.xfzr) + "',JSKSSJ=getdate(),BY8='" + SqlYun.from_user + "',JZBZ='" + SqlYun.JZBZ + "' where WMDBH='" + mItem.getWMDBH() + "'|";
+                    String updateWMLSBJB = "update WMLSBJB set JSJ='"+mPad+"',SFYJZ='1',DJLSH='" + prk + "',BY13='" + mID + "',BY16='" + ZFBID + "',YSJE='" + bigDecimal(Moneys.xfzr) + "',JSKSSJ=getdate(),BY8='" + SqlYun.from_user + "'," +
+                            "JZBZ='" + SqlYun.JZBZ + "',HYKH='" + SqlYun.HYBH + "',SS=" + bigDecimal(Moneys.ysjr) + ",HYKDJ='" + SqlYun.HYKDJ + "',ZKFS='" + mItem.getZKFS() + "' where WMDBH='" + mItem.getWMDBH() + "'|";
                     String sql = yunLoacalSql+insertXSFKFS + insertXSJBXX + insertXSMXXX + updateWMLSBJB;
 
                     Post7.getInstance().Http_scan(sql,payStytle);
