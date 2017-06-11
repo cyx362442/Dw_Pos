@@ -230,7 +230,6 @@ public class WebViewPayActivity extends AppCompatActivity {
     private synchronized void getHtmlResult(final String payStytle) {
         final String result = DownHTTP.getResult(this,chaUrl);
         Log.e("result=====",result);
-
         if(result.contains("支付成功") || result.contains("SUCCESS")){
             if (payStytle.equals(getString(R.string.payStytle_zhifubao_yun))||payStytle.equals(getString(R.string.payStytle_zhifubao))) {
                     ZFBID = result.substring(result.indexOf("*") + 1, result.length());
