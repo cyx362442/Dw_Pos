@@ -1,8 +1,5 @@
 package com.duowei.dw_pos.tools;
 
-
-import android.util.Log;
-
 /**
  * Created by Administrator on 2017-02-15.
  */

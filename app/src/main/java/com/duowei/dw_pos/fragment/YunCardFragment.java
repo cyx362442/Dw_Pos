@@ -96,8 +96,8 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
     private float mJfbfb;//获得积分
     private int by3=0;//总需积分;
     private Button mConfirm;
-    private String mJifen1;
-    private String mJifen2;
+    private String mJifen1="";
+    private String mJifen2="";
 
     public YunCardFragment() {
         // Required empty public constructor
@@ -273,7 +273,6 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                             mAdapter.notifyDataSetChanged();
                             mYun.setSelect(true);
                         }
-                        Log.e("by3======",by3+"分");
                     }
                 }else{//己选中，删除
                     for (int j = 0; j < listYunPayFragment.size(); j++) {

@@ -1,6 +1,7 @@
 package com.duowei.dw_pos.httputils;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
@@ -146,7 +147,7 @@ public final class DownHTTP {
 			//String urlPath = "http://192.168.1.9:80/JJKSms/RecSms.php";
 			URL url = new URL(strUrlPath);
 			HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-			httpURLConnection.setConnectTimeout(3000);     //设置连接超时时间
+			httpURLConnection.setConnectTimeout(5000);     //设置连接超时时间
 			httpURLConnection.setDoInput(true);                  //打开输入流，以便从服务器获取数据
 			httpURLConnection.setDoOutput(true);                 //打开输出流，以便向服务器提交数据
 			httpURLConnection.setRequestMethod("POST");     //设置以Post方式提交数据
@@ -206,6 +207,7 @@ public final class DownHTTP {
 			e.printStackTrace();
 		}
 		resultData = new String(byteArrayOutputStream.toByteArray());
+		Log.e("resultData====",resultData);
 		return resultData;
 	}
 }
