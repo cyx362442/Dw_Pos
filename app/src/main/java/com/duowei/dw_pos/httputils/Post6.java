@@ -62,15 +62,15 @@ public class Post6 {
             @Override
             public void onResponse(String response) {
                 if (response.equals("]")) {
-                    String sql = "select a.id,a.title,a.couponmoney,a.is_jf,a.jf_bfb,b.sl from  (\n" +
-                            "select id,title,couponmoney,is_jf,jf_bfb from ims_card_coupon where weid='" + weid + "' and status=1 ) a inner join(\n" +
+                    String sql = "select a.id,a.title,a.couponmoney,a.is_jf,a.jf_bfb,b.sl,a.least_cost from  (\n" +
+                            "select id,title,couponmoney,is_jf,jf_bfb,least_cost from ims_card_coupon where weid='" + weid + "' and status=1 ) a inner join(\n" +
                             "select couponid,SUM(status)SL from ims_card_members_coupon where from_user='" + from_user + "' \n" +
                             "and weid='" + weid + "' and status=1 and (CURRENT_DATE() between CAST(FROM_UNIXTIME(starttime,'%Y-%m-%d')as datetime)  \n" +
                             "and CAST(FROM_UNIXTIME(endtime,'%Y-%m-%d')as datetime))group by couponid )b on a.id=b.couponid|";
                     Http_tickets(sql);
                 } else {
-                    String sql = "select a.id,a.title,a.couponmoney,a.is_jf,a.jf_bfb,b.sl from  (\n" +
-                            "select id,title,couponmoney,is_jf,jf_bfb from ims_card_coupon where weid=" + weid + " and status='1' and id in(\n" +
+                    String sql = "select a.id,a.title,a.couponmoney,a.is_jf,a.jf_bfb,b.sl,a.least_cost from  (\n" +
+                            "select id,title,couponmoney,is_jf,jf_bfb,least_cost from ims_card_coupon where weid=" + weid + " and status='1' and id in(\n" +
                             "select couponid from ims_card_coupon_stores where weid=" + weid + " and bmbh='" + bmbh + "') ) a inner join(\n" +
                             "select couponid,SUM(status)SL from ims_card_members_coupon where from_user='" + from_user + "' \n" +
                             "and weid=" + weid + " and status=1 and (CURRENT_DATE() between CAST(FROM_UNIXTIME(starttime,'%Y-%m-%d')as datetime)  \n" +

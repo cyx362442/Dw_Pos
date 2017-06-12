@@ -171,12 +171,12 @@ public class YunPayActivity extends AppCompatActivity implements YunCardFragment
         if (mImsCards.getCredit2() >= 0) {//储值卡
             mYunList.add(new ImsCardMember(mImsCards.getId(), mImsCards.getFrom_user(), mImsCards.getCardsn(), mImsCards.getCredit1(), mImsCards.getCredit2(),
                     mImsCards.getRealname(), mImsCards.getMobile(), mImsCards.getStatus(), mImsCards.getCardgrade(), mImsCards.getOccupation(),
-                    mImsCards.getCreatetime(), mImsCards.getTitle(), mImsCards.getCouponmoney(), mImsCards.getSL(), 0,false));
+                    mImsCards.getCreatetime(), mImsCards.getTitle(), mImsCards.getCouponmoney(), mImsCards.getSL(), 0,false,mImsCards.getLeast_cost()));
         }
         if (mImsCards.getCredit1() >= 0) {//积分
             mYunList.add(new ImsCardMember(mImsCards.getId(), mImsCards.getFrom_user(), mImsCards.getCardsn(), mImsCards.getCredit1(), -1f,
                     mImsCards.getRealname(), mImsCards.getMobile(), mImsCards.getStatus(), mImsCards.getCardgrade(), mImsCards.getOccupation(),
-                    mImsCards.getCreatetime(), mImsCards.getTitle(), mImsCards.getCouponmoney(), mImsCards.getSL(), 1,false));
+                    mImsCards.getCreatetime(), mImsCards.getTitle(), mImsCards.getCouponmoney(), mImsCards.getSL(), 1,false,mImsCards.getLeast_cost()));
         }
     }
 

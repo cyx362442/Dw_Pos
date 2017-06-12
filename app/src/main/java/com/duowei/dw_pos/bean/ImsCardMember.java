@@ -38,9 +38,18 @@ public class ImsCardMember implements Serializable{
     private int SL;
     private int ticket;
     private boolean isSelect;
+    private float least_cost;
 
 
-    public ImsCardMember(int id, String from_user, String cardsn, float credit1, float credit2, String realname, String mobile, String status, String cardgrade, String occupation, String createtime, String title, float couponmoney, int SL, int ticket, boolean isSelect) {
+    public float getLeast_cost() {
+        return least_cost;
+    }
+
+    public void setLeast_cost(float least_cost) {
+        this.least_cost = least_cost;
+    }
+
+    public ImsCardMember(int id, String from_user, String cardsn, float credit1, float credit2, String realname, String mobile, String status, String cardgrade, String occupation, String createtime, String title, float couponmoney, int SL, int ticket, boolean isSelect, float least_cost) {
         this.id = id;
         this.from_user = from_user;
         this.cardsn = cardsn;
@@ -57,6 +66,8 @@ public class ImsCardMember implements Serializable{
         this.SL = SL;
         this.ticket = ticket;
         this.isSelect=isSelect;
+
+        this.least_cost=least_cost;
     }
 
     public int getId() {

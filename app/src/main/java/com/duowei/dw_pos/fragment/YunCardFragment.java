@@ -312,6 +312,10 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
     }
     /**各抵用券点击事件*/
     private void click_Coupon(int couponNum) {
+        if(Moneys.ysjr<mYun.getLeast_cost()){
+            Toast.makeText(getActivity(),"该礼券不可用",Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (mYun.isSelect() == false) {//未选过，添加
             if(Moneys.wfjr<=0){
                 Toast.makeText(getActivity(),"您无需再付款了",Toast.LENGTH_SHORT).show();

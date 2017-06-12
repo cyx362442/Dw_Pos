@@ -1,6 +1,8 @@
 package com.duowei.dw_pos.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.ImsCardMember;
+import com.duowei.dw_pos.bean.Moneys;
 
 import java.util.ArrayList;
 
@@ -108,19 +111,39 @@ public class YunGvAdapter extends BaseAdapter {
         /**各电子券*/
         else if(cards.getTicket()==2){
             hold.content.setText(cards.getTitle());
-            hold.money.setText(cards.getSL()+"张");
+            if(cards.getLeast_cost()>0&& Moneys.ysjr<cards.getLeast_cost()){//消费满多少才可使用
+                hold.money.setText("消费满"+cards.getLeast_cost()+"元");
+            }else{
+                hold.money.setText(cards.getSL()+"张");
+            }
         }else if(cards.getTicket()==3){
             hold.content.setText(cards.getTitle());
-            hold.money.setText(cards.getSL()+"张");
+            if(cards.getLeast_cost()>0&& Moneys.ysjr<cards.getLeast_cost()){
+                hold.money.setText("消费满"+cards.getLeast_cost()+"元");
+            }else{
+                hold.money.setText(cards.getSL()+"张");
+            }
         }else if(cards.getTicket()==4){
             hold.content.setText(cards.getTitle());
-            hold.money.setText(cards.getSL()+"张");
+            if(cards.getLeast_cost()>0&& Moneys.ysjr<cards.getLeast_cost()){
+                hold.money.setText("消费满"+cards.getLeast_cost()+"元");
+            }else{
+                hold.money.setText(cards.getSL()+"张");
+            }
         }else if(cards.getTicket()==5){
             hold.content.setText(cards.getTitle());
-            hold.money.setText(cards.getSL()+"张");
-        }else if(cards.getTicket()==6){
+            if(cards.getLeast_cost()>0&& Moneys.ysjr<cards.getLeast_cost()){
+                hold.money.setText("消费满"+cards.getLeast_cost()+"元");
+            }else{
+                hold.money.setText(cards.getSL()+"张");
+            }
+        }else if(cards.getTicket()==6&& Moneys.ysjr<cards.getLeast_cost()){
             hold.content.setText(cards.getTitle());
-            hold.money.setText(cards.getSL()+"张");
+            if(cards.getLeast_cost()>0){
+                hold.money.setText("消费满"+cards.getLeast_cost()+"元");
+            }else{
+                hold.money.setText(cards.getSL()+"张");
+            }
         }
         return contentView;
     }
