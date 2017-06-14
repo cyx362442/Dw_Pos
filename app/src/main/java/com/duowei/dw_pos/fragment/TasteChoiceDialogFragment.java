@@ -3,6 +3,7 @@ package com.duowei.dw_pos.fragment;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -58,6 +59,8 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
 
     private float mSl=1;
 
+    private String mOrderstytle;
+
     /**
      * 1:整单备注   2:单个口味选择
      */
@@ -100,6 +103,9 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
         mMode = getArguments().getInt("mode");
         mSl=getArguments().getFloat("sl");
         mWMLSB = (WMLSB) getArguments().getSerializable("wmlsb");
+
+        SharedPreferences sp = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE);
+        mOrderstytle = sp.getString("orderstytle", getResources().getString(R.string.order_stytle_zhongxican));
     }
 
     @NonNull
@@ -298,7 +304,9 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
                     }
                 }
 
-                EventBus.getDefault().post(new CartAutoSubmit());
+                if(mOrderstytle.equals(R.string.order_stytle_zhongxican)){//中西餐模式
+                    EventBus.getDefault().post(new CartAutoSubmit());
+                }
             }
         }
 
