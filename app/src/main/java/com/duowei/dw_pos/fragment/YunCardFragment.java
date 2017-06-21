@@ -402,7 +402,6 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
 
     private void getSql() {
        float jinfenMoney=Moneys.ysjr;//可兑换积分的钱
-
         for(int i=0;i<listYunPayFragment.size();i++){
             YunFu yunFu = listYunPayFragment.get(i);
             /**

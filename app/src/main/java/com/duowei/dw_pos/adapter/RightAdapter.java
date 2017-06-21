@@ -95,8 +95,8 @@ public class RightAdapter extends BaseAdapter implements Filterable {
             holder = new ViewHolder();
             holder.tv_name = (TextView) convertView.findViewById(R.id.tv_name);
             holder.tv_money = (TextView) convertView.findViewById(R.id.tv_money);
-            holder.btn_add = (ImageButton) convertView.findViewById(R.id.btn_add);
-            holder.btn_mul= (ImageView) convertView.findViewById(R.id.btn_mul);
+            holder.btn_add = (ImageButton) convertView.findViewById(R.id.btn_add1);
+            holder.btn_mul= (ImageButton) convertView.findViewById(R.id.btn_mul);
             holder.ll_view = (LinearLayout) convertView.findViewById(R.id.temp);
 
             convertView.setTag(holder);
@@ -275,7 +275,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         TextView tv_name;
         TextView tv_money;
         ImageButton btn_add;
-        ImageView btn_mul;
+        ImageButton btn_mul;
         LinearLayout ll_view;
     }
 

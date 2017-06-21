@@ -25,7 +25,7 @@ public class Wmslbjb_jiezhang implements Serializable{
     private String WMDBH;
     private String ZH;
     private String JCRS;
-    private String YS;
+    private float YS;
     private String BY1;
     private String JYSJ;
     private String jcfs;
@@ -73,11 +73,11 @@ public class Wmslbjb_jiezhang implements Serializable{
         this.JCRS = JCRS;
     }
 
-    public String getYS() {
+    public float getYS() {
         return YS;
     }
 
-    public void setYS(String YS) {
+    public void setYS(float YS) {
         this.YS = YS;
     }
 

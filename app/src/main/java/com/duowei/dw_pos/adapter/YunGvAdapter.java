@@ -137,9 +137,9 @@ public class YunGvAdapter extends BaseAdapter {
             }else{
                 hold.money.setText(cards.getSL()+"张");
             }
-        }else if(cards.getTicket()==6&& Moneys.ysjr<cards.getLeast_cost()){
+        }else if(cards.getTicket()==6){
             hold.content.setText(cards.getTitle());
-            if(cards.getLeast_cost()>0){
+            if(cards.getLeast_cost()>0&& Moneys.ysjr<cards.getLeast_cost()){
                 hold.money.setText("消费满"+cards.getLeast_cost()+"元");
             }else{
                 hold.money.setText(cards.getSL()+"张");

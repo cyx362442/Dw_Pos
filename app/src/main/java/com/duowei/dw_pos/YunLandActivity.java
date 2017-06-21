@@ -30,6 +30,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.litepal.crud.DataSupport;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,8 +143,8 @@ public class YunLandActivity extends AppCompatActivity {
             /**更新服务器wmlsb表*/
             Post7.getInstance().Http_updateWmlsb(sqlUpdateWmlsb);
             /**改变应收金额、折扣金额*/
-            Moneys.ysjr=totalMoney;
-            Moneys.zkjr=Moneys.xfzr-Moneys.ysjr;
+            Moneys.ysjr=bigDecimal(totalMoney);
+            Moneys.zkjr=bigDecimal(Moneys.xfzr-Moneys.ysjr);
             Moneys.wfjr=Moneys.ysjr;
             Intent intent = new Intent(this, YunPayActivity.class);
             intent.putExtra("WMLSBJB",mWmlsbjb);
@@ -185,5 +186,8 @@ public class YunLandActivity extends AppCompatActivity {
                 startActivityForResult(intent,REQUESTCODE);
                 break;
         }
+    }
+    public Float bigDecimal(Float f) {
+        return BigDecimal.valueOf(f).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
     }
 }

@@ -49,7 +49,7 @@
         />
 
     <ImageButton
-        android:id="@+id/btn_add"
+        android:id="@+id/btn_add1"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
