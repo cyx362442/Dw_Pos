@@ -374,8 +374,10 @@ public class DataLoad {
             }
             @Override
             public void onResponse(final String response) {
+                Log.e("response===",response);
                 if(response.equals("]")){
                     Http_FXHYKSZ();
+                    DataSupport.deleteAll(WXFWQDZ.class);
                 }else{
                     new Thread(new Runnable() {
                         @Override
@@ -434,6 +436,7 @@ public class DataLoad {
             public void onResponse(final String response) {
                 if(response.equals("]")){
                     Http_CXDMXXX();
+                    DataSupport.deleteAll(PaySet.class);
                 }else{
                     new Thread(new Runnable() {
                         @Override

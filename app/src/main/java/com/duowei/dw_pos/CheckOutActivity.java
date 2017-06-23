@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +23,9 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.Moneys;
 import com.duowei.dw_pos.bean.OrderNo;
+import com.duowei.dw_pos.bean.PaySet;
 import com.duowei.dw_pos.bean.WMLSB;
+import com.duowei.dw_pos.bean.WXFWQDZ;
 import com.duowei.dw_pos.bean.Wmslbjb_jiezhang;
 import com.duowei.dw_pos.bean.YHJBQK;
 import com.duowei.dw_pos.bean.YunFu;
@@ -144,6 +147,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     //云会员后的数据
     private ArrayList<WMLSB> mListYunWmlsb;
     private float mOtherPay;
+    private PaySet mPayset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -276,6 +280,11 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                 break;
             case R.id.rl_zhifubao:
                 if (canCheck()) return;
+                mPayset = DataSupport.findFirst(PaySet.class);
+                if(mPayset ==null|| TextUtils.isEmpty(mPayset.getPID())){
+                    Toast.makeText(this,"您还未设置支付宝支付，请申请开通后到前台收银机设置",Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 mIntent = new Intent(this, WebViewPayActivity.class);
                 mIntent.putExtra("WMLSBJB", mWmlsbjb);
@@ -285,6 +294,11 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                 break;
             case R.id.rl_weixin:
                 if (canCheck()) return;
+                mPayset = DataSupport.findFirst(PaySet.class);
+                if(mPayset ==null||TextUtils.isEmpty(mPayset.getBY3())){
+                    Toast.makeText(this,"您还未设置微信支付，请申请开通后到前台收银机设置",Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 mIntent = new Intent(this, WebViewPayActivity.class);
                 mIntent.putExtra("WMLSBJB", mWmlsbjb);
@@ -293,6 +307,11 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                 break;
             case R.id.rl_yun:
                 if (canCheck()) return;
+                List<WXFWQDZ> list = DataSupport.select("weid","SIP").find(WXFWQDZ.class);
+                if(list.size()<=0){
+                    Toast.makeText(this,"您还未设置云会员支付，请开通云会员后在前台收银机设置",Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 mIntent = new Intent(this, YunLandActivity.class);
                 mIntent.putExtra("WMLSBJB", mWmlsbjb);

@@ -118,23 +118,16 @@ public class WebViewPayActivity extends AppCompatActivity {
         mTvPayStytle.setText(mPayStytle+"  ￥"+bigDecimal(Moneys.wfjr));
         if (mPayStytle.equals(getString(R.string.payStytle_zhifubao))||mPayStytle.equals(getString(R.string.payStytle_zhifubao_yun))) {
             mBm="PPPPP";
-            if (TextUtils.isEmpty("mPid")) {
-                Toast.makeText(this, "您还未设置支付宝支付功能！", Toast.LENGTH_SHORT);
-            } else {
-                //生成10W以内随机数
-                number = getNumber();
-                mID = DateTimes.getTime() + number;
-                chaUrl = "http://pay.wxdw.top/aipay/f2fpay/query.php?out_trade_no=" + mID + "&appid=" + mPid;
-                ysturl = "http://%s/aipay/f2fpay/qrpay.php?appid=%s&out_trade_no=%s&subject=%s&store_id=%s&total_amount=%s";
-                ysturl = String.format(ysturl, mFwqdz, mPid, mID, mBy1 + mBy2, mBy1, bigDecimal(Moneys.wfjr));
+            //生成10W以内随机数
+            number = getNumber();
+            mID = DateTimes.getTime() + number;
+            chaUrl = "http://pay.wxdw.top/aipay/f2fpay/query.php?out_trade_no=" + mID + "&appid=" + mPid;
+            ysturl = "http://%s/aipay/f2fpay/qrpay.php?appid=%s&out_trade_no=%s&subject=%s&store_id=%s&total_amount=%s";
+            ysturl = String.format(ysturl, mFwqdz, mPid, mID, mBy1 + mBy2, mBy1, bigDecimal(Moneys.wfjr));
                 startWebView();
-            }
         }else if(mPayStytle.equals(getString(R.string.payStytle_weixin))||mPayStytle.equals(getString(R.string.payStytle_weixin_yun))){
             mBm="WWWWW";
-            if(mBy3.equals("")||mBy3==null){
-                Toast.makeText(this,"您还未设置支付宝支付功能！",Toast.LENGTH_SHORT).show();
-                return;
-            }
+
             //生成10W以内随机数
             number = getNumber();
             mID= DateTimes.getTime() + number;
