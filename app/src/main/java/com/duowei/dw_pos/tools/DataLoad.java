@@ -374,7 +374,6 @@ public class DataLoad {
             }
             @Override
             public void onResponse(final String response) {
-                Log.e("response===",response);
                 if(response.equals("]")){
                     Http_FXHYKSZ();
                     DataSupport.deleteAll(WXFWQDZ.class);

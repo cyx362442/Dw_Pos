@@ -308,7 +308,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
             case R.id.rl_yun:
                 if (canCheck()) return;
                 List<WXFWQDZ> list = DataSupport.select("weid","SIP").find(WXFWQDZ.class);
-                if(list.size()<=0){
+                if(list.size()<=0||TextUtils.isEmpty(list.get(0).getSIP())){
                     Toast.makeText(this,"您还未设置云会员支付，请开通云会员后在前台收银机设置",Toast.LENGTH_SHORT).show();
                     return;
                 }
