@@ -96,7 +96,7 @@ public class Post6 {
     /**现金结账*/
     public void Http_cashier(final Context context, final Wmslbjb_jiezhang mWmlsbjb, final String mPad,
                              final float mYingshou, final float mYishou, final float mZhaoling){
-        String sj = mWmlsbjb.getSj().replaceAll("-", "");
+        String sj = "wmlsbjb"+mWmlsbjb.getSj().replaceAll("-", "");
         String exec = "exec prc_AADBPRK_android_001 '" + sj + "',1|";
         DownHTTP.postVolley6(Net.url, exec, new VolleyResultListener() {
             @Override
@@ -126,7 +126,7 @@ public class Post6 {
     /**云付款*/
     public void Http_yun(final Context context,final Wmslbjb_jiezhang mWmlsbjb,final String yunLoacalSql){
         final String pad=context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("pad", "");
-        String sj = mWmlsbjb.getSj().replaceAll("-", "");
+        String sj = "wmlsbjb"+mWmlsbjb.getSj().replaceAll("-", "");
         String exec = "exec prc_AADBPRK_android_001 '" + sj + "',1|";
         DownHTTP.postVolley6(Net.url, exec, new VolleyResultListener() {
             @Override
@@ -162,7 +162,7 @@ public class Post6 {
     /**扫码支付*/
     public void Http_scan(final Wmslbjb_jiezhang mItem, final String mBm, final String mPad,
                           final String mID, final String ZFBID,final String payStytle){
-        String sj = mItem.getSj().replaceAll("-", "");
+        String sj = "wmlsbjb"+mItem.getSj().replaceAll("-", "");
         String exec = "exec prc_AADBPRK_android_001 '" + sj + "',1|";
         DownHTTP.postVolley6(Net.url, exec, new VolleyResultListener() {
             @Override
@@ -194,7 +194,8 @@ public class Post6 {
     public void Http_yun_cash(final Context context, final Wmslbjb_jiezhang mWmlsbjb,
                               final String yunLoacalSql, final float mShouXian, final float mZhaoling){
         final String pad=context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("pad", "");
-        String sj = mWmlsbjb.getSj().replaceAll("-", "");
+//        String sj = mWmlsbjb.getSj().replaceAll("-", "");
+        String sj = "wmlsbjb"+mWmlsbjb.getSj().replaceAll("-", "");
         String exec = "exec prc_AADBPRK_android_001 '" + sj + "',1|";
         DownHTTP.postVolley6(Net.url, exec, new VolleyResultListener() {
             @Override
@@ -226,7 +227,7 @@ public class Post6 {
     }
     /**云会员—扫码支付*/
     public void Http_yun_scan(final Wmslbjb_jiezhang mItem, final String yunLoacalSql,final String mBm,final String mPad, final String mID, final String ZFBID,final String payStytle){
-        String sj = mItem.getSj().replaceAll("-", "");
+        String sj = "wmlsbjb"+mItem.getSj().replaceAll("-", "");
         String exec = "exec prc_AADBPRK_android_001 '" + sj + "',1|";
         DownHTTP.postVolley6(Net.url, exec, new VolleyResultListener() {
             @Override
