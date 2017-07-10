@@ -7,7 +7,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 
 import com.duowei.dw_pos.bean.YHJBQK;
 import com.duowei.dw_pos.dialog.MsgInputDialog;
-import com.duowei.dw_pos.dialog.YunFuDialog;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.Users;

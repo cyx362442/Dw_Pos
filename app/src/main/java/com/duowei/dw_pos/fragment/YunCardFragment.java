@@ -158,6 +158,9 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
             }
             @Override
             public void onResponse(String s) {
+               if(s.equals("]")){
+                   return;
+               }
                 Gson gson = new Gson();
                 JFGZSZ[] jfgzszs =  gson.fromJson(s, JFGZSZ[].class);
                 mJfgzsz =  jfgzszs[0];
@@ -461,7 +464,7 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         }
         saveSqlData();
         //0按消费金额获取积分&&(2 储值卡消费.3 现金消费和储值卡消费金额)
-        if (mJfgzsz.jfly == 0 && (mJfgzsz.jfgz == 2 || mJfgzsz.jfgz == 3)) {
+        if (mJfgzsz!=null&&mJfgzsz.jfly == 0 && (mJfgzsz.jfgz == 2 || mJfgzsz.jfgz == 3)) {
             mJfbfb = jinfenMoney * mJfgzsz.jfbfb / 100;//获得积分
             SqlYun.jfbfb_add = mJfbfb;
             //更新积分表
