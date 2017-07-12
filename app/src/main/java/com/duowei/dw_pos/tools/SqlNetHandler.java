@@ -131,6 +131,13 @@ public class SqlNetHandler {
         NetUtils.post7(Net.url, sql, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                EventBus.getDefault().post(new Commit(false,null));
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context,"提交失败",Toast.LENGTH_SHORT).show();
+                    }
+                });
                 e.printStackTrace();
             }
 
@@ -144,15 +151,16 @@ public class SqlNetHandler {
                         if (result.contains("richado")) {
                             Toast.makeText(context, "提交成功！", Toast.LENGTH_SHORT).show();
 
-                            EventBus.getDefault().post(new Commit(false, CartList.sWMLSBJB, wmlsbList));
                             //中西餐
                             if(orderstytle.equals(context.getResources().getString(R.string.order_stytle_zhongxican))){
                                 Intent intent = new Intent(context, DinningActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 context.startActivity(intent);
                             }
+                            EventBus.getDefault().post(new Commit(false, CartList.sWMLSBJB, wmlsbList));
 
                         } else {
+                            EventBus.getDefault().post(new Commit(false,null));
                             Toast.makeText(context, "提交失败！", Toast.LENGTH_LONG).show();
                         }
                     }

@@ -17,7 +17,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.duowei.dw_pos.adapter.CartDetailItemAdapter;
 import com.duowei.dw_pos.bean.OpenInfo;
@@ -101,6 +103,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     private LinearLayout mLlCommit;
     private Button mBCheck;
     private NumInputDialog mDialog;
+    private ProgressBar mPb;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -142,6 +145,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.btn_all_order_remark).setOnClickListener(this);
         findViewById(R.id.btn_back_main).setOnClickListener(this);
 
+        mPb = (ProgressBar) findViewById(R.id.pb);
         mLlCommit = (LinearLayout) findViewById(R.id.linearLayout);
         mBCheck = (Button) findViewById(R.id.btn_check);
         mBCheck.setOnClickListener(this);
@@ -212,7 +216,16 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
 
     @Subscribe
     public void commitSuccess(Commit event) {
-        if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mSubmit1Button.setEnabled(true);
+                mPb.setVisibility(View.GONE);
+            }
+        });
+
+        if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))
+                ||event.wmlsbjb==null){
             return;
         }
         //打印
@@ -281,6 +294,9 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
 
         } else if (id == R.id.btn_submit_1) {
             // 下单送厨打
+            mPb.setVisibility(View.VISIBLE);
+            mSubmit1Button.setEnabled(false);
+
             new SqlNetHandler().handleCommit1(mHandler, CartDetailActivity.this, CartList.newInstance(this).getOrderNo());
 
         } else if (id == R.id.btn_all_order_remark) {
