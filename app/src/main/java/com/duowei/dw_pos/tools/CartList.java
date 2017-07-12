@@ -200,6 +200,7 @@ public class CartList {
             // 直接添加
             wmlsb = new WMLSB(jyxmsz);
             wmlsb.setSL(num);
+            wmlsb.setDJ(dj);
             mList.add(wmlsb);
 
             if (!hasCXDMXXX) {
