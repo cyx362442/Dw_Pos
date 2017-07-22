@@ -51,7 +51,6 @@ public class CartList {
     private static CartList mInstance;
 
     private ArrayList<WMLSB> mList = new ArrayList<>();
-    ;
 
     private OpenInfo mOpenInfo;
 
@@ -137,48 +136,55 @@ public class CartList {
      * @param jyxmsz
      */
     public WMLSB add(JYXMSZ jyxmsz) {
-        float dj = processCxdmxxx(jyxmsz);
+        WMLSB wmlsb = new WMLSB(jyxmsz);
 
-        boolean find = false;
+        if ("1".equals(jyxmsz.getBY16())) {
+            // 偶数份半价处理
+            List<WMLSB> allList = new ArrayList<>();
+            allList.addAll(sWMLSBList);
+            allList.addAll(mList);
 
-        WMLSB wmlsb = null;
+            int num1 = 0;
+            int num2 = 0;
+            for (WMLSB w : allList) {
+                if (w.getXMBH().equals(jyxmsz.getXMBH())) {
+                    if ("1".equals(w.getBY16())) {
+                        num1++;
 
-        // 点击添加时另起一行，不在判断购物车中是否存在同样的数据
-//        String xmbh = jyxmsz.getXMBH();
-//        for (int i = 0; i < mList.size(); i++) {
-//            wmlsb = mList.get(i);
-//            if ("1".equals(wmlsb.getSfxs()) && TextUtils.isEmpty(wmlsb.getBY15()) && xmbh.endsWith(wmlsb.getXMBH())) {
-//                // 购物车已存在当前单品
-//                // 数量+1
-//                wmlsb.setSL(wmlsb.getSL() + 1);
-//
-//                if (!hasCXDMXXX) {
-//
-//                    for (int j = 0; j < wmlsb.getSubWMLSBList().size(); j++) {
-//                        WMLSB subWmlsb = wmlsb.getSubWMLSBList().get(j);
-//                        subWmlsb.setSL(subWmlsb.getSL() + 1);
-//                        subWmlsb.setDJ(dj);
-//                    }
-//                }
-//
-//                EventBus.getDefault().post(new CartUpdateEvent());
-//                find = true;
-//            }
-//        }
+                    } else if ("2".equals(w.getBY16())) {
+                        num2++;
+                    }
+                }
+            }
 
-        if (!find) {
+            if ((num1 + num2) % 2 == 0) {
+                // 1
+                wmlsb.setBY16("1");
+
+            } else {
+                // 2
+                wmlsb.setBY16("2");
+                wmlsb.setBY13("偶数份半价");
+                wmlsb.setDJ(new BigDecimal(String.valueOf(jyxmsz.getXSJG()))
+                        .divide(new BigDecimal("2"), 2, BigDecimal.ROUND_HALF_UP).floatValue());
+            }
+
+            mList.add(wmlsb);
+
+        } else {
+            float dj = processCxdmxxx(jyxmsz);
+
             // 购物车没有当前要添加的单品
             // 直接添加
-            wmlsb = new WMLSB(jyxmsz);
             wmlsb.setDJ(dj);
             mList.add(wmlsb);
 
             if (!hasCXDMXXX) {
                 processMzszjb(wmlsb, jyxmsz, 1);
             }
-
-            EventBus.getDefault().post(new CartUpdateEvent());
         }
+
+        EventBus.getDefault().post(new CartUpdateEvent());
 
         return wmlsb;
     }

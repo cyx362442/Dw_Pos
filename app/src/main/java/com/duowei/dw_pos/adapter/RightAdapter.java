@@ -12,7 +12,6 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -104,6 +103,8 @@ public class RightAdapter extends BaseAdapter implements Filterable {
             holder = (ViewHolder) convertView.getTag();
         }
 
+        holder.btn_mul.setEnabled(true);
+
         Object object = getItem(position);
         if (object instanceof JYXMSZ) {
             // 单品
@@ -147,6 +148,11 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                         Toast.makeText(mContext, "该单品己停售", Toast.LENGTH_SHORT).show();
                         return;
                     }
+                    if ("1".equals(item.getBY16())) {
+                        Toast.makeText(mContext, "该单品设置了偶数份半价，因此您无法指定数量", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     EventBus.getDefault().post(new ClearSearchEvent());
                     final CheckOutDialog dialog = new CheckOutDialog(mContext,"请输入数量","数量：", 2);
                     dialog.setOnconfirmClick(new CheckOutDialog.OnconfirmClick() {

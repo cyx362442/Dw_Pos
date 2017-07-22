@@ -10,16 +10,15 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.duowei.dw_pos.adapter.CartDetailItemAdapter;
 import com.duowei.dw_pos.bean.OpenInfo;
@@ -27,7 +26,6 @@ import com.duowei.dw_pos.bean.OrderNo;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.bean.WMLSBJB;
 import com.duowei.dw_pos.constant.ExtraParm;
-import com.duowei.dw_pos.dialog.CheckOutDialog;
 import com.duowei.dw_pos.dialog.NumInputDialog;
 import com.duowei.dw_pos.event.CartAutoSubmit;
 import com.duowei.dw_pos.event.CartMsgDialogEvent;
@@ -68,6 +66,10 @@ import woyou.aidlservice.jiuiv5.IWoyouService;
  */
 
 public class CartDetailActivity extends AppCompatActivity implements View.OnClickListener, NumInputDialog.OnconfirmClick {
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     private Handler mHandler = new Handler();
 

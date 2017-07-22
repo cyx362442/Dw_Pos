@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -121,7 +120,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
             holder.taste_layout = (LinearLayout) convertView.findViewById(R.id.taste_layout);
             holder.btn_taste = (TextView) convertView.findViewById(R.id.btn_taste);
             holder.recycler_view_taste = (RecyclerView) convertView.findViewById(R.id.recycler_view_taste);
-            holder.btn_edit = (ImageButton) convertView.findViewById(R.id.btn_edit);
+            holder.btn_edit = (ImageView) convertView.findViewById(R.id.btn_edit);
 
             convertView.setTag(holder);
         } else {
@@ -327,6 +326,14 @@ public class CartDetailItemAdapter extends BaseAdapter {
 
         } else if ("赠送".equals(item.getBY13())) {
             holder.iv_add.setEnabled(false);
+
+        } else if ("偶数份半价".equals(item.getBY13())) {
+            holder.iv_add.setEnabled(false);
+        }
+
+        if ("1".equals(item.getBY16()) || "2".equals(item.getBY16())) {
+            holder.iv_add.setEnabled(false);
+            holder.btn_edit.setVisibility(View.GONE);
         }
 
         return convertView;
@@ -430,6 +437,6 @@ public class CartDetailItemAdapter extends BaseAdapter {
         LinearLayout taste_layout;
         TextView btn_taste;
         RecyclerView recycler_view_taste;
-        ImageButton btn_edit;
+        ImageView btn_edit;
     }
 }
