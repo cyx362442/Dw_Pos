@@ -2,22 +2,18 @@ package com.duowei.dw_pos.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.JYCSSZ;
 import com.duowei.dw_pos.bean.TableUse;
-import com.duowei.dw_pos.tools.Users;
 
 import java.util.List;
-import java.util.zip.Inflater;
 
 /**
  * Created by Administrator on 2017-03-23.

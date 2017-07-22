@@ -46,7 +46,7 @@
         android:minHeight="78dp"
         android:minWidth="48dp"
         android:layout_gravity="center_vertical"
-        app:srcCompat="@drawable/ic_mul"/>
+        android:src="@drawable/ic_cancel_black_36dp"/>
 
     <ImageButton
         android:id="@+id/btn_add1"
@@ -57,6 +57,6 @@
         android:layout_gravity="center_vertical"
         android:minHeight="78dp"
         android:minWidth="48dp"
-        android:src="@drawable/ic_add"/>
+        android:src="@drawable/ic_control_point_black_36dp"/>
 
 </LinearLayout>
