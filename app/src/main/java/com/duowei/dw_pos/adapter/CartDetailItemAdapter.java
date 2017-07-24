@@ -16,6 +16,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.duowei.dw_pos.CartDetailActivity;
 import com.duowei.dw_pos.R;
@@ -254,6 +255,28 @@ public class CartDetailItemAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 if (item.getRemote() == 1) {
+                    // 偶数份处理
+                    if (!TextUtils.isEmpty(item.getBY16()) && "1".equals(item.getBY16())) {
+                        List<WMLSB> remoteList = CartList.sWMLSBList;
+                        int num1 = 0;
+                        int num2 = 0;
+                        for (WMLSB w : remoteList) {
+                            if (w.getXMBH().equals(item.getXMBH())) {
+                                if ("1".equals(w.getBY16())) {
+                                    num1++;
+
+                                } else if ("2".equals(w.getBY16())) {
+                                    num2++;
+                                }
+                            }
+                        }
+                        if (num1 <= num2) {
+                            Toast.makeText(mActivity, "存在偶数份半价的单品，请先退偶数份半价的单品", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                    // ------------------
+
                     if (item.getDWSL() > 0) {
                         item.setSL(item.getSL() - item.getDWSL());
                     } else {
