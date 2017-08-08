@@ -56,6 +56,7 @@ public class ShoppingCartAnimationView extends AppCompatTextView implements Valu
         setText("1");
         setTextColor(Color.WHITE);
         setTextSize(12);
+        setPadding(3,3,3,3);
     }
 
 

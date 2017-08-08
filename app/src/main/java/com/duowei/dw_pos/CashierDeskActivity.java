@@ -21,7 +21,6 @@ import com.duowei.dw_pos.adapter.RightAdapter;
 import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
-import com.duowei.dw_pos.event.AddAnim;
 import com.duowei.dw_pos.event.AddEvent;
 import com.duowei.dw_pos.event.ClearSearchEvent;
 import com.duowei.dw_pos.event.FinishEvent;

@@ -137,7 +137,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
 
             holder.btn_mul.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(final View view) {
                     if (item.getGQ().equals("1")) {
                         Toast.makeText(mContext, "该单品己停售", Toast.LENGTH_SHORT).show();
                         return;
@@ -157,6 +157,10 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                             showDialog2(wmlsb,Float.parseFloat(money));//有必选口味，称重产品再次弹出dialog
 
                             dialog.cancel();
+
+                            if (mHolderClickListener != null) {
+                                mHolderClickListener.onHolderClick(view);
+                            }
                         }
                     });
                 }
