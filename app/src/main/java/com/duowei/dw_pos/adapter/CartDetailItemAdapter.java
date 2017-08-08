@@ -9,6 +9,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +60,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
      */
     public void addLocalList(List<WMLSB> list) {
         for (int i = 0; i < list.size(); i++) {
+//            list.get(i).setRemote(1);
             mAllList.add(list.get(i));
             for (int j = 0; j < list.get(i).getSubWMLSBList().size(); j++) {
                 mAllList.add(list.get(i).getSubWMLSBList().get(j));
@@ -276,13 +278,11 @@ public class CartDetailItemAdapter extends BaseAdapter {
                         }
                     }
                     // ------------------
-
                     if (item.getDWSL() > 0) {
                         item.setSL(item.getSL() - item.getDWSL());
                     } else {
                         item.setSL(item.getSL() - 1);
                     }
-
                 } else {
                     CartList.newInstance(v.getContext()).remove(item);
                 }

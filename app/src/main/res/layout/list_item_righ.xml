@@ -11,7 +11,7 @@
         android:id="@+id/temp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="1.5"
         android:layout_gravity="center_vertical"
         android:orientation="vertical"
         android:paddingLeft="8dp"
@@ -37,26 +37,28 @@
             tools:text="¥10.0"/>
 
     </LinearLayout>
-
-    <ImageButton
+<LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    android:layout_weight="1">
+    <ImageView
         android:id="@+id/btn_mul"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:minHeight="78dp"
-        android:minWidth="48dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_cancel_black_36dp"/>
+        android:layout_weight="1"
+        android:src="@mipmap/ic_cancel_green_36dp"/>
 
-    <ImageButton
+    <ImageView
         android:id="@+id/btn_add1"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:layout_gravity="center_vertical"
-        android:minHeight="78dp"
-        android:minWidth="48dp"
-        android:src="@drawable/ic_control_point_black_36dp"/>
+        android:src="@mipmap/ic_add_circle_green_36dp"/>
+</LinearLayout>
 
 </LinearLayout>

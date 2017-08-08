@@ -31,7 +31,7 @@ public class TableUse {
     private String XTBZ;
     private String YHBH;
     public String ZH;
-    public String YS;
+    public float YS;
     public String JYSJ;
     private String SFYJZ;
     private String JSJ;
@@ -92,11 +92,11 @@ public class TableUse {
         this.ZH = ZH;
     }
 
-    public String getYS() {
+    public float getYS() {
         return YS;
     }
 
-    public void setYS(String YS) {
+    public void setYS(float YS) {
         this.YS = YS;
     }
 

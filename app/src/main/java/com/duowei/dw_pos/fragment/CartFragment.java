@@ -1,10 +1,6 @@
 package com.duowei.dw_pos.fragment;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,6 +15,7 @@ import android.widget.TextView;
 import com.duowei.dw_pos.CartDetailActivity;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.CartInfo;
+import com.duowei.dw_pos.event.AddAnim;
 import com.duowei.dw_pos.event.CartUpdateEvent;
 import com.duowei.dw_pos.tools.CartList;
 
@@ -38,24 +35,12 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     private TextView mCartNumView;
     private TextView mCartPriceView;
     private FrameLayout mCartIconLayout;
-
-    private final String ACTION_NAME = "animStore";
-
-    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (ACTION_NAME.equals(intent.getAction())) {
-                Animation animation = AnimationUtils.loadAnimation(getContext(),
-                        R.anim.anim_cart);
-                mCartIconLayout.startAnimation(animation);
-            }
-        }
-    };
+    private Animation mAnimation;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+        EventBus.getDefault().register(CartFragment.this);
     }
 
     @Nullable
@@ -71,12 +56,11 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         mCartNumView = (TextView) view.findViewById(R.id.tv_cart_num);
         mCartPriceView = (TextView) view.findViewById(R.id.tv_cart_price);
         mCartIconLayout = (FrameLayout) view.findViewById(R.id.fl_cart);
+        mAnimation = AnimationUtils.loadAnimation(getContext(),
+                R.anim.anim_cart);
 
         view.findViewById(R.id.btn_commit).setOnClickListener(this);
         mCartIconLayout.setOnClickListener(this);
-
-        //注册广播
-        registerBoradcastReceiver();
     }
 
     @Override
@@ -88,16 +72,12 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
-        getActivity().unregisterReceiver(mBroadcastReceiver);
+        EventBus.getDefault().unregister(CartFragment.this);
     }
 
-
-    public void registerBoradcastReceiver() {
-        IntentFilter myIntentFilter = new IntentFilter();
-        myIntentFilter.addAction(ACTION_NAME);
-        //注册广播
-        getActivity().registerReceiver(mBroadcastReceiver, myIntentFilter);
+    @Subscribe
+    public void startAnim(AddAnim event){
+        mCartIconLayout.startAnimation(mAnimation);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -13,6 +13,8 @@ import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.JYCSSZ;
 import com.duowei.dw_pos.bean.TableUse;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -80,7 +82,7 @@ public class MyGridAdapter extends BaseAdapter {
                     viewHolder.ll_table.setBackgroundResource(R.drawable.table_used);
                     viewHolder.ll_tv.setVisibility(View.VISIBLE);
                     viewHolder.tv1.setTextColor(Color.parseColor("#ffffff"));
-                    viewHolder.tv2.setText(used[i].getYS());
+                    viewHolder.tv2.setText(bigDecimal(used[i].getYS())+"");
                     viewHolder.tv3.setText("  " + used[i].getJCRS());
                     //截取点餐时间时、分
                     String jysj = used[i].getJYSJ();
@@ -105,5 +107,8 @@ public class MyGridAdapter extends BaseAdapter {
         public TextView tv3;
         public TextView tv4;
         public TextView tv5;
+    }
+    public  Float bigDecimal(Float ys){
+        return BigDecimal.valueOf(ys).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
     }
 }

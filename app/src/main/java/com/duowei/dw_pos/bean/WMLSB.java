@@ -544,7 +544,6 @@ public class WMLSB implements Serializable {
     private void updateRemoteSl(boolean isWeight) {
         if (getRemote() == 1) {
             String sql = "";
-
             if (isWeight) {
                 // 倍数
                 sql += "update wmlsb set sl = " + weight + " where xh = " + XH + "|";

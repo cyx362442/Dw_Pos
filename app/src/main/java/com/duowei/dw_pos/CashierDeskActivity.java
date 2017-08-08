@@ -1,7 +1,7 @@
 package com.duowei.dw_pos;
 
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -22,15 +21,14 @@ import com.duowei.dw_pos.adapter.RightAdapter;
 import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
-import com.duowei.dw_pos.dialog.CheckOutDialog;
+import com.duowei.dw_pos.event.AddAnim;
 import com.duowei.dw_pos.event.AddEvent;
 import com.duowei.dw_pos.event.ClearSearchEvent;
 import com.duowei.dw_pos.event.FinishEvent;
 import com.duowei.dw_pos.fragment.AddDialogFragment;
 import com.duowei.dw_pos.fragment.CartFragment;
 import com.duowei.dw_pos.httputils.CheckVersion;
-import com.duowei.dw_pos.tools.AnimUtils;
-import com.duowei.dw_pos.tools.CartList;
+import com.duowei.dw_pos.view.ShoppingCartAnimationView;
 import com.duowei.dw_pos.view.ToggleButton;
 
 import org.greenrobot.eventbus.EventBus;
@@ -47,7 +45,7 @@ import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
  */
 
 public class CashierDeskActivity extends AppCompatActivity implements View.OnClickListener,
-        AdapterView.OnItemClickListener{
+        AdapterView.OnItemClickListener, RightAdapter.HolderClickListener {
     private static final String TAG = "CashierDeskActivity";
 
     private ImageView mBackView;
@@ -87,6 +85,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         public void afterTextChanged(Editable s) {
         }
     };
+    private ImageView mImgCart;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -198,18 +197,8 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
 
         mRightAdapter = new RightAdapter(this);
         mRightListView.setAdapter(mRightAdapter);
-
-        final AnimUtils animUtils = AnimUtils.getInstance(this);
-        final ImageView img_cart = (ImageView) findViewById(R.id.img_cart);
-        final FrameLayout animLayout = createAnimLayout();
-        mRightAdapter.setOnSetHolderClickListener(new RightAdapter.HolderClickListener() {
-            @Override
-            public void onHolderClick(Drawable drawable, int[] start_location) {
-                animUtils.setPX(50);
-                animUtils.doAnim(animLayout, img_cart, drawable, start_location);
-            }
-        });
-
+        mImgCart = (ImageView) findViewById(R.id.img_cart);
+        mRightAdapter.setOnSetHolderClickListener(this);
         setupData();
     }
 
@@ -360,27 +349,27 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
     }
 
     /**
-     * 创建动画层
-     */
-    private FrameLayout createAnimLayout() {
-        ViewGroup rootView = (ViewGroup) this.getWindow().getDecorView();
-        FrameLayout animLayout = new FrameLayout(this);
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-        animLayout.setLayoutParams(lp);
-        animLayout.setBackgroundResource(android.R.color.transparent);
-        rootView.addView(animLayout);
-        return animLayout;
-    }
-
-    /**
      * 显示赠送 、加价促销窗口
      *
      * @param event
      */
     @Subscribe
     public void addPrice(AddEvent event) {
-
         AddDialogFragment fragment = AddDialogFragment.newInstance(event.getType(),event.num);
         fragment.show(getSupportFragmentManager(), null);
+    }
+
+    @Override
+    public void onHolderClick(View view) {
+        ShoppingCartAnimationView shoppingCartAnimationView = new ShoppingCartAnimationView(this);
+        int positions[] = new int[2];
+        view.getLocationInWindow(positions);
+        shoppingCartAnimationView.setStartPosition(new Point(positions[0], positions[1]));
+        ViewGroup rootView = (ViewGroup) this.getWindow().getDecorView();
+        rootView.addView(shoppingCartAnimationView);
+        int endPosition[] = new int[2];
+        mImgCart.getLocationInWindow(endPosition);
+        shoppingCartAnimationView.setEndPosition(new Point(endPosition[0], endPosition[1]));
+        shoppingCartAnimationView.startBeizerAnimation();
     }
 }

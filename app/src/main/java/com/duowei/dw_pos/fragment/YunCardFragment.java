@@ -429,6 +429,8 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
                 //积分消费记录
                 sqlJFXF = SqlYun.insertIms_card_jf_record(mWeid, yunFu.fromUser, mJysj, "积分消费",yunFu.credit1, -by3,
                         yunFu.credit1-by3, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, yunFu.id);
+                //更新积分表
+                mJifen1 += SqlYun.updateIms_card_members2(-by3, mWeid, mYunList.get(0).getFrom_user());
                 //插入sqlserver
                 sqlXSFKFS2="INSERT INTO XSFKFS(XSDH,BM,NR,FKJE,DYQZS) VALUES('"+mWmlsbjb.getWMDBH()+"','999999998','云会员-积分消费',"+yunFu.money+",0)|";
                 SqlYun.jfbfb_sub=by3;
@@ -467,11 +469,13 @@ public class YunCardFragment extends Fragment implements AdapterView.OnItemClick
         if (mJfgzsz!=null&&mJfgzsz.jfly == 0 && (mJfgzsz.jfgz == 2 || mJfgzsz.jfgz == 3)) {
             mJfbfb = jinfenMoney * mJfgzsz.jfbfb / 100;//获得积分
             SqlYun.jfbfb_add = mJfbfb;
-            //更新积分表
-            mJifen1 = SqlYun.updateIms_card_members2(mJfbfb, mWeid, mYunList.get(0).getFrom_user());
-            //积分获得记录
-            mJifen2 = SqlYun.insertIms_card_jf_record(mWeid, mYunList.get(0).getFrom_user(), mJysj, "获取积分", mYunList.get(0).getCredit1(), mJfbfb,
-                    mYunList.get(0).getCredit1() + mJfbfb, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, mYunList.get(0).getId());
+            if(mJfbfb>0){
+                //更新积分表
+                mJifen1 += SqlYun.updateIms_card_members2(mJfbfb, mWeid, mYunList.get(0).getFrom_user());
+                //积分获得记录
+                mJifen2 += SqlYun.insertIms_card_jf_record(mWeid, mYunList.get(0).getFrom_user(), mJysj, "获取积分", mYunList.get(0).getCredit1(), mJfbfb,
+                        mYunList.get(0).getCredit1() + mJfbfb, mWmlsbjb.getJSJ(), mWmlsbjb.getYHBH(), mBmbh, mDeal_id, mYunList.get(0).getId());
+            }
         }
         //汇总
         mSqlYun=mJifen1+mJifen2+sqlCZXF+sqlJFXF+sqlJYQ1+sqlJYQ2+sqlJYQ3+sqlJYQ4+sqlJYQ5;

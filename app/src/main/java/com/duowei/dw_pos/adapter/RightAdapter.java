@@ -12,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -94,8 +95,8 @@ public class RightAdapter extends BaseAdapter implements Filterable {
             holder = new ViewHolder();
             holder.tv_name = (TextView) convertView.findViewById(R.id.tv_name);
             holder.tv_money = (TextView) convertView.findViewById(R.id.tv_money);
-            holder.btn_add = (ImageButton) convertView.findViewById(R.id.btn_add1);
-            holder.btn_mul= (ImageButton) convertView.findViewById(R.id.btn_mul);
+            holder.btn_add = (ImageView) convertView.findViewById(R.id.btn_add1);
+            holder.btn_mul= (ImageView) convertView.findViewById(R.id.btn_mul);
             holder.ll_view = (LinearLayout) convertView.findViewById(R.id.temp);
 
             convertView.setTag(holder);
@@ -128,15 +129,8 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                     final WMLSB wmlsb = mCartList.add(item);
 
                     if (mHolderClickListener != null) {
-                        int[] start_location = new int[2];
-                        holder.btn_add.getLocationInWindow(start_location);//获取点击商品图片的位置
-                        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.anim_goods);
-                        holder.ll_view.startAnimation(animation);
-                        Drawable drawable = holder.btn_add.getDrawable();//复制一个新的商品图标
-                        mHolderClickListener.onHolderClick(drawable, start_location);
+                        mHolderClickListener.onHolderClick(v);
                     }
-
-
                     showDialog2(wmlsb,1);//有必选口味，称重产品再次弹出dialog
                 }
             });
@@ -280,8 +274,8 @@ public class RightAdapter extends BaseAdapter implements Filterable {
     private class ViewHolder {
         TextView tv_name;
         TextView tv_money;
-        ImageButton btn_add;
-        ImageButton btn_mul;
+        ImageView btn_add;
+        ImageView btn_mul;
         LinearLayout ll_view;
     }
 
@@ -368,6 +362,6 @@ public class RightAdapter extends BaseAdapter implements Filterable {
     }
 
     public interface HolderClickListener {
-        void onHolderClick(Drawable drawable, int[] start_location);
+        void onHolderClick(View view);
     }
 }

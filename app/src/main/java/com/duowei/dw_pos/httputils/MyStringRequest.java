@@ -1,13 +1,17 @@
 package com.duowei.dw_pos.httputils;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
+import com.duowei.dw_pos.tools.Base64;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MyStringRequest extends StringRequest {
     @Override
@@ -21,8 +25,7 @@ public class MyStringRequest extends StringRequest {
         }
         return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
     }
-	
-	public MyStringRequest(int method, String url, Listener<String> listener, ErrorListener errorListener) {
+    public MyStringRequest(int method, String url, Listener<String> listener, ErrorListener errorListener) {
 		super(method, url, listener, errorListener);
 	}
 }

@@ -120,7 +120,7 @@ public class SettingsActivity extends AppCompatActivity implements RadioGroup.On
                     Toast.makeText(this, "请填写端口", Toast.LENGTH_SHORT).show();
 
                 } else if (TextUtils.isEmpty(mPad)) {
-                    Toast.makeText(this, "请填写平板名称", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "请设置手持POS名称", Toast.LENGTH_SHORT).show();
 
                 } else{
                     Net.url="http://"+mIp+":"+mPort+"/server/ServerSvlt?";
