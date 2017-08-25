@@ -18,6 +18,7 @@ public class JYCSSZ extends DataSupport{
     public String CSBH;
     public String FCSBH;
     public String CSMC;
+    public int count=0;
 
     public String getCSBH() {
         return CSBH;

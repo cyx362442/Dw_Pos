@@ -69,33 +69,19 @@ public class MyGridAdapter extends BaseAdapter {
             viewHolder.tv3 = (TextView) convertView.findViewById(R.id.tv_persionNumber);
             viewHolder.tv4 = (TextView) convertView.findViewById(R.id.tv_signTime);
             viewHolder.tv5 = (TextView) convertView.findViewById(R.id.tv_passTime);
+            viewHolder.tv6= (TextView) convertView.findViewById(R.id.tv_ping);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.tv1.setText(list.get(position).CSMC);
+        JYCSSZ jycssz = list.get(position);
+        viewHolder.tv1.setText(jycssz.CSMC);
         if (used.length <= 0) {
             viewHolder.ll_table.setBackgroundResource(R.drawable.table_normal);
             viewHolder.ll_tv.setVisibility(View.GONE);
         } else {
             for (int i = 0; i < used.length; i++) {//已开台
-//                if ((list.get(position).CSMC + ",").equals(used[i].getZH())) {
-//                    viewHolder.ll_table.setBackgroundResource(R.drawable.table_used);
-//                    viewHolder.ll_tv.setVisibility(View.VISIBLE);
-//                    viewHolder.tv1.setTextColor(Color.parseColor("#ffffff"));
-//                    viewHolder.tv2.setText(bigDecimal(used[i].getYS())+"");
-//                    viewHolder.tv3.setText("  " + used[i].getJCRS());
-//                    //截取点餐时间时、分
-//                    String jysj = used[i].getJYSJ();
-//                    String sDateTime = jysj.substring(9, 14);
-//                    viewHolder.tv4.setText(sDateTime);
-//                    viewHolder.tv5.setText(used[i].getScjc() + "分");
-//                    break;
-//                } else {
-//                    viewHolder.ll_table.setBackgroundResource(R.drawable.table_normal);
-//                    viewHolder.ll_tv.setVisibility(View.GONE);
-//                }
-                if ((used[i].getZH().contains(list.get(position).CSMC + ","))){
+                if ((used[i].getZH().contains(jycssz.CSMC + ","))){
                     viewHolder.ll_table.setBackgroundResource(R.drawable.table_used);
                     viewHolder.ll_tv.setVisibility(View.VISIBLE);
                     viewHolder.tv1.setTextColor(Color.parseColor("#ffffff"));
@@ -106,6 +92,18 @@ public class MyGridAdapter extends BaseAdapter {
                     String sDateTime = jysj.substring(9, 14);
                     viewHolder.tv4.setText(sDateTime);
                     viewHolder.tv5.setText(used[i].getScjc() + "分");
+                    //再次统计是不是拼桌
+                    int count=0;
+                    for(int j=0;j<used.length;j++){
+                        if(jycssz.CSMC.equals(used[j].getCsmc())){
+                            count++;
+                        }
+                    }
+                    if(count>1){
+                        viewHolder.tv6.setVisibility(View.VISIBLE);
+                    }else{
+                        viewHolder.tv6.setVisibility(View.GONE);
+                    }
                     break;
                 } else {
                     viewHolder.ll_table.setBackgroundResource(R.drawable.table_normal);
@@ -124,6 +122,7 @@ public class MyGridAdapter extends BaseAdapter {
         public TextView tv3;
         public TextView tv4;
         public TextView tv5;
+        public TextView tv6;
     }
     public  Float bigDecimal(Float ys){
         return BigDecimal.valueOf(ys).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();

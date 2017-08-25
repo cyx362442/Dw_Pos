@@ -60,7 +60,6 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     private Runnable mRun;
     private String mCsbh;
     private final int REQUESTCODE=100;
-//    private int changeCode=0;
     private String mWmdbh;
     private ImageView mImgMore;
 

@@ -8,18 +8,27 @@
               android:gravity="center"
               android:orientation="vertical">
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center">
+        >
         <TextView
             android:id="@+id/tv_tableNum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:text="000"
             android:textSize="@dimen/textSize20"
             android:textColor="@color/colorWhite"
             />
+        <TextView
+            android:id="@+id/tv_ping"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:text="拼"
+            android:visibility="gone"
+            android:textColor="@color/colorWhite"/>
     </RelativeLayout>
     <LinearLayout
         android:id="@+id/linearLayout01"
