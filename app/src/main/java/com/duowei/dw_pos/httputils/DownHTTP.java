@@ -35,6 +35,7 @@ public final class DownHTTP {
         // 创建http请求
         MyStringRequest myReq = new MyStringRequest(Method.GET, url, listener, listener);
         // 将http请求加入队列，volley库会开始执行请求
+		queue.getCache().clear();
         queue.add(myReq);
     }
 

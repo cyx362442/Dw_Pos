@@ -88,4 +88,6 @@
     <string name="payStytle_weixin">微信支付</string>
     <string name="payStytle_zhifubao_yun">-支付宝支付</string>
     <string name="payStytle_weixin_yun">-微信支付</string>
+
+    <string name="update">升级</string>
 </resources>

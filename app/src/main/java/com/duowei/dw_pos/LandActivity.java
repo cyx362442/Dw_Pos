@@ -1,31 +1,40 @@
 package com.duowei.dw_pos;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.YHJBQK;
 import com.duowei.dw_pos.dialog.MsgInputDialog;
+import com.duowei.dw_pos.fragment.UpdateFragment;
+import com.duowei.dw_pos.httputils.DownHTTP;
+import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.tools.CartList;
 import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.Users;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
 import java.util.List;
 
 import butterknife.ButterKnife;
 import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
-public class LandActivity extends AppCompatActivity implements View.OnClickListener, MsgInputDialog.OnconfirmClick {
-    private SharedPreferences.Editor mEdit;
+public class LandActivity extends AppCompatActivity implements View.OnClickListener,
+        MsgInputDialog.OnconfirmClick {
     private SharedPreferences mSp;
     private EditText mEtAccount;
     private EditText mEtPassword;
@@ -33,6 +42,9 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
     private TextView mVersion;
     private String mOrderstytle;
     private MsgInputDialog mMsgInputDialog;
+    private int mVersionCode=0;
+
+    private final String updateUrl="http://ouwtfo4eg.bkt.clouddn.com/dw_pos.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +53,9 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
         ButterKnife.bind(this);
         SQLiteStudioService.instance().start(this);
         mSp = getSharedPreferences("user", Context.MODE_PRIVATE);
-        mEdit = mSp.edit();
         initUI();
+
+        checkVersion();
     }
 
     @Override
@@ -98,11 +111,52 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
+    private void checkVersion() {
+        DownHTTP.getVolley(updateUrl, new VolleyResultListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String versionCode = jsonObject.getString("versionCode");
+                    if(Integer.parseInt(versionCode)>mVersionCode){
+                        final String name = jsonObject.getString("name");
+                        final String url = jsonObject.getString("url");
+                        String msg = jsonObject.getString("msg");
+                        showDialog(name, url, msg);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void showDialog(final String name, final String url, String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(LandActivity.this);
+        builder.setIcon(R.mipmap.logo);
+        builder.setTitle("发现新版本是否升级？");
+        builder.setMessage(msg);
+        builder.setNegativeButton("取消",null);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                UpdateFragment fragment = UpdateFragment.newInstance(url, name);
+                fragment.show(getFragmentManager(),getString(R.string.update));
+            }
+        });
+        builder.show();
+    }
+
     private String getVersionName() {
         String versionName="版本号：1.0";
         try {
             PackageInfo info = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
             versionName = "版本号："+info.versionName;
+            mVersionCode = info.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
