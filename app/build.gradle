@@ -13,8 +13,8 @@ android {
         applicationId "com.duowei.dw_pos"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 48
-        versionName "V20170730"
+        versionCode 49
+        versionName "V20170817"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }

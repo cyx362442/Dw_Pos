@@ -2,6 +2,7 @@ package com.duowei.dw_pos.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,7 +79,23 @@ public class MyGridAdapter extends BaseAdapter {
             viewHolder.ll_tv.setVisibility(View.GONE);
         } else {
             for (int i = 0; i < used.length; i++) {//已开台
-                if ((list.get(position).CSMC + ",").equals(used[i].getZH())) {
+//                if ((list.get(position).CSMC + ",").equals(used[i].getZH())) {
+//                    viewHolder.ll_table.setBackgroundResource(R.drawable.table_used);
+//                    viewHolder.ll_tv.setVisibility(View.VISIBLE);
+//                    viewHolder.tv1.setTextColor(Color.parseColor("#ffffff"));
+//                    viewHolder.tv2.setText(bigDecimal(used[i].getYS())+"");
+//                    viewHolder.tv3.setText("  " + used[i].getJCRS());
+//                    //截取点餐时间时、分
+//                    String jysj = used[i].getJYSJ();
+//                    String sDateTime = jysj.substring(9, 14);
+//                    viewHolder.tv4.setText(sDateTime);
+//                    viewHolder.tv5.setText(used[i].getScjc() + "分");
+//                    break;
+//                } else {
+//                    viewHolder.ll_table.setBackgroundResource(R.drawable.table_normal);
+//                    viewHolder.ll_tv.setVisibility(View.GONE);
+//                }
+                if ((used[i].getZH().contains(list.get(position).CSMC + ","))){
                     viewHolder.ll_table.setBackgroundResource(R.drawable.table_used);
                     viewHolder.ll_tv.setVisibility(View.VISIBLE);
                     viewHolder.tv1.setTextColor(Color.parseColor("#ffffff"));

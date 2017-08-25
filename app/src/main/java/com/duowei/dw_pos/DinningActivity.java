@@ -6,12 +6,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -39,7 +43,7 @@ import java.util.List;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.EventBus;
 
-public class DinningActivity extends AppCompatActivity implements  View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
+public class DinningActivity extends AppCompatActivity implements  View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener {
     private String sqlUse="select datediff(mi,jysj,getdate())scjc,a.csmc,b.* from wmlsbjb b,jycssz a where (charindex('@'+a.csmc+',@',b.zh)>0 or charindex(a.csmc+',',b.zh)>0) and isnull(sfyjz,'0')<>'1' and wmdbh in(select wmdbh from wmlsb)|";
 
     private List<String>listName=new ArrayList<>();
@@ -58,13 +62,13 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     private final int REQUESTCODE=100;
 //    private int changeCode=0;
     private String mWmdbh;
+    private ImageView mImgMore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dinning);
         EventBus.getDefault().register(this);
-        findViewById(R.id.btn_exit).setOnClickListener(this);
         SharedPreferences user = getSharedPreferences("user", Context.MODE_PRIVATE);
         mUrl = user.getString("url", "");
         initUi();
@@ -74,6 +78,8 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         mPb = (ProgressBar) findViewById(R.id.progressBar);
         mUser = (TextView) findViewById(R.id.tv_user);
         mSp = (Spinner) findViewById(R.id.spinnner);
+        mImgMore = (ImageView) findViewById(R.id.img_more);
+        mImgMore.setOnClickListener(this);
         mGv = (GridView) findViewById(R.id.gridView);
         mGv_adapter = new MyGridAdapter(this, mJycssz,mTableUses);
         mGv.setAdapter(mGv_adapter);
@@ -107,7 +113,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         mHandler.postDelayed(mRun = new Runnable() {
             @Override
             public void run() {
-                mHandler.postDelayed(this,5000);
+                mHandler.postDelayed(this,10000);
                 brushTable();
             }
         },5000);
@@ -193,8 +199,11 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.btn_exit:
-                finish();
+            case R.id.img_more:
+                PopupMenu popupMenu = new PopupMenu(this, mImgMore);
+                popupMenu.getMenuInflater().inflate(R.menu.menu,popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(this);
+                popupMenu.show();
                 break;
         }
     }
@@ -202,7 +211,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         final String csmc = mJycssz.get(position).getCSMC();
-        String sql="select * from wmlsbjb where '@'+zh like '%@"+csmc+"%' and isnull(sfyjz,'0')<>'1' and wmdbh in(select wmdbh from wmlsb)|";
+        String sql="select * from wmlsbjb where zh like '%"+csmc+"%' and isnull(sfyjz,'0')<>'1' and wmdbh in(select wmdbh from wmlsb)|";
         DownHTTP.postVolley6(mUrl, sql, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -266,8 +275,20 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     }
 
     @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        if(item.getItemId()==R.id.combine){
+            Intent intent = new Intent(this, CombineActivity.class);
+            startActivity(intent);
+        }else if(item.getItemId()==R.id.exit){
+            finish();
+        }
+        return false;
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
+
 }
