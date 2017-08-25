@@ -27,8 +27,9 @@
                 android:padding="3dp">
                 <TextView
                     android:id="@+id/tv_table"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:minWidth="100dp"
                     android:text="A101"
                     android:gravity="center"
                     android:layout_centerInParent="true"
