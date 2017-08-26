@@ -247,7 +247,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
                         if(tableUses.length==1){
                             String wmdbh = tableUses[0].getWMDBH();
                             toCheckOutActivity(wmdbh);
-                        }else if(tableUses.length>1){
+                        }else if(tableUses.length>1){//拼桌，选择账单
                             PingFragment pingFragment = PingFragment.newInstance(tableUses);
                             pingFragment.show(getFragmentManager(),getString(R.string.ping));
                         }
