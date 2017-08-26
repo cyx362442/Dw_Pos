@@ -55,7 +55,6 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     private MyGridAdapter mGv_adapter;
     private TextView mUser;
     private TableUse[] mTableUses=new TableUse[]{};
-    private Intent mIntent;
     private String mUrl;
     private ProgressBar mPb;
     private Handler mHandler;

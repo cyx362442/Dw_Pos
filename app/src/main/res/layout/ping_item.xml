@@ -3,27 +3,39 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
             <TextView
+                android:id="@+id/tv_index"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp"
+                android:gravity="center"
+                android:textSize="16dp"
+                android:layout_weight="0.5"/>
+            <TextView
                 android:id="@+id/tv_time"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
+                android:textSize="16dp"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp"
                 android:gravity="center"
-                android:layout_weight="2"/>
+                android:layout_weight="1.5"/>
             <TextView
                 android:id="@+id/tv_table"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
+                android:textSize="16dp"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp"
                 android:gravity="center"
                 android:layout_weight="1"/>
             <TextView
                 android:id="@+id/tv_money"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
+                android:textSize="16dp"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp"
                 android:gravity="center"
                 android:layout_weight="1"/>
 </LinearLayout>

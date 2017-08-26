@@ -45,6 +45,7 @@ public class PingFragment extends DialogFragment implements AdapterView.OnItemCl
         lv.setOnItemClickListener(this);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setNegativeButton("关闭",null);
         return builder.setView(inflate).show();
     }
 
@@ -84,6 +85,7 @@ public class PingFragment extends DialogFragment implements AdapterView.OnItemCl
                 LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
                 convertView=layoutInflater.inflate(R.layout.ping_item, null);
                 hold=new Hold();
+                hold.tvIndex= (TextView) convertView.findViewById(R.id.tv_index);
                 hold.tvTime= (TextView) convertView.findViewById(R.id.tv_time);
                 hold.tvTable= (TextView) convertView.findViewById(R.id.tv_table);
                 hold.tvMoney= (TextView) convertView.findViewById(R.id.tv_money);
@@ -92,6 +94,7 @@ public class PingFragment extends DialogFragment implements AdapterView.OnItemCl
                 hold= (Hold) convertView.getTag();
             }
             TableUse tableUse = tableUses[position];
+            hold.tvIndex.setText((position+1)+"");
             hold.tvTime.setText(tableUse.getJYSJ().substring(9,14));
             hold.tvTable.setText(tableUse.getZH());
             hold.tvMoney.setText("￥"+tableUse.getYS());
@@ -99,6 +102,7 @@ public class PingFragment extends DialogFragment implements AdapterView.OnItemCl
         }
 
         class Hold{
+            TextView tvIndex;
             TextView tvTime;
             TextView tvTable;
             TextView tvMoney;

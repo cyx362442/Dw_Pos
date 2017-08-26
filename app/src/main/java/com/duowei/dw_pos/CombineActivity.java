@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CombineActivity extends AppCompatActivity implements View.OnClickListener {
-    private final String sql="select * from wmlsbjb where isnull(sfyjz,0)='0'|";
+    private final String sql="select * from wmlsbjb where isnull(sfyjz,0)<>'1'and wmdbh in(select wmdbh from wmlsb)|";
     private UnCombineAdapter mUnCombineAdapter;
     private List<WMLSBJB> mListWmlsbjb1;
     private List<WMLSBJB>mListWmlsbjb2;
