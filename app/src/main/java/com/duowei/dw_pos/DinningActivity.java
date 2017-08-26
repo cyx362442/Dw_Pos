@@ -64,6 +64,8 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     private final int REQUESTCODE=100;
     private String mWmdbh;
     private ImageView mImgMore;
+    private boolean isPing=false;
+    private TextView mTvPing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +81,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         mPb = (ProgressBar) findViewById(R.id.progressBar);
         mUser = (TextView) findViewById(R.id.tv_user);
         mSp = (Spinner) findViewById(R.id.spinnner);
+        mTvPing = (TextView) findViewById(R.id.tv_ping);
         mImgMore = (ImageView) findViewById(R.id.img_more);
         mImgMore.setOnClickListener(this);
         mGv = (GridView) findViewById(R.id.gridView);
@@ -230,14 +233,16 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
                     if(mWmdbh!=null){//转台
                         Post7.getInstance().ChangeTable(csmc+",",mWmdbh);
                     }else{
-                        mIntent = new Intent(DinningActivity.this, OpenTableActivity.class);
-                        mIntent.putExtra("csmc",csmc);
-                        startActivity(mIntent);
+                        toOpenTableActivity(csmc);
                     }
                 }else{//餐桌己被占用，获取相关信息
                     if(mWmdbh!=null){//转台
                         Toast.makeText(DinningActivity.this,"此餐桌己被占用，请选择其它餐桌",Toast.LENGTH_SHORT).show();
                     }else{
+                        if(isPing==true){//拼桌
+                            toOpenTableActivity(csmc);
+                            return;
+                        }
                         Gson gson = new Gson();
                         TableUse[] tableUses = gson.fromJson(response, TableUse[].class);
                         if(tableUses.length==1){
@@ -249,8 +254,16 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
                         }
                     }
                 }
+                isPing=false;
+                mTvPing.setVisibility(View.GONE);
             }
         });
+    }
+
+    private void toOpenTableActivity(String csmc) {
+        Intent intent = new Intent(DinningActivity.this, OpenTableActivity.class);
+        intent.putExtra("csmc",csmc);
+        startActivity(intent);
     }
 
     private void toCheckOutActivity(String wmdbh) {
@@ -288,7 +301,10 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        if(item.getItemId()==R.id.combine){
+        if(item.getItemId()==R.id.ping){
+            isPing=true;
+            mTvPing.setVisibility(View.VISIBLE);
+        }else if(item.getItemId()==R.id.combine){
             Intent intent = new Intent(this, CombineActivity.class);
             startActivity(intent);
         }else if(item.getItemId()==R.id.exit){
@@ -302,5 +318,4 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
-
 }
