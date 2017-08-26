@@ -108,6 +108,7 @@ public class MyGridAdapter extends BaseAdapter {
                 } else {
                     viewHolder.ll_table.setBackgroundResource(R.drawable.table_normal);
                     viewHolder.ll_tv.setVisibility(View.GONE);
+                    viewHolder.tv6.setVisibility(View.GONE);
                 }
             }
         }

@@ -27,6 +27,8 @@ import com.duowei.dw_pos.bean.JYCSSZ;
 import com.duowei.dw_pos.bean.TableUse;
 import com.duowei.dw_pos.event.ChangeTable;
 import com.duowei.dw_pos.event.FinishEvent;
+import com.duowei.dw_pos.event.SelectPing;
+import com.duowei.dw_pos.fragment.PingFragment;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.Post7;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
@@ -128,6 +130,12 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         Http_TalbeUse();
         mWmdbh=null;
     }
+    //选择拼桌
+    @Subscribe
+    public void selectPing(SelectPing event){
+        toCheckOutActivity(event.wmdbh);
+    }
+
     private void brushTable() {
         DownHTTP.postVolley6(mUrl, sqlUse, new VolleyResultListener() {
             @Override
@@ -230,20 +238,25 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
                     if(mWmdbh!=null){//转台
                         Toast.makeText(DinningActivity.this,"此餐桌己被占用，请选择其它餐桌",Toast.LENGTH_SHORT).show();
                     }else{
-                        try {
-                            JSONArray jsonArray = new JSONArray(response);
-                            JSONObject jsonObject = jsonArray.getJSONObject(0);
-                            String wmdbh = jsonObject.getString("WMDBH");//单据编号
-                            Intent intent = new Intent(DinningActivity.this, CheckOutActivity.class);
-                            intent.putExtra("WMDBH",wmdbh);
-                            startActivityForResult(intent,REQUESTCODE);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        Gson gson = new Gson();
+                        TableUse[] tableUses = gson.fromJson(response, TableUse[].class);
+                        if(tableUses.length==1){
+                            String wmdbh = tableUses[0].getWMDBH();
+                            toCheckOutActivity(wmdbh);
+                        }else if(tableUses.length>1){
+                            PingFragment pingFragment = PingFragment.newInstance(tableUses);
+                            pingFragment.show(getFragmentManager(),getString(R.string.ping));
                         }
                     }
                 }
             }
         });
+    }
+
+    private void toCheckOutActivity(String wmdbh) {
+        Intent intent = new Intent(DinningActivity.this, CheckOutActivity.class);
+        intent.putExtra("WMDBH",wmdbh);
+        startActivityForResult(intent,REQUESTCODE);
     }
 
     @Override
