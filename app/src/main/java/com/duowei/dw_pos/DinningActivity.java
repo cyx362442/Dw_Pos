@@ -236,7 +236,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
                     }
                 }else{//餐桌己被占用，获取相关信息
                     if(mWmdbh!=null){//转台
-                        Toast.makeText(DinningActivity.this,"此餐桌己被占用，请选择其它餐桌",Toast.LENGTH_SHORT).show();
+                        Post7.getInstance().ChangeTable(csmc+",",mWmdbh);
                     }else{
                         if(isPing==true){//拼桌
                             toOpenTableActivity(csmc);
