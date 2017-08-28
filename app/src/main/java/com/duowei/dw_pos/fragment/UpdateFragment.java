@@ -8,10 +8,12 @@ import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -109,13 +111,7 @@ public class UpdateFragment extends DialogFragment {
                     break;
                 case DownloadManager.STATUS_SUCCESSFUL:
                     //完成
-                    Intent installintent = new Intent();
-                    installintent.setAction(Intent.ACTION_VIEW);
-                    // 在Boradcast中启动活动需要添加Intent.FLAG_ACTIVITY_NEW_TASK
-                    installintent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    installintent.setDataAndType(Uri.fromFile(new File(SDPATH+mName)),
-                            "application/vnd.android.package-archive");//存储位置为Android/data/包名/file/Download文件夹
-                    getActivity().startActivity(installintent);
+                    installApk();
                     mRequest.setNotificationVisibility(View.GONE);
                     dismiss();
                     break;
@@ -127,6 +123,22 @@ public class UpdateFragment extends DialogFragment {
             }
         }
         c.close();
+    }
+
+    private void installApk() {
+        File file = new File(SDPATH + mName);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Uri contentUri = FileProvider.getUriForFile(getActivity(), "com.duowei.dw_pos.fileprovider", file);
+            intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+        } else {
+            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        if (getActivity().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+            getActivity().startActivity(intent);
+        }
     }
 
     private void deleteAllFiles(File root) {

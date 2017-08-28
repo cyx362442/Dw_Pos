@@ -22,6 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         <activity
+            android:screenOrientation="portrait"
             android:name=".LandActivity"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -30,35 +31,53 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
-        </activity>
-        <activity android:name=".DinningActivity">
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".MainActivity">
         </activity>
         <activity
+            android:screenOrientation="portrait"
+            android:name=".DinningActivity">
+        </activity>
+        <activity
+            android:screenOrientation="portrait"
             android:name=".OpenTableActivity"
             android:windowSoftInputMode="stateAlwaysVisible">
         </activity>
         <activity
+            android:screenOrientation="portrait"
             android:name=".CashierDeskActivity"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
+            android:screenOrientation="portrait"
             android:name=".ComboActivity"
             android:exported="true"/>
         <activity
+            android:screenOrientation="portrait"
             android:name=".CartDetailActivity"
             android:exported="true"/>
-        <activity android:name=".CheckOutActivity">
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".CheckOutActivity">
         </activity>
-        <activity android:name=".WebViewPayActivity">
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".WebViewPayActivity">
         </activity>
-        <activity android:name=".OrdetDetailActivity">
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".OrdetDetailActivity">
         </activity>
         <activity android:name=".summiscan.ScanActivity">
         </activity>
-        <activity android:name=".YunLandActivity">
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".YunLandActivity">
         </activity>
-        <activity android:name=".YunPayActivity">
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".YunPayActivity">
         </activity>
 
         <receiver android:name=".receiver.BootReceiver">
@@ -74,6 +93,17 @@
         </activity>
         <activity android:name=".CombineActivity">
         </activity>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.duowei.dw_pos.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false"
+            >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>
