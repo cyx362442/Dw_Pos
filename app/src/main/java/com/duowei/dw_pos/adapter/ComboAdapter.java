@@ -172,7 +172,10 @@ public class ComboAdapter extends BaseAdapter {
 
             List<DMPZSD> dmpzsdList = new ArrayList<>();
             for (int i = 0; i < dmkwdydpList.size(); i++) {
-                dmpzsdList.add(DataSupport.where("pzbm = ?", dmkwdydpList.get(i).getPZBM()).findFirst(DMPZSD.class));
+                DMPZSD dmpzsd = DataSupport.where("pzbm = ?", dmkwdydpList.get(i).getPZBM()).findFirst(DMPZSD.class);
+                if (dmpzsd != null) {
+                    dmpzsdList.add(dmpzsd);
+                }
             }
 
             tastelayout.setAdapter(new TasteAdapter(mActivity, tcsd, dmpzsdList));
