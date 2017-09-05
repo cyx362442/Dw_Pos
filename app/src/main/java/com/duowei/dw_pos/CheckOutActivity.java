@@ -410,6 +410,11 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
         finish();
     }
 
+    @Subscribe
+    public void finishActivity(FinishEvent event){
+        finish();
+    }
+
     public Float bigDecimal(Float f) {
         return BigDecimal.valueOf(f).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
     }
@@ -419,7 +424,6 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     public void confirmListener() {
         EventBus.getDefault().post(new FinishEvent());
         mConfirmDialog.cancel();
-        finish();
     }
 
     @Override

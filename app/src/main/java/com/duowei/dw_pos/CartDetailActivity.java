@@ -286,9 +286,10 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         int id = v.getId();
 
         if (id == R.id.btn_back_main) {
-            Intent intent = new Intent(this, DinningActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+//            Intent intent = new Intent(this, DinningActivity.class);
+//            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//            startActivity(intent);
+            EventBus.getDefault().post(new FinishEvent());
 
         } else if (id == R.id.btn_add) {
             Intent intent = new Intent(this, CashierDeskActivity.class);

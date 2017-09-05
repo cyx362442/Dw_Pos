@@ -8,8 +8,6 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,9 +33,6 @@ import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.tools.Users;
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
@@ -65,6 +60,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     private ImageView mImgMore;
     private boolean isPing=false;
     private TextView mTvPing;
+    private ArrayAdapter<String> mSpAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +83,11 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         mGv_adapter = new MyGridAdapter(this, mJycssz,mTableUses);
         mGv.setAdapter(mGv_adapter);
         mGv.setOnItemClickListener(this);
+
+        mSpAdapter = new ArrayAdapter<>(this, R.layout.simple_spinner_item2, R.id.tv_spinner,listName);
+        mSpAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item2);
+        mSp.setAdapter(mSpAdapter);
+        mSp.setOnItemSelectedListener(this);
     }
 
     @Override
@@ -101,7 +102,6 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     protected void onStart() {
         super.onStart();
         mUser.setText(Users.YHMC);
-        mSp.setOnItemSelectedListener(this);
     }
 
     @Override
@@ -122,10 +122,10 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         },5000);
     }
 
-    @Subscribe
-    public void finishActivity(FinishEvent event){
-        finish();
-    }
+//    @Subscribe
+//    public void finishActivity(FinishEvent event){
+//        finish();
+//    }
     /**转台后刷新*/
     @Subscribe
     public void changeTable(ChangeTable event){
@@ -180,7 +180,11 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
                     mTableUses=new TableUse[0];
                 }
                 initSpinner();
-                initGridView("FCSBH!=?","");
+                if(TextUtils.isEmpty(mCsbh)){
+                    initGridView("FCSBH!=?","");
+                }else{
+                    initGridView("FCSBH=?",mCsbh);
+                }
             }
         });
     }
@@ -200,9 +204,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         for(JYCSSZ J:jycxxz){
             listName.add(J.getCSMC());
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.simple_spinner_item2, R.id.tv_spinner,listName);
-        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item2);
-        mSp.setAdapter(adapter);
+        mSpAdapter.notifyDataSetChanged();
     }
 
     @Override
