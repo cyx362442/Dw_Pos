@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.Moneys;
@@ -38,6 +39,11 @@ public class Prints {
 
     private Wmslbjb_jiezhang mWmlsbjb;
     private WMLSB[] mWmlsbs;
+
+    private String printChuda="";
+    private String printJieZhang="";
+    private String printYun="";
+    private String printAdd="";
 
     private IWoyouService woyouService;
     public static ICallback callback = null;
@@ -123,6 +129,11 @@ public class Prints {
                 if(woyouService==null){
                     return;
                 }
+                if(printJieZhang.equals(mWmlsbjb.getWMDBH())){
+                    return;
+                }else{
+                    printJieZhang=mWmlsbjb.getWMDBH();
+                }
                 try {
                     woyouService.setAlignment(1, callback);// 对齐方式
                     woyouService.printTextWithFont("桌号：" + mWmlsbjb.getZH() + "\n", "", 32, callback);
@@ -174,6 +185,11 @@ public class Prints {
                 if(woyouService==null){
                     return;
                 }
+                if(printYun.equals(wmlsbjb.getWMDBH())){
+                    return;
+                }else{
+                    printYun=wmlsbjb.getWMDBH();
+                }
                 try {
                     woyouService.setAlignment(1, callback);
                     woyouService.printTextWithFont("桌号：" +wmlsbjb.getZH() + "\n", "", 32, callback);
@@ -224,8 +240,13 @@ public class Prints {
                 if(woyouService==null){
                     return;
                 }
+                if(printChuda.equals(wmlsbjb.getWMDBH())){
+                    return;
+                }else{
+                    printChuda=wmlsbjb.getWMDBH();
+                }
                 try {
-                     woyouService.setAlignment(1, callback);
+                    woyouService.setAlignment(1, callback);
                     woyouService.printTextWithFont("桌号：" +wmlsbjb.getZH() + "\n", "", 32, callback);
                     woyouService.setAlignment(0, callback);
                     woyouService.printTextWithFont("账单号：" + wmlsbjb.getWMDBH() + "\n", "", 28, callback);
@@ -256,6 +277,54 @@ public class Prints {
             }
         });
     }
+
+    //提交订单打印
+    public void print_add(final WMLSBJB wmlsbjb, final List<WMLSB>wmlsbList){
+        ThreadPoolManager.getInstance().executeTask(new Runnable() {
+            @Override
+            public void run() {
+                if(woyouService==null){
+                    return;
+                }
+                Log.e("wmlsbjb=====",wmlsbjb.getWMDBH());
+                if(printAdd.equals(wmlsbjb.getWMDBH())){
+                    return;
+                }else{
+                    printAdd=wmlsbjb.getWMDBH();
+                }
+                try {
+                    woyouService.setAlignment(1, callback);
+                    woyouService.printTextWithFont("桌号：" +wmlsbjb.getZH() + "\n", "", 32, callback);
+                    woyouService.setAlignment(0, callback);
+                    woyouService.printTextWithFont("账单号：" + wmlsbjb.getWMDBH() + "\n", "", 28, callback);
+                    woyouService.printTextWithFont("日期：" + DateTimes.getTime2() + "\n", "", 28, callback);
+                    woyouService.printTextWithFont("点单员：" + Users.YHMC + "    人数：" + wmlsbjb.getJCRS() + "\n", "", 28, callback);
+                    woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
+                    //_______________________________________________________________________________________________________________________________
+                    text[0] = "单品名称";
+                    text[1] = "数量";
+                    text[2] = "金额";
+                    woyouService.printColumnsText(text, width, align, callback);
+                    for (int i = 0; i < wmlsbList.size(); i++) {
+                        text[0] = wmlsbList.get(i).getXMMC();
+                        text[1] = wmlsbList.get(i).getSL() + "";
+                        text[2] = bigDecimal(wmlsbList.get(i).getDJ()*wmlsbList.get(i).getSL()) + "";
+                        woyouService.printColumnsText(text, width, align, callback);
+                    }
+                    woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
+                    //______________________________________________________________________________
+                    woyouService.printTextWithFont("消费合计：" + bigDecimal(getZj(wmlsbList)) + "\n", "", 30, callback);
+                    woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
+                    woyouService.setAlignment(1, callback);
+                    woyouService.printTextWithFont("压桌单", "", 30, callback);
+                    woyouService.lineWrap(4, callback);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     //总计金额
     private float getZj(List<WMLSB>wmlsbList){
         float zj=0f;

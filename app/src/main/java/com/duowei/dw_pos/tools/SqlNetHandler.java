@@ -156,13 +156,10 @@ public class SqlNetHandler {
 
                             //中西餐
                             if(orderstytle.equals(context.getResources().getString(R.string.order_stytle_zhongxican))){
-//                                Intent intent = new Intent(context, DinningActivity.class);
-//                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                                context.startActivity(intent);
                                 EventBus.getDefault().post(new FinishEvent());
                             }
                             EventBus.getDefault().post(new Commit(false, CartList.sWMLSBJB, wmlsbList));
-
+                            EventBus.getDefault().post(new Commit(false, CartList.sWMLSBJB, wmlsbList));
                         } else {
                             EventBus.getDefault().post(new Commit(false,null));
                             Toast.makeText(context, "提交失败！", Toast.LENGTH_LONG).show();

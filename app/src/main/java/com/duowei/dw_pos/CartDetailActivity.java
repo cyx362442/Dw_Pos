@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.duowei.dw_pos.adapter.CartDetailItemAdapter;
 import com.duowei.dw_pos.bean.OpenInfo;
@@ -227,8 +228,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             }
         });
 
-        if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))
-                ||event.wmlsbjb==null){
+        if(mOrderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))||event.wmlsbjb==null){
             return;
         }
         //打印
@@ -238,7 +238,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             mPrinter.print_commit(event.wmlsbjb, mAdapter.getAllList());
         } else {
             //加单
-            mPrinter.print_commit(event.wmlsbjb, event.wmlsbList);
+            mPrinter.print_add(event.wmlsbjb, event.wmlsbList);
         }
     }
     //结账成功
@@ -273,6 +273,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         if (CartList.sWMLSBJB == null&&mOrderstytle.equals(getResources().getString(R.string.order_stytle_zhongxican))) {
             getWmlsbjb(CartList.newInstance(this).getOrderNo().getWmdbh());
         }
+        mPb.setVisibility(View.GONE);
     }
 
     @Subscribe
@@ -357,6 +358,8 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         NetUtils.post6(Net.url, sql, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                Toast.makeText(CartDetailActivity.this,e+"",Toast.LENGTH_SHORT).show();
+                mPb.setVisibility(View.GONE);
             }
 
             @Override

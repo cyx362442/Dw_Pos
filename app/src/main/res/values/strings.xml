@@ -91,4 +91,9 @@
 
     <string name="update">升级</string>
     <string name="ping">拼桌</string>
+
+    <string name="yudayin">预打印</string>
+    <string name="chuda">送厨打</string>
+    <string name="jiezhang">结账</string>
+    <string name="yunjiezhang">云会员结账</string>
 </resources>
