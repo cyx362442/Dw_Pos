@@ -2,7 +2,6 @@ package com.duowei.dw_pos.tools;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -35,21 +34,32 @@ import org.litepal.crud.DataSupport;
  */
 
 public class DataLoad {
-    Context context;
-    private final ProgressDialog mProgressDialog;
-    public DataLoad(Context context) {
-        this.context = context;
+    private Context context;
+    private  ProgressDialog mProgressDialog;
+    private DataLoad() {
+    }
+    private static DataLoad singleton = null;
+    public static DataLoad getInstance() {
+        if (singleton == null) {
+            singleton = new DataLoad();
+        }
+        return singleton;
+    }
+
+    public void showDialog(Context context){
+        this.context=context;
         mProgressDialog = new ProgressDialog(context);
         mProgressDialog.setTitle("提示");
         mProgressDialog.setMessage("文件下载中……");
         mProgressDialog.setIndeterminate(true);
-//        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         mProgressDialog.setCancelable(true);// 设置是否可以通过点击Back键取消
         mProgressDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
         mProgressDialog.show();
     }
-    public void startLoad(){
+
+    public void startLoad(Context context){
+        showDialog(context);
         Http_YHJBQK();
     }
     private void Http_YHJBQK() {
@@ -554,7 +564,8 @@ public class DataLoad {
             @Override
             public void onResponse(final String response) {
                 if(response.equals("]")){
-                    mProgressDialog.dismiss();
+                    DataSupport.deleteAll(Jgsz.class);
+                    Http_TBSJ();
                 }else{
                     new Thread(new Runnable() {
                         @Override

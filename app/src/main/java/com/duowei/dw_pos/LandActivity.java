@@ -22,6 +22,7 @@ import com.duowei.dw_pos.fragment.UpdateFragment;
 import com.duowei.dw_pos.httputils.DownHTTP;
 import com.duowei.dw_pos.httputils.VolleyResultListener;
 import com.duowei.dw_pos.tools.CartList;
+import com.duowei.dw_pos.tools.DataLoad;
 import com.duowei.dw_pos.tools.Net;
 import com.duowei.dw_pos.tools.Users;
 
@@ -68,6 +69,7 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
         mEtAccount = (EditText) findViewById(R.id.et_account);
         mEtPassword = (EditText) findViewById(R.id.et_password);
         mVersion = (TextView) findViewById(R.id.tv_version);
+        findViewById(R.id.tv_brush).setOnClickListener(this);
         findViewById(R.id.tv_setting).setOnClickListener(this);
         findViewById(R.id.btn_land).setOnClickListener(this);
         findViewById(R.id.btn_exit).setOnClickListener(this);
@@ -76,6 +78,9 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()){
+            case R.id.tv_brush:
+                DataLoad.getInstance().startLoad(this);
+                break;
             case R.id.tv_setting:
                 mMsgInputDialog = new MsgInputDialog(this, "请输入密码", "密码：");
                 mMsgInputDialog.setOnconfirmClick(this);

@@ -190,6 +190,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
                     title += " ¥" + mAdapter.getTotalPrice();
                 }
                 mTitleView.setText(title);
+                mPb.setVisibility(View.GONE);
             }
         }
     }
@@ -233,13 +234,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         }
         //打印
         mPrinter.setWoyouService(woyouService);
-        //第一次下单
-        if (event.first) {
-            mPrinter.print_commit(event.wmlsbjb, mAdapter.getAllList());
-        } else {
-            //加单
-            mPrinter.print_add(event.wmlsbjb, event.wmlsbList);
-        }
+        mPrinter.print_commit(event.wmlsbjb, event.wmlsbList,event.seconds);
     }
     //结账成功
     @Subscribe

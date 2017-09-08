@@ -130,8 +130,7 @@ public class SettingsActivity extends AppCompatActivity implements RadioGroup.On
                     mEdit.putString("pad",mPad);
                     mEdit.putString("url", Net.url);
                     mEdit.commit();
-                    DataLoad dataLoad = new DataLoad(this);
-                    dataLoad.startLoad();
+                    DataLoad.getInstance().startLoad(this);
                 }
                 break;
             case R.id.btn_back:

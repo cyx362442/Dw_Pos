@@ -42,4 +42,10 @@ public class DateTimes {
         String dtime=format.format(curDate);
         return dtime;
     }
+    public static String getSecond(){
+        Date curDate = new Date(System.currentTimeMillis());
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+        String dtime=format.format(curDate);
+        return dtime;
+    }
 }

@@ -25,6 +25,18 @@
             android:layout_alignParentRight="true"
             android:textColor="@color/colorWhite"
             android:background="@drawable/shape_land"/>
+        <TextView
+            android:id="@+id/tv_brush"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="更新"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:layout_margin="10dp"
+            android:textColor="@color/colorWhite"
+            android:background="@drawable/shape_land"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

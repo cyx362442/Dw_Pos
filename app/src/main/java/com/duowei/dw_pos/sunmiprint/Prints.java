@@ -40,10 +40,9 @@ public class Prints {
     private Wmslbjb_jiezhang mWmlsbjb;
     private WMLSB[] mWmlsbs;
 
-    private String printChuda="";
     private String printJieZhang="";
     private String printYun="";
-    private String printAdd="";
+    private String mSecond="";
 
     private IWoyouService woyouService;
     public static ICallback callback = null;
@@ -233,64 +232,17 @@ public class Prints {
         });
     }
     //提交订单打印
-    public void print_commit(final WMLSBJB wmlsbjb, final List<WMLSB>wmlsbList){
+    public void print_commit(final WMLSBJB wmlsbjb, final List<WMLSB>wmlsbList, final String seconds){
         ThreadPoolManager.getInstance().executeTask(new Runnable() {
             @Override
             public void run() {
                 if(woyouService==null){
                     return;
                 }
-                if(printChuda.equals(wmlsbjb.getWMDBH())){
+                if(mSecond.equals(seconds)){
                     return;
                 }else{
-                    printChuda=wmlsbjb.getWMDBH();
-                }
-                try {
-                    woyouService.setAlignment(1, callback);
-                    woyouService.printTextWithFont("桌号：" +wmlsbjb.getZH() + "\n", "", 32, callback);
-                    woyouService.setAlignment(0, callback);
-                    woyouService.printTextWithFont("账单号：" + wmlsbjb.getWMDBH() + "\n", "", 28, callback);
-                    woyouService.printTextWithFont("日期：" + DateTimes.getTime2() + "\n", "", 28, callback);
-                    woyouService.printTextWithFont("点单员：" + Users.YHMC + "    人数：" + wmlsbjb.getJCRS() + "\n", "", 28, callback);
-                    woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
-                    //_______________________________________________________________________________________________________________________________
-                    text[0] = "单品名称";
-                    text[1] = "数量";
-                    text[2] = "金额";
-                    woyouService.printColumnsText(text, width, align, callback);
-                    for (int i = 0; i < wmlsbList.size(); i++) {
-                        text[0] = wmlsbList.get(i).getXMMC();
-                        text[1] = wmlsbList.get(i).getSL() + "";
-                        text[2] = bigDecimal(wmlsbList.get(i).getDJ()*wmlsbList.get(i).getSL()) + "";
-                        woyouService.printColumnsText(text, width, align, callback);
-                    }
-                    woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
-                    //______________________________________________________________________________
-                    woyouService.printTextWithFont("消费合计：" + bigDecimal(getZj(wmlsbList)) + "\n", "", 30, callback);
-                    woyouService.sendRAWData(BytesUtil.initLine1(384, 1), callback);
-                    woyouService.setAlignment(1, callback);
-                    woyouService.printTextWithFont("压桌单", "", 30, callback);
-                    woyouService.lineWrap(4, callback);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    //提交订单打印
-    public void print_add(final WMLSBJB wmlsbjb, final List<WMLSB>wmlsbList){
-        ThreadPoolManager.getInstance().executeTask(new Runnable() {
-            @Override
-            public void run() {
-                if(woyouService==null){
-                    return;
-                }
-                Log.e("wmlsbjb=====",wmlsbjb.getWMDBH());
-                if(printAdd.equals(wmlsbjb.getWMDBH())){
-                    return;
-                }else{
-                    printAdd=wmlsbjb.getWMDBH();
+                    mSecond=seconds;
                 }
                 try {
                     woyouService.setAlignment(1, callback);

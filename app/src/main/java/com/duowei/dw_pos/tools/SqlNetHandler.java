@@ -1,15 +1,10 @@
 package com.duowei.dw_pos.tools;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.widget.Toast;
 
-import com.duowei.dw_pos.CartDetailActivity;
-import com.duowei.dw_pos.CheckOutActivity;
-import com.duowei.dw_pos.DinningActivity;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.OrderNo;
 import com.duowei.dw_pos.bean.Pbdyxxb;
@@ -134,7 +129,7 @@ public class SqlNetHandler {
         NetUtils.post7(Net.url, sql, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                EventBus.getDefault().post(new Commit(false,null));
+                EventBus.getDefault().post(new Commit(null));
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -158,10 +153,9 @@ public class SqlNetHandler {
                             if(orderstytle.equals(context.getResources().getString(R.string.order_stytle_zhongxican))){
                                 EventBus.getDefault().post(new FinishEvent());
                             }
-                            EventBus.getDefault().post(new Commit(false, CartList.sWMLSBJB, wmlsbList));
-                            EventBus.getDefault().post(new Commit(false, CartList.sWMLSBJB, wmlsbList));
+                            EventBus.getDefault().post(new Commit(CartList.sWMLSBJB, wmlsbList,DateTimes.getSecond()));
                         } else {
-                            EventBus.getDefault().post(new Commit(false,null));
+                            EventBus.getDefault().post(new Commit(null));
                             Toast.makeText(context, "提交失败！", Toast.LENGTH_LONG).show();
                         }
                     }
