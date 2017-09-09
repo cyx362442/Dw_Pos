@@ -116,7 +116,7 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         mHandler.postDelayed(mRun = new Runnable() {
             @Override
             public void run() {
-                mHandler.postDelayed(this,10000);
+                mHandler.postDelayed(this,15000);
                 brushTable();
             }
         },5000);
