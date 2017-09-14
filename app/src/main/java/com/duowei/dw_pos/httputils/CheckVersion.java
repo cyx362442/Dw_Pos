@@ -1,7 +1,5 @@
 package com.duowei.dw_pos.httputils;
 
-import android.util.Log;
-
 import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TBSJ;
@@ -40,7 +38,6 @@ public class CheckVersion {
             @Override
             public void onResponse(String response) {
                 if(!response.equals("]")){
-                    Log.e("response====",response);
                     DataSupport.deleteAll(TBSJ.class);
                     Gson gson = new Gson();
                     TBSJ[] tbsjs = gson.fromJson(response, TBSJ[].class);
