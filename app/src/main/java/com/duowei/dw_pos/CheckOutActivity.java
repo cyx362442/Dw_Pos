@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -273,10 +272,15 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
                 mPrinter.print_yudayin();
                 break;
             case R.id.btn_dingdan:
-                CartList.newInstance(this).clear();
-                mIntent = new Intent(this, CartDetailActivity.class);
-                mIntent.putExtra(ExtraParm.EXTRA_WMDBH, mWmlsbjb.getWMDBH());
-                startActivity(mIntent);
+                if (mWmlsbjb != null) {
+                    CartList.newInstance(this).clear();
+                    mIntent = new Intent(this, CartDetailActivity.class);
+                    mIntent.putExtra(ExtraParm.EXTRA_WMDBH, mWmlsbjb.getWMDBH());
+                    startActivity(mIntent);
+                } else {
+                    Toast.makeText(this, "数据未完全加载, 不能进入订单详情", Toast.LENGTH_SHORT).show();
+                }
+
                 break;
             case R.id.rl_zhifubao:
                 if (canCheck()) return;
@@ -308,7 +312,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
             case R.id.rl_yun:
                 if (canCheck()) return;
                 List<WXFWQDZ> list = DataSupport.select("weid","SIP").find(WXFWQDZ.class);
-                if(list.size()<=0||TextUtils.isEmpty(list.get(0).getSIP())){
+                if(list.size() == 0 || TextUtils.isEmpty(list.get(0).getSIP())){
                     Toast.makeText(this,"您还未设置云会员支付，请开通云会员后在前台收银机设置",Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -329,7 +333,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     private boolean canCheck() {
         List<YHJBQK> yhjbqk = DataSupport.select("ZPQX").where("YHBH=?", Users.YHBH).find(YHJBQK.class);
         String zpqx = yhjbqk.get(0).getZPQX();
-        if (!zpqx.equals("1")) {
+        if (!"q".equals(zpqx)) {
             mConfirmDialog.show(this, "当前账号没有结账权限，是否切换有结账权限账号登录？");
             mConfirmDialog.setOnconfirmClick(this);
             return true;

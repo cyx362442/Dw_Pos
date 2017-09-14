@@ -1,17 +1,13 @@
 package com.duowei.dw_pos.adapter;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -236,7 +232,8 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         }
 
         // 必选口味处理(有称重是，就不处理必选口味了)
-        if (!hasWeight && "1".equals(jyxmsz.getSFYHQ())) {
+        if (!hasWeight &&
+                (jyxmsz != null && "1".equals(jyxmsz.getSFYHQ()))) {
 
             List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
 

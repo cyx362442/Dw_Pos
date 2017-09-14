@@ -349,9 +349,14 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         String sql = "select * from wmlsb where wmdbh = '" + wmdbh + "'|";
         NetUtils.post6(Net.url, sql, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                Toast.makeText(CartDetailActivity.this,e+"",Toast.LENGTH_SHORT).show();
-                mPb.setVisibility(View.GONE);
+            public void onFailure(Call call, final IOException e) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(CartDetailActivity.this, e + "",Toast.LENGTH_SHORT).show();
+                        mPb.setVisibility(View.GONE);
+                    }
+                });
             }
 
             @Override

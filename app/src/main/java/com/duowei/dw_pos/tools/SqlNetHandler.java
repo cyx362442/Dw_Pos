@@ -127,10 +127,10 @@ public class SqlNetHandler {
         NetUtils.post7(Net.url, sql, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                EventBus.getDefault().post(new Commit(null));
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        EventBus.getDefault().post(new Commit(null));
                         Toast.makeText(context,"提交失败",Toast.LENGTH_SHORT).show();
                     }
                 });
