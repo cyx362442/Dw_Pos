@@ -237,7 +237,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
 
             List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
 
-            if (tasteList != null) {
+            if (tasteList != null && tasteList.size() > 0) {
                 // 有选中必须口味框，都弹出口味选择
                 TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb,sl);
                 fragment.show(mContext.getSupportFragmentManager(), null);
