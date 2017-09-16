@@ -333,7 +333,7 @@ public class CheckOutActivity extends AppCompatActivity implements ConfirmDialog
     private boolean canCheck() {
         List<YHJBQK> yhjbqk = DataSupport.select("ZPQX").where("YHBH=?", Users.YHBH).find(YHJBQK.class);
         String zpqx = yhjbqk.get(0).getZPQX();
-        if (!"q".equals(zpqx)) {
+        if (!"1".equals(zpqx)) {
             mConfirmDialog.show(this, "当前账号没有结账权限，是否切换有结账权限账号登录？");
             mConfirmDialog.setOnconfirmClick(this);
             return true;
