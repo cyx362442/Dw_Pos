@@ -45,7 +45,8 @@ public class Post7 {
     /**转台*/
     public void ChangeTable(String table,String wmdbh){
         String sql="update wmlsbjb set zh='"+table+"' where WMDBH='"+wmdbh+"'|";
-        DownHTTP.postVolley7(Net.url, sql, new VolleyResultListener() {
+        String sql2="update cfpb set by1='"+table+"' where wmdbh='"+wmdbh+"'|";
+        DownHTTP.postVolley7(Net.url, sql+sql2, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
             }
