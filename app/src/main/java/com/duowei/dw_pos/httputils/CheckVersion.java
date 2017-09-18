@@ -1,9 +1,13 @@
 package com.duowei.dw_pos.httputils;
 
+
+import android.util.Log;
+
 import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TBSJ;
 import com.duowei.dw_pos.event.CheckJYCXMSZ;
+import com.duowei.dw_pos.event.HideLoad;
 import com.duowei.dw_pos.tools.Net;
 import com.google.gson.Gson;
 
@@ -30,7 +34,7 @@ public class CheckVersion {
         if(tbrp.size()<=0){
             return;
         }
-        String sql="select tablename,CONVERT(varchar(100), tbrq, 20)as tbrq from tbsj where tbrq>'"+tbrp.get(0).getTbrq()+"'and tablename='jyxmsz'|";
+        String sql="select tablename,CONVERT(varchar(100), tbrq+0.00003, 20)as tbrq from tbsj where tbrq>'"+tbrp.get(0).getTbrq()+"'and tablename='jyxmsz'|";
         DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -38,6 +42,7 @@ public class CheckVersion {
             @Override
             public void onResponse(String response) {
                 if(!response.equals("]")){
+                    EventBus.getDefault().post(new HideLoad(true));
                     DataSupport.deleteAll(TBSJ.class);
                     Gson gson = new Gson();
                     TBSJ[] tbsjs = gson.fromJson(response, TBSJ[].class);
@@ -51,6 +56,7 @@ public class CheckVersion {
                     DownHTTP.postVolley6(Net.url, sql, new VolleyResultListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
+                            EventBus.getDefault().post(new HideLoad(false));
                         }
                         @Override
                         public void onResponse(final String response) {

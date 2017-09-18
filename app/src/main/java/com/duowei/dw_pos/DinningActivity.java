@@ -238,6 +238,8 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
                     }else{
                         if(isPing==true){//拼桌
                             toOpenTableActivity(csmc);
+                            isPing=false;
+                            mTvPing.setVisibility(View.GONE);
                             return;
                         }
                         Gson gson = new Gson();

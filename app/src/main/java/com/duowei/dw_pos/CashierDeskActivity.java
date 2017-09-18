@@ -22,8 +22,10 @@ import com.duowei.dw_pos.bean.DMJYXMSSLB;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.TCMC;
 import com.duowei.dw_pos.event.AddEvent;
+import com.duowei.dw_pos.event.CheckJYCXMSZ;
 import com.duowei.dw_pos.event.ClearSearchEvent;
 import com.duowei.dw_pos.event.FinishEvent;
+import com.duowei.dw_pos.event.HideLoad;
 import com.duowei.dw_pos.fragment.AddDialogFragment;
 import com.duowei.dw_pos.fragment.CartFragment;
 import com.duowei.dw_pos.httputils.CheckVersion;
@@ -85,6 +87,7 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         }
     };
     private ImageView mImgCart;
+    private View mLoad;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -118,14 +121,33 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
         super.onDestroy();
     }
     @Subscribe
-    public void checkJycxmsz(){
-        mRightJyxmszAllList = getJyxmszAllList();
-        mRightAdapter.setAllList(mRightJyxmszAllList);
+    public void checkJycxmsz(CheckJYCXMSZ event){
+        new Thread(){
+            @Override
+            public void run() {
+               mHandler.post(new Runnable() {
+                   @Override
+                   public void run() {
+                       setupData();
+                       mLoad.setVisibility(View.GONE);
+                   }
+               });
+            }
+        }.start();
     }
 
     @Subscribe
     public void finishEvent(FinishEvent event){
         finish();
+    }
+
+    @Subscribe
+    public void loadState(HideLoad event){
+        if(event.isShow()){
+            mLoad.setVisibility(View.VISIBLE);
+        }else{
+            mLoad.setVisibility(View.GONE);
+        }
     }
 
     private void loadAllData() {
@@ -134,7 +156,6 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
             public void run() {
                 mRightJyxmszAllList = getJyxmszAllList();
                 mRightTcmcAllList = getTcmcAllList();
-
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -150,6 +171,9 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void initViews() {
+        mLoad = findViewById(R.id.load);
+        mLoad.bringToFront();
+
         mBackView = (ImageView) findViewById(R.id.iv_back);
         mSearchView = (ImageView) findViewById(R.id.iv_search);
         mEditText = (EditText) findViewById(R.id.edit_query);
