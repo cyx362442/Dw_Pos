@@ -9,7 +9,8 @@
     tools:context="com.duowei.dw_pos.SettingsActivity">
     <LinearLayout
         style="@style/linearLayout_setting"
-        android:layout_margin="10dp">
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="5dp">
         <TextView
             style="@style/textview_setting"
             android:text="设置"

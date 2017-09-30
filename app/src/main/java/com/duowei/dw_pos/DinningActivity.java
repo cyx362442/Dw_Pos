@@ -8,8 +8,10 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
@@ -41,7 +43,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.EventBus;
 
 public class DinningActivity extends AppCompatActivity implements  View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener {
-    private String sqlUse="select datediff(mi,jysj,getdate())scjc,a.csmc,b.* from wmlsbjb b,jycssz a where (charindex('@'+a.csmc+',@',b.zh)>0 or charindex(a.csmc+',',b.zh)>0) and isnull(sfyjz,'0')<>'1' and wmdbh in(select wmdbh from wmlsb)|";
+    private String sqlUse="select datediff(mi,jysj,getdate())scjc,a.csmc,b.* from wmlsbjb b,jycssz a " +
+            "where (charindex('@'+a.csmc+',','@'+b.zh)>0 or charindex(','+a.csmc+',',b.zh)>0) " +
+            "and isnull(sfyjz,'0')<>'1' and wmdbh in(select wmdbh from wmlsb)|";
 
     private List<String>listName=new ArrayList<>();
     private Spinner mSp;
@@ -67,6 +71,8 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dinning);
         EventBus.getDefault().register(this);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
         SharedPreferences user = getSharedPreferences("user", Context.MODE_PRIVATE);
         mUrl = user.getString("url", "");
         initUi();
@@ -218,7 +224,8 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         final String csmc = mJycssz.get(position).getCSMC();
-        String sql="select * from wmlsbjb where zh like '%"+csmc+"%' and isnull(sfyjz,'0')<>'1' and wmdbh in(select wmdbh from wmlsb)|";
+        final String csmc1=csmc+",";
+        String sql="select * from wmlsbjb where zh='"+csmc1+"' and isnull(sfyjz,'0')<>'1' and wmdbh in(select wmdbh from wmlsb)|";
         DownHTTP.postVolley6(mUrl, sql, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -228,13 +235,13 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
             public void onResponse(String response) {
                 if(response.equals("]")){//餐桌未占用
                     if(mWmdbh!=null){//转台
-                        Post7.getInstance().ChangeTable(csmc+",",mWmdbh);
+                        Post7.getInstance().ChangeTable(csmc1,mWmdbh);
                     }else{
                         toOpenTableActivity(csmc);
                     }
                 }else{//餐桌己被占用，获取相关信息
                     if(mWmdbh!=null){//转台
-                        Post7.getInstance().ChangeTable(csmc+",",mWmdbh);
+                        Post7.getInstance().ChangeTable(csmc1,mWmdbh);
                     }else{
                         if(isPing==true){//拼桌
                             toOpenTableActivity(csmc);

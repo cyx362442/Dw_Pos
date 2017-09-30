@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -57,9 +58,10 @@ public class SettingsActivity extends AppCompatActivity implements RadioGroup.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
         mSp = getSharedPreferences("user", Context.MODE_PRIVATE);
         mEdit = mSp.edit();
-
         initUI();
     }
 

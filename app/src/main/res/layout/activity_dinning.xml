@@ -4,20 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorBlack"
     tools:context="com.duowei.dw_pos.DinningActivity">
     <RelativeLayout
         android:id="@+id/rlTop"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:gravity="center_vertical"
-        android:background="@color/colorBlack">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:gravity="center_vertical">
         <Spinner
             android:id="@+id/spinnner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:background="@null"
-            >
+            android:background="@null">
         </Spinner>
         <TextView
             android:id="@+id/tv_user"
@@ -41,21 +41,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:visibility="gone"
             android:textColor="@color/colorWhite"
+            android:visibility="gone"
             android:text="拼"/>
     </RelativeLayout>
-    <GridView
-        android:id="@+id/gridView"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        android:layout_below="@+id/rlTop"
-        android:numColumns="3"
-        android:horizontalSpacing="5dp"
-        android:verticalSpacing="5dp"
-        ></GridView>
+        android:background="@color/colorWhite"
+        android:layout_below="@+id/rlTop">
+        <GridView
+            android:id="@+id/gridView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:numColumns="3"
+            android:horizontalSpacing="5dp"
+            android:verticalSpacing="5dp"
+            ></GridView>
+    </RelativeLayout>
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"

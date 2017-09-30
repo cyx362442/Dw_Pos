@@ -5,14 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorGreen"
     tools:context="com.duowei.dw_pos.WebViewPayActivity">
     <RelativeLayout
         android:id="@+id/rlTop"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:gravity="center_vertical"
-        android:background="@color/colorGreen"
-        >
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical">
         <ImageView
             android:id="@+id/img_return"
             android:layout_width="wrap_content"
@@ -32,8 +32,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/rlTop"
-        android:layout_weight="4">
+        android:layout_below="@id/rlTop">
         <WebView
             android:id="@+id/webview"
             android:layout_width="match_parent"
