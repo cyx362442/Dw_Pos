@@ -2,6 +2,7 @@ package com.duowei.dw_pos.adapter;
 
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -217,16 +218,14 @@ public class RightAdapter extends BaseAdapter implements Filterable {
                     CartList.newInstance(mContext).modifyNum(wmlsb, inputValue);
 
                     // 必选口味处理
-                    if ("1".equals(jyxmsz.getSFYHQ())) {
-
-                        List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
-
-                        if (tasteList != null) {
-                            // 有选中必须口味框，都弹出口味选择
-                            TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb,sl);
-                            fragment.show(mContext.getSupportFragmentManager(), null);
-                        }
-                    }
+//                    if ("1".equals(jyxmsz.getSFYHQ())) {
+//                        List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
+//                        if (tasteList != null) {
+//                            // 有选中必须口味框，都弹出口味选择
+//                        }
+//                    }
+                    TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb,sl);
+                    fragment.show(mContext.getSupportFragmentManager(), null);
                 }
             });
         }
@@ -234,14 +233,13 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         // 必选口味处理(有称重是，就不处理必选口味了)
         if (!hasWeight &&
                 (jyxmsz != null && "1".equals(jyxmsz.getSFYHQ()))) {
-
-            List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
-
-            if (tasteList != null && tasteList.size() > 0) {
-                // 有选中必须口味框，都弹出口味选择
-                TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb,sl);
-                fragment.show(mContext.getSupportFragmentManager(), null);
-            }
+//            List<DMKWDYDP> tasteList = DataSupport.where("xmbh = ?", wmlsb.getXMBH()).find(DMKWDYDP.class);
+//
+//            if (tasteList != null && tasteList.size() > 0) {
+//                // 有选中必须口味框，都弹出口味选择
+//            }
+            TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb,sl);
+            fragment.show(mContext.getSupportFragmentManager(), null);
         }
     }
 
