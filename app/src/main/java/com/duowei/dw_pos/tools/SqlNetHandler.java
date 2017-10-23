@@ -3,6 +3,7 @@ package com.duowei.dw_pos.tools;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.duowei.dw_pos.R;

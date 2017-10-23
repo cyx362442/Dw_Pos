@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -20,18 +21,24 @@ import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.duowei.dw_pos.CartDetailActivity;
 import com.duowei.dw_pos.R;
 import com.duowei.dw_pos.bean.DMKWDYDP;
 import com.duowei.dw_pos.bean.DMPZSD;
 import com.duowei.dw_pos.bean.JYXMSZ;
+import com.duowei.dw_pos.bean.OrderNo;
 import com.duowei.dw_pos.bean.WMLSB;
 import com.duowei.dw_pos.event.CartAutoSubmit;
 import com.duowei.dw_pos.event.CartUpdateEvent;
+import com.duowei.dw_pos.httputils.NetUtils;
 import com.duowei.dw_pos.tools.CartList;
+import com.duowei.dw_pos.tools.Net;
+import com.duowei.dw_pos.tools.SqlNetHandler;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.crud.DataSupport;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -40,6 +47,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 /**
  * 口味选择、整单备注
@@ -65,6 +76,7 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
      * 1:整单备注   2:单个口味选择
      */
     private int mMode = 0;
+    private boolean mFirst;
 
     /**
      * 整单备注
@@ -84,11 +96,12 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
      *
      * @param wmlsb 当前购物车项
      */
-    public static TasteChoiceDialogFragment newInstance(WMLSB wmlsb,float sl) {
+    public static TasteChoiceDialogFragment newInstance(WMLSB wmlsb,float sl,boolean first) {
 
         Bundle args = new Bundle();
         args.putInt("mode", 2);
         args.putFloat("sl",sl);
+        args.putBoolean("first",first);
         args.putSerializable("wmlsb", wmlsb);
 
         TasteChoiceDialogFragment fragment = new TasteChoiceDialogFragment();
@@ -102,6 +115,7 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
         mContext = getContext();
         mMode = getArguments().getInt("mode");
         mSl=getArguments().getFloat("sl");
+        mFirst = getArguments().getBoolean("first");
         mWMLSB = (WMLSB) getArguments().getSerializable("wmlsb");
 
         SharedPreferences sp = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE);
@@ -301,6 +315,11 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
                     if (jyxmsz != null) {
                         WMLSB wmlsb = CartList.newInstance(mContext).add(jyxmsz);
                         wmlsb.setSL(mSl);
+                        if(mFirst==true){//口味加价提加至服务器
+                            Handler mHandler = new Handler();
+                            OrderNo orderNo = CartList.newInstance(getActivity()).getOrderNo();
+                            new SqlNetHandler().handleCommit(mHandler, getActivity(), orderNo);
+                        }
                     }
                 }
 

@@ -442,7 +442,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
     private View.OnClickListener mTasteClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance((WMLSB) v.getTag(),1);
+            TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance((WMLSB) v.getTag(),1,true);
             fragment.show(mActivity.getSupportFragmentManager(), null);
         }
     };
