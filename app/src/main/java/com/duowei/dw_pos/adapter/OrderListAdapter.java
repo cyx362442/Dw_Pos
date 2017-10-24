@@ -100,11 +100,11 @@ public class OrderListAdapter extends BaseAdapter {
             holder.tv_name.setText(item.getXMMC());
             holder.ll_right.setVisibility(View.VISIBLE);
         }
-        if (item.getSFYXD().equals("1")) {//己下单打印
+        if ("1".equals(item.getSFYXD())) {//己下单打印
             holder.tv_no.setTextColor(context.getResources().getColor(R.color.colorAccent));
             holder.tv_name.setTextColor(context.getResources().getColor(R.color.colorAccent));
             holder.tv_price.setTextColor(context.getResources().getColor(R.color.colorAccent));
-            holder.iv_add.setVisibility(View.INVISIBLE);
+            holder.iv_add.setVisibility(View.GONE);
             holder.ll_taste.setVisibility(View.GONE);
         } else {
             holder.tv_no.setTextColor(Color.parseColor("#4c4c4c"));
@@ -123,12 +123,12 @@ public class OrderListAdapter extends BaseAdapter {
             }
         });
 
-        holder.iv_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+//        holder.iv_add.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
 //                CartList.newInstance().add(item);
-            }
-        });
+//            }
+//        });
 
         return convertView;
     }

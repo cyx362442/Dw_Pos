@@ -311,6 +311,7 @@ public class CartDetailItemAdapter extends BaseAdapter {
             holder.tv_name.setTextColor(Color.RED);
             holder.btn_taste.setVisibility(View.GONE);
             holder.iv_add.setEnabled(false);
+            holder.iv_add.setImageResource(R.mipmap.ic_add_circle_gray_36dp);
             holder.btn_edit.setVisibility(View.GONE);
 
             holder.iv_remove.setOnClickListener(new View.OnClickListener() {
