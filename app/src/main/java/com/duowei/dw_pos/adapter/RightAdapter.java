@@ -219,7 +219,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
 
                     // 必选口味处理
                     if ("1".equals(jyxmsz.getSFYHQ())) {
-                        TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb,sl,false);
+                        TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb,sl,true);
                         fragment.show(mContext.getSupportFragmentManager(), null);
                     }
                 }
@@ -229,7 +229,7 @@ public class RightAdapter extends BaseAdapter implements Filterable {
         // 必选口味处理(有称重是，就不处理必选口味了)
         if (!hasWeight &&
                 (jyxmsz != null && "1".equals(jyxmsz.getSFYHQ()))) {
-            TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb,sl,false);
+            TasteChoiceDialogFragment fragment = TasteChoiceDialogFragment.newInstance(wmlsb,sl,true);
             fragment.show(mContext.getSupportFragmentManager(), null);
         }
     }

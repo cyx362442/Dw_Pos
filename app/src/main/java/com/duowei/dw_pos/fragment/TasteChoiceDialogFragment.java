@@ -315,7 +315,7 @@ public class TasteChoiceDialogFragment extends AppCompatDialogFragment implement
                     if (jyxmsz != null) {
                         WMLSB wmlsb = CartList.newInstance(mContext).add(jyxmsz);
                         wmlsb.setSL(mSl);
-                        if(mFirst==true){//口味加价提加至服务器
+                        if(mFirst==false&&mOrderstytle.equals(getString(R.string.order_stytle_zhongxican))){//口味加价提加至服务器
                             Handler mHandler = new Handler();
                             OrderNo orderNo = CartList.newInstance(getActivity()).getOrderNo();
                             new SqlNetHandler().handleCommit(mHandler, getActivity(), orderNo);
