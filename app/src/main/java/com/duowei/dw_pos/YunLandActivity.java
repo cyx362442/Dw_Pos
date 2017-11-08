@@ -88,8 +88,20 @@ public class YunLandActivity extends AppCompatActivity {
             if(result.length()<=0||!result.contains(",")){
                 Toast.makeText(YunLandActivity.this,"扫描失败，请重试",Toast.LENGTH_SHORT).show();
             }else{
+                int x=0;
+                for(int i=0;i<=result.length()-1;i++) {
+                    String getstr=result.substring(i,i+1);
+                    if(getstr.equals(",")){
+                        x++;
+                    }
+                }
+                if(x>=2){
+                    mPassword=result.substring(result.indexOf(",")+1,result.lastIndexOf(",")).trim();
+                }else{
+                    mPassword=result.substring(result.indexOf(",")+1,result.length()).trim();
+                }
                 mEtPhone.setText(mPhone=result.substring(0,result.indexOf(",")));
-                mEtPassword.setText(mPassword=result.substring(result.indexOf(",")+1,result.length()).trim());
+                mEtPassword.setText(mPassword);
                 mPost6.post_ims_card_members(mPhone,mPassword,mWeid);//发送post请求云会员登录
             }
         }
