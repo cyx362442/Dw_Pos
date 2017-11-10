@@ -39,7 +39,7 @@ public class Post6 {
         String sql="Select b.id,a.from_user,a.cardsn,a.credit1,a.credit2,b.realname,b.mobile,a.status,ifnull(a.cardgrade,'云会员')cardgrade,a.active, b.occupation,\n" +
                 "CAST(FROM_UNIXTIME(a.createtime,'%Y-%m-%d')as datetime)createtime \n" +
                 "from ims_card_members a,ims_fans b  \n" +
-                "where a.weid=b.weid and a.from_user=b.from_user and b.mobile='"+account+"' and b.occupation='"+password+"'  AND a.weid="+mWeid+" AND b.weid="+mWeid+"|";
+                "where a.weid=b.weid and a.from_user=b.from_user and (b.mobile='"+account+"' or a.cardsn='"+account+"') and b.occupation='"+password+"'  AND a.weid="+mWeid+" AND b.weid="+mWeid+"|";
         DownHTTP.postVolley6(Net.yunUrl, sql, new VolleyResultListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
