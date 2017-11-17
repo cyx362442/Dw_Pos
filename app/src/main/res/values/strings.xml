@@ -77,6 +77,9 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
 
+    <string name="backtable">返回餐桌</string>
+    <string name="backorder">返回点餐</string>
+
     <string name="cash_allow">开启</string>
     <string name="cash_unallowed">禁用</string>
     <string name="order_stytle_zhongxican">中西餐</string>

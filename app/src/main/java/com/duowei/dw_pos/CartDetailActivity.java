@@ -107,6 +107,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
     private Button mBCheck;
     private NumInputDialog mDialog;
     private ProgressBar mPb;
+    private Button mBtnBack;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -146,7 +147,9 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
             }
         });
         findViewById(R.id.btn_all_order_remark).setOnClickListener(this);
-        findViewById(R.id.btn_back_main).setOnClickListener(this);
+        mBtnBack = (Button) findViewById(R.id.btn_back_main);
+        mBtnBack.setText(getString(R.string.backorder));
+        mBtnBack.setOnClickListener(this);
 
         mPb = (ProgressBar) findViewById(R.id.pb);
         mLlCommit = (LinearLayout) findViewById(R.id.linearLayout);
@@ -281,7 +284,12 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
         int id = v.getId();
 
         if (id == R.id.btn_back_main) {
-            EventBus.getDefault().post(new FinishEvent());
+            String s = mBtnBack.getText().toString();
+            if(s.equals(getString(R.string.backtable))){
+                EventBus.getDefault().post(new FinishEvent());
+            }else{
+                finish();
+            }
 
         } else if (id == R.id.btn_add) {
             Intent intent = new Intent(this, CashierDeskActivity.class);
@@ -377,6 +385,7 @@ public class CartDetailActivity extends AppCompatActivity implements View.OnClic
                         @Override
                         public void run() {
                             updateData();
+                            mBtnBack.setText(getString(R.string.backtable));
                         }
                     });
 
