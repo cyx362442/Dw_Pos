@@ -243,7 +243,6 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
             mRightAdapter.setList(getJyxmszList(((DMJYXMSSLB) mLeftAdapter.getItem(checkedPosition)).getLBBM()));
             mRightAdapter.setAllList(mRightJyxmszAllList);
         }
-
     }
 
     /**
@@ -315,14 +314,6 @@ public class CashierDeskActivity extends AppCompatActivity implements View.OnCli
      */
     private List<JYXMSZ> getJyxmszList(String lbbm) {
         return DataSupport.where("lbbm = ?", lbbm).find(JYXMSZ.class);
-//        ArrayList<JYXMSZ> list = new ArrayList<>();
-//        for (int i = 0; i < mRightJyxmszAllList.size(); i++) {
-//            JYXMSZ jyxmsz = mRightJyxmszAllList.get(i);
-//            if (lbbm.endsWith(jyxmsz.getLBBM())) {
-//                list.add(jyxmsz);
-//            }
-//        }
-//        return list;
     }
 
     /**

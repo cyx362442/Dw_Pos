@@ -15,6 +15,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.duowei.dw_pos.bean.JYCSSZ;
+import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.OpenInfo;
 import com.duowei.dw_pos.bean.OrderNo;
 import com.duowei.dw_pos.bean.WMLSBJB;
@@ -28,8 +30,10 @@ import com.duowei.dw_pos.tools.Users;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.litepal.crud.DataSupport;
 
 import java.io.IOException;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -60,6 +64,7 @@ public class OpenTableActivity extends AppCompatActivity {
     private String customerStytle="";
 
     private Handler mHandler = new Handler();
+    private List<JYXMSZ> mJyxmszs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +83,8 @@ public class OpenTableActivity extends AppCompatActivity {
                 }
             }
         });
+
+        mJyxmszs = DataSupport.where("by19=?", "1").find(JYXMSZ.class);
     }
 
     @Subscribe
@@ -124,6 +131,9 @@ public class OpenTableActivity extends AppCompatActivity {
                 ));
 
                 cartList.setOrderNo(new OrderNo(Users.pad + DateTimeUtils.getCurrentDatetime(), false));
+
+                //必选单品
+                cartList.addReuqireItem(mJyxmszs,Float.parseFloat(persons));
 
                 httpCreateWmlsbjb();
 

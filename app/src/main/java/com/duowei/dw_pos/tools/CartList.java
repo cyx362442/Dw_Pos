@@ -94,6 +94,14 @@ public class CartList {
         this.mList = list;
     }
 
+    public void addReuqireItem(List<JYXMSZ> JYXMSZList,float num) {
+        for(int i=0;i<JYXMSZList.size();i++){
+            WMLSB wmlsb = new WMLSB(JYXMSZList.get(i));
+            wmlsb.setSL(num);
+            mList.add(wmlsb);
+        }
+    }
+
     public void clear() {
         mList.clear();
         sWMLSBJB = null;
@@ -137,7 +145,6 @@ public class CartList {
      */
     public WMLSB add(JYXMSZ jyxmsz) {
         WMLSB wmlsb = new WMLSB(jyxmsz);
-
         if ("1".equals(jyxmsz.getBY16())) {
             // 偶数份半价处理
             List<WMLSB> allList = new ArrayList<>();

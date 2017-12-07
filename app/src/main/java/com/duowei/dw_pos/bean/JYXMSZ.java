@@ -54,6 +54,7 @@ public class JYXMSZ extends DataSupport{
     public String SFYHQ;
     public String BY16;
     public String BY6;
+    public String BY19;
     public float YHJ;
     public String HYJ;
     public String HYJ2;
@@ -245,6 +246,14 @@ public class JYXMSZ extends DataSupport{
 
     public void setBY6(String BY6) {
         this.BY6 = BY6;
+    }
+
+    public String getBY19() {
+        return BY19;
+    }
+
+    public void setBY19(String BY19) {
+        this.BY19 = BY19;
     }
 
     public void setYHJ(float YHJ) {

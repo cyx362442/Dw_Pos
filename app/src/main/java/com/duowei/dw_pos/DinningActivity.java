@@ -65,7 +65,6 @@ public class DinningActivity extends AppCompatActivity implements  View.OnClickL
     private boolean isPing=false;
     private TextView mTvPing;
     private ArrayAdapter<String> mSpAdapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
