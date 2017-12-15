@@ -60,7 +60,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:gravity="center"
-                android:text="seryreghyeswr"
                 android:textSize="20dp"/>
         </LinearLayout>
         <ProgressBar

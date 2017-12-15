@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -15,7 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.duowei.dw_pos.bean.JYCSSZ;
 import com.duowei.dw_pos.bean.JYXMSZ;
 import com.duowei.dw_pos.bean.OpenInfo;
 import com.duowei.dw_pos.bean.OrderNo;
@@ -63,7 +61,6 @@ public class OpenTableActivity extends AppCompatActivity {
     LinearLayout mLlcustomer;
     private String customerStytle="";
 
-    private Handler mHandler = new Handler();
     private List<JYXMSZ> mJyxmszs;
 
     @Override
