@@ -25,7 +25,7 @@
             android:layout_margin="10dp"
             android:layout_alignParentRight="true"
             android:textColor="@color/colorWhite"
-            android:background="@drawable/shape_land"/>
+            android:background="@drawable/selector_land"/>
         <TextView
             android:id="@+id/tv_brush"
             android:layout_width="wrap_content"
@@ -37,7 +37,7 @@
             android:paddingTop="5dp"
             android:layout_margin="10dp"
             android:textColor="@color/colorWhite"
-            android:background="@drawable/shape_land"/>
+            android:background="@drawable/selector_land"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="10dp"
-            android:background="@drawable/shape_cancel"
+            android:background="@drawable/selector_cancel"
             android:gravity="center"
             android:text="退出"
             android:textSize="@dimen/textSize20"
@@ -128,7 +128,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="10dp"
-            android:background="@drawable/shape_land"
+            android:background="@drawable/selector_land"
             android:gravity="center"
             android:text="登录"
             android:textSize="@dimen/textSize20"

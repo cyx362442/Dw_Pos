@@ -1,171 +1,211 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@mipmap/homebackgroundtwo"
     tools:context="com.duowei.dw_pos.SettingsActivity">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_bottom">
     <LinearLayout
-        style="@style/linearLayout_setting"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="5dp">
-        <TextView
-            style="@style/textview_setting"
-            android:text="设置"
-            android:textColor="@color/colorGreen"
-            android:textStyle="bold"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            style="@style/linearLayout_setting"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="5dp">
+            <TextView
+                style="@style/textview_setting"
+                android:text="设置"
+                android:textColor="@color/colorGreen"
+                android:textStyle="bold"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorGray"></View>
+        </LinearLayout>
+        <LinearLayout
+            style="@style/linearLayout_setting">
+            <TextView
+                style="@style/textview_setting"
+                android:text="IP地址"/>
+            <EditText
+                android:id="@+id/et_ip"
+                style="@style/editText_setting"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:inputType="textEmailAddress"
+                />
+        </LinearLayout>
+        <LinearLayout
+            style="@style/linearLayout_setting">
+            <TextView
+                style="@style/textview_setting"
+                android:text="端口"/>
+            <EditText
+                android:id="@+id/et_port"
+                style="@style/editText_setting"
+                android:selectAllOnFocus="true"
+                android:inputType="number"
+                />
+        </LinearLayout>
+        <LinearLayout
+            style="@style/linearLayout_setting">
+            <TextView
+                style="@style/textview_setting"
+                android:text="平板名称"/>
+            <EditText
+                android:id="@+id/et_pad"
+                style="@style/editText_setting"
+                android:selectAllOnFocus="true"
+                android:hint="如：P1"
+                />
+        </LinearLayout>
+        <LinearLayout
+            style="@style/linearLayout_setting">
+            <TextView
+                style="@style/textview_setting"
+                android:text="现金支付"/>
+            <RadioGroup
+                android:id="@+id/radioGroup2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/rb3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/colorWhite"
+                    android:text="@string/cash_unallowed"/>
+                <RadioButton
+                    android:id="@+id/rb4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/colorWhite"
+                    android:text="@string/cash_allow"/>
+            </RadioGroup>
+        </LinearLayout>
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorGray"></View>
-    </LinearLayout>
-    <LinearLayout
-        style="@style/linearLayout_setting">
-        <TextView
-            style="@style/textview_setting"
-            android:text="IP地址"/>
-        <EditText
-            android:id="@+id/et_ip"
-            style="@style/editText_setting"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:inputType="textEmailAddress"
-            />
-    </LinearLayout>
-    <LinearLayout
-        style="@style/linearLayout_setting">
-        <TextView
-            style="@style/textview_setting"
-            android:text="端口"/>
-        <EditText
-            android:id="@+id/et_port"
-            style="@style/editText_setting"
-            android:selectAllOnFocus="true"
-            android:inputType="number"
-            />
-    </LinearLayout>
-    <LinearLayout
-        style="@style/linearLayout_setting">
-        <TextView
-            style="@style/textview_setting"
-            android:text="平板名称"/>
-        <EditText
-            android:id="@+id/et_pad"
-            style="@style/editText_setting"
-            android:selectAllOnFocus="true"
-            android:hint="如：P1"
-            />
-    </LinearLayout>
-    <LinearLayout
-        style="@style/linearLayout_setting">
-        <TextView
-            style="@style/textview_setting"
-            android:text="现金支付"/>
-        <RadioGroup
-            android:id="@+id/radioGroup2"
+            android:layout_height="0.5dp"
+            android:background="#000000"></View>
+        <LinearLayout
+            style="@style/linearLayout_setting">
+            <TextView
+                style="@style/textview_setting"
+                android:text="点餐模式"/>
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/rb1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/colorWhite"
+                    android:text="@string/order_stytle_zhongxican"/>
+                <RadioButton
+                    android:id="@+id/rb2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/colorWhite"
+                    android:text="@string/order_stytle_kuaican"/>
+            </RadioGroup>
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#000000"></View>
+        <RelativeLayout
+            android:id="@+id/rl_clearData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:orientation="horizontal">
-            <RadioButton
-                android:id="@+id/rb3"
-                android:layout_width="0dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+            <TextView
+                android:id="@+id/tv6"
+                style="@style/textview_setting"
+                android:text="启用清机"/>
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/colorWhite"
-                android:text="@string/cash_unallowed"/>
-            <RadioButton
-                android:id="@+id/rb4"
-                android:layout_width="0dp"
+                android:layout_below="@+id/tv6"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="5dp"
+                android:text="勾选清机"/>
+            <CheckBox
+                android:id="@+id/cb_clear"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/colorWhite"
-                android:text="@string/cash_allow"/>
-        </RadioGroup>
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="#000000"></View>
-    <LinearLayout
-        style="@style/linearLayout_setting">
-        <TextView
-            style="@style/textview_setting"
-            android:text="点餐模式"/>
-        <RadioGroup
-            android:id="@+id/radioGroup"
+                android:clickable="false"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#000000"></View>
+        <RelativeLayout
+            android:id="@+id/rl_autoStart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:orientation="horizontal">
-            <RadioButton
-                android:id="@+id/rb1"
-                android:layout_width="0dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+            <TextView
+                android:id="@+id/tv5"
+                style="@style/textview_setting"
+                android:text="开机自启动"/>
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/colorWhite"
-                android:text="@string/order_stytle_zhongxican"/>
-            <RadioButton
-                android:id="@+id/rb2"
-                android:layout_width="0dp"
+                android:layout_below="@+id/tv5"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="5dp"
+                android:text="默认自启动"/>
+            <CheckBox
+                android:id="@+id/checkbox"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/colorWhite"
-                android:text="@string/order_stytle_kuaican"/>
-        </RadioGroup>
+                android:checked="true"
+                android:clickable="false"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
     </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="#000000"></View>
-    <RelativeLayout
-        android:id="@+id/rl_autoStart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
-        <TextView
-            android:id="@+id/tv5"
-            style="@style/textview_setting"
-            android:text="开机自启动"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv5"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="5dp"
-            android:text="默认自启动"/>
-        <CheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:clickable="false"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"/>
-    </RelativeLayout>
+    </ScrollView>
     <LinearLayout
+        android:id="@+id/ll_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentBottom="true"
         android:gravity="center">
         <Button
             android:id="@+id/btn_load"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/shape_land"
+            android:background="@drawable/selector_land"
             android:textColor="@color/colorWhite"
             android:text="下载数据库"/>
         <Button
             android:id="@+id/btn_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/shape_cancel"
+            android:background="@drawable/selector_cancel"
             android:layout_marginLeft="50dp"
             android:textColor="@color/colorGreen"
             android:text="返回"/>
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

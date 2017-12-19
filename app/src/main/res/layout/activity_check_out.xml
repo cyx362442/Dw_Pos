@@ -87,7 +87,7 @@
                     android:enabled="false"
                     android:layout_weight="1"
                     android:layout_marginRight="5dp"
-                    android:background="@drawable/shape_land"
+                    android:background="@drawable/selector_land"
                     android:text="预打印"
                     android:textColor="@color/colorWhite"/>
                 <Button
@@ -96,7 +96,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginLeft="5dp"
-                    android:background="@drawable/check_dingdan"
+                    android:background="@drawable/selector_cancel"
                     android:text="订单详情"
                     android:textColor="@color/colorGreen"/>
             </LinearLayout>

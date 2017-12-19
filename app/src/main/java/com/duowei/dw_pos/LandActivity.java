@@ -9,6 +9,9 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -17,6 +20,7 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.duowei.dw_pos.bean.YHJBQK;
+import com.duowei.dw_pos.dialog.ClearDialogFragment;
 import com.duowei.dw_pos.dialog.MsgInputDialog;
 import com.duowei.dw_pos.fragment.UpdateFragment;
 import com.duowei.dw_pos.httputils.DownHTTP;
@@ -46,6 +50,7 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
     private int mVersionCode=0;
 
     private final String updateUrl="http://ouwtfo4eg.bkt.clouddn.com/dw_pos.txt";
+    private boolean mClear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +70,7 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         mOrderstytle = mSp.getString("orderstytle", getResources().getString(R.string.order_stytle_zhongxican));
+        mClear = mSp.getBoolean("clear", false);
     }
 
     private void initUI() {
@@ -114,7 +120,12 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.btn_exit:
-                finish();
+                if(mClear&&!TextUtils.isEmpty(Users.pad)){
+                    ClearDialogFragment fragment = ClearDialogFragment.newInstance(Users.pad,Users.YHMC);
+                    fragment.show(getSupportFragmentManager(),null);
+                }else{
+                    finish();
+                }
                 break;
         }
     }
@@ -175,6 +186,21 @@ public class LandActivity extends AppCompatActivity implements View.OnClickListe
         SQLiteStudioService.instance().stop();
         CartList.newInstance(this).getList().clear();
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            //TODO something
+            if(mClear&&!TextUtils.isEmpty(Users.pad)){
+                ClearDialogFragment fragment = ClearDialogFragment.newInstance(Users.pad,Users.YHMC);
+                fragment.show(getSupportFragmentManager(),null);
+            }else{
+                finish();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override

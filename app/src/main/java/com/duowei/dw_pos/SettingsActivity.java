@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -45,6 +44,8 @@ public class SettingsActivity extends AppCompatActivity implements RadioGroup.On
     Button mBtnLoad;
     @BindView(R.id.btn_back)
     Button mBtnBack;
+    @BindView(R.id.cb_clear)
+    CheckBox mCbClear;
 
     private SharedPreferences.Editor mEdit;
     private SharedPreferences mSp;
@@ -52,6 +53,7 @@ public class SettingsActivity extends AppCompatActivity implements RadioGroup.On
     private String mPort;
     private String mPad;
     private boolean auto;
+    private boolean clear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,14 +68,20 @@ public class SettingsActivity extends AppCompatActivity implements RadioGroup.On
     }
 
     private void initUI() {
-        mEtIp.setText(mSp.getString("ip",""));
-        mEtPort.setText(mSp.getString("port","2233"));
-        mEtPad.setText(mSp.getString("pad",""));
-        auto=mSp.getBoolean("auto",true);
-        if(auto){
+        mEtIp.setText(mSp.getString("ip", ""));
+        mEtPort.setText(mSp.getString("port", "2233"));
+        mEtPad.setText(mSp.getString("pad", ""));
+        auto = mSp.getBoolean("auto", true);
+        clear=mSp.getBoolean("clear",false);
+        if (auto) {
             mCheckbox.setChecked(true);
-        }else{
+        } else {
             mCheckbox.setChecked(false);
+        }
+        if(clear){
+            mCbClear.setChecked(true);
+        }else{
+            mCbClear.setChecked(false);
         }
         RadioGroup rg = (RadioGroup) findViewById(R.id.radioGroup);
         RadioButton rb1 = (RadioButton) findViewById(R.id.rb1);
@@ -83,31 +91,41 @@ public class SettingsActivity extends AppCompatActivity implements RadioGroup.On
         RadioButton rb4 = (RadioButton) findViewById(R.id.rb4);
         String orderstytle = mSp.getString("orderstytle", getResources().getString(R.string.order_stytle_zhongxican));
         String cashpay = mSp.getString("cashpay", getString(R.string.cash_unallowed));
-        if(orderstytle.equals(getResources().getString(R.string.order_stytle_zhongxican))){
+        if (orderstytle.equals(getResources().getString(R.string.order_stytle_zhongxican))) {
             rb1.setChecked(true);
-        }else if(orderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))){
+        } else if (orderstytle.equals(getResources().getString(R.string.order_stytle_kuaican))) {
             rb2.setChecked(true);
         }
-        if(cashpay.equals(getString(R.string.cash_allow))){
+        if (cashpay.equals(getString(R.string.cash_allow))) {
             rb4.setChecked(true);
-        }else if(cashpay.equals(getString(R.string.cash_unallowed))){
+        } else if (cashpay.equals(getString(R.string.cash_unallowed))) {
             rb3.setChecked(true);
         }
         rg.setOnCheckedChangeListener(this);
         rg2.setOnCheckedChangeListener(this);
     }
 
-    @OnClick({R.id.rl_autoStart, R.id.btn_load, R.id.btn_back})
+    @OnClick({R.id.rl_clearData,R.id.rl_autoStart, R.id.btn_load, R.id.btn_back})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.rl_autoStart:
-                if(auto){
-                    mCheckbox.setChecked(false);
+            case R.id.rl_clearData:
+                if(clear){
+                    mCbClear.setChecked(false);
                 }else{
+                    mCbClear.setChecked(true);
+                }
+                clear=!clear;
+                mEdit.putBoolean("clear",clear);
+                mEdit.commit();
+                break;
+            case R.id.rl_autoStart:
+                if (auto) {
+                    mCheckbox.setChecked(false);
+                } else {
                     mCheckbox.setChecked(true);
                 }
-                auto=!auto;
-                mEdit.putBoolean("auto",auto);
+                auto = !auto;
+                mEdit.putBoolean("auto", auto);
                 mEdit.commit();
                 break;
 
@@ -124,12 +142,12 @@ public class SettingsActivity extends AppCompatActivity implements RadioGroup.On
                 } else if (TextUtils.isEmpty(mPad)) {
                     Toast.makeText(this, "请设置手持POS名称", Toast.LENGTH_SHORT).show();
 
-                } else{
-                    Net.url="http://"+mIp+":"+mPort+"/server/ServerSvlt?";
-                    Users.pad=mPad;
-                    mEdit.putString("ip",mIp);
-                    mEdit.putString("port",mPort);
-                    mEdit.putString("pad",mPad);
+                } else {
+                    Net.url = "http://" + mIp + ":" + mPort + "/server/ServerSvlt?";
+                    Users.pad = mPad;
+                    mEdit.putString("ip", mIp);
+                    mEdit.putString("port", mPort);
+                    mEdit.putString("pad", mPad);
                     mEdit.putString("url", Net.url);
                     mEdit.commit();
                     DataLoad.getInstance().startLoad(this);
@@ -143,15 +161,15 @@ public class SettingsActivity extends AppCompatActivity implements RadioGroup.On
 
     @Override
     public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
-        if(radioGroup.getId()==R.id.radioGroup){
+        if (radioGroup.getId() == R.id.radioGroup) {
             int radioButtonId = radioGroup.getCheckedRadioButtonId();
-            RadioButton rb = (RadioButton)findViewById(radioButtonId);
-            mEdit.putString("orderstytle",rb.getText().toString());
+            RadioButton rb = (RadioButton) findViewById(radioButtonId);
+            mEdit.putString("orderstytle", rb.getText().toString());
             mEdit.commit();
-        }else if(radioGroup.getId()==R.id.radioGroup2){
+        } else if (radioGroup.getId() == R.id.radioGroup2) {
             int radioButtonId = radioGroup.getCheckedRadioButtonId();
-            RadioButton rb = (RadioButton)findViewById(radioButtonId);
-            mEdit.putString("cashpay",rb.getText().toString());
+            RadioButton rb = (RadioButton) findViewById(radioButtonId);
+            mEdit.putString("cashpay", rb.getText().toString());
             mEdit.commit();
         }
         CartList.newInstance(this).clear();

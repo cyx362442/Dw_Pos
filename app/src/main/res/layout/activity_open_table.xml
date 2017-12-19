@@ -79,7 +79,7 @@
                 android:id="@+id/btn_cancel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/shape_cancel"
+                android:background="@drawable/selector_cancel"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
                 android:text="取消"/>
@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginLeft="5dp"
-                android:background="@drawable/shape_land"
+                android:background="@drawable/selector_land"
                 android:textColor="@color/colorWhite"
                 android:text="确定"/>
         </LinearLayout>

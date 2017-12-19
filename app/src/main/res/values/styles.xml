@@ -85,14 +85,14 @@
     <style name="ButtonCancel">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/shape_cancel</item>
+        <item name="android:background">@drawable/selector_cancel</item>
         <item name="android:textSize">@dimen/textSize20</item>
         <item name="android:text">取消</item>
     </style>
     <style name="ButtonConfirm">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/shape_land</item>
+        <item name="android:background">@drawable/selector_land</item>
         <item name="android:textSize">@dimen/textSize20</item>
         <item name="android:textColor">@color/colorWhite</item>
         <item name="android:text">确定</item>
